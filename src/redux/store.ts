@@ -1,10 +1,13 @@
 import { ThunkAction, configureStore, Action } from '@reduxjs/toolkit';
-import userReducer from './reducers/userSlice';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+
+import userReducer from './reducers/userSlice';
+import themeReducer from './reducers/themeSlice';
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
+    theme: themeReducer,
   },
   devTools: true,
 });
