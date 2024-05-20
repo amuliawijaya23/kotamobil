@@ -1,6 +1,9 @@
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
+import { useAppSelector } from '../redux/store';
+import { getTheme } from '../redux/reducers/themeSlice';
+
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
@@ -61,8 +64,10 @@ const lightTheme = createTheme({
 });
 
 const ThemeRegistry = ({ children }: { children: React.ReactNode }) => {
+  const theme = useAppSelector(getTheme);
+
   return (
-    <ThemeProvider theme={lightTheme}>
+    <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
       <CssBaseline />
       {children}
     </ThemeProvider>
