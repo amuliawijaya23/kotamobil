@@ -63,7 +63,7 @@ const lightTheme = createTheme({
   },
 });
 
-const ThemeRegistry = ({ children }: { children: React.ReactNode }) => {
+export const ThemeRegistry = ({ children }: { children: React.ReactNode }) => {
   const theme = useAppSelector(getTheme);
 
   return (
@@ -73,5 +73,3 @@ const ThemeRegistry = ({ children }: { children: React.ReactNode }) => {
     </ThemeProvider>
   );
 };
-
-export default ThemeRegistry;
