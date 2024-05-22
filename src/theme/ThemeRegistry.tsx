@@ -1,8 +1,6 @@
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
-// import { useAppSelector } from '../redux/store';
-
 import { useAppSelector } from '~/redux/store';
 import { getTheme } from '~/redux/reducers/themeSlice';
 
@@ -18,61 +16,56 @@ const typographyOptions = {
 
 const paletteOptions = {
   primary: {
-    main: '#002147',
-    contrastText: '#ffffff',
+    light: '#1976d2',
+    main: '#1565c0',
+    dark: '#0d47a1',
+    contrastText: '#fff',
   },
   secondary: {
-    main: '#ffdf00',
+    light: '#c62828',
+    main: '#d50000',
+    dark: '#b71c1c',
+    contrastText: '#fff',
   },
   success: {
-    main: '#39ff14',
+    light: '#4caf50',
+    main: '#43a047',
+    dark: '#388e3c',
+    contrastText: '#fff',
   },
   error: {
-    main: '#ff2800',
+    light: '#c62828',
+    main: '#d50000',
+    dark: '#b71c1c',
+    contrastText: '#fff',
   },
   warning: {
-    main: '#ff6700',
+    light: '#ffeb3b',
+    main: '#fdd835',
+    dark: '#fbc02d',
+    contrastText: '#fff',
   },
   info: {
-    main: '#bf00ff',
+    light: '#78909c',
+    main: '#607d8b',
+    dark: '#546e7a',
+    contrastText: '#fff',
   },
 };
-
-const darkTheme = createTheme({
-  typography: typographyOptions,
-  palette: {
-    mode: 'dark',
-    background: {
-      default: '#000000',
-    },
-    ...paletteOptions,
-    text: {
-      primary: '#f5f5f5',
-      secondary: '#bf00ff',
-    },
-  },
-});
-
-const lightTheme = createTheme({
-  typography: typographyOptions,
-  palette: {
-    mode: 'light',
-    background: {
-      default: '#ffffff',
-    },
-    ...paletteOptions,
-    text: {
-      primary: '#000000',
-      secondary: '#bf00ff',
-    },
-  },
-});
 
 export const ThemeRegistry = ({ children }: { children: React.ReactNode }) => {
   const theme = useAppSelector(getTheme);
 
+  const appTheme = createTheme({
+    typography: typographyOptions,
+    palette: {
+      mode: theme === 'dark' ? 'dark' : 'light',
+      ...paletteOptions,
+    },
+  });
+
   return (
-    <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
+    <ThemeProvider theme={appTheme}>
       <CssBaseline />
       {children}
     </ThemeProvider>
