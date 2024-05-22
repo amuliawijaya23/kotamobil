@@ -19,7 +19,12 @@ const EmailInput = ({
   onChangeHandler,
 }: EmailInputProps) => {
   return (
-    <FormControl size="small" variant="outlined" sx={{ mt: 1 }}>
+    <FormControl
+      fullWidth
+      size="small"
+      variant="outlined"
+      sx={{ mt: 1, mb: 1 }}
+    >
       <InputLabel htmlFor="outlined-email">Email</InputLabel>
       <OutlinedInput
         type="email"

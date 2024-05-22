@@ -10,9 +10,9 @@ import { validateEmail } from '~/helpers';
 const useAuthData = () => {
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
-  const [email, setEmail] = useState<string>('screaming7@gmail.com');
+  const [email, setEmail] = useState<string>('');
   const [isValidEmail, setIsValidEmail] = useState<boolean>(false);
-  const [password, setPassword] = useState<string>('jikulon');
+  const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
 
@@ -89,6 +89,7 @@ const useAuthData = () => {
     firstName,
     lastName,
     email,
+    isValidEmail,
     password,
     confirmPassword,
     error,

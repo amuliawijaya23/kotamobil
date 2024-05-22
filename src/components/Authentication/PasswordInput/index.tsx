@@ -29,7 +29,12 @@ const PasswordInput = ({ value, onChangeHandler }: PasswordInputProps) => {
   };
 
   return (
-    <FormControl size="small" variant="outlined" sx={{ mt: 1 }}>
+    <FormControl
+      fullWidth
+      size="small"
+      variant="outlined"
+      sx={{ mt: 1, mb: 1 }}
+    >
       <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
       <OutlinedInput
         type={showPassword ? 'text' : 'password'}
