@@ -11,6 +11,7 @@ import React from 'react';
 
 import EmailInput from '~/components/Authentication/EmailInput';
 import PasswordInput from '~/components/Authentication/PasswordInput';
+import ErrorAlert from '~/components/Authentication/ErrorAlert';
 
 import useAuthData from '~/hooks/useAuthData';
 
@@ -19,6 +20,8 @@ const Login = () => {
     email,
     isValidEmail,
     password,
+    error,
+    handleClearError,
     handleOnChangeEmail,
     handleOnChangePassword,
     handleLogin,
@@ -62,6 +65,7 @@ const Login = () => {
               <Typography variant="h4" component="h1">
                 Sign In
               </Typography>
+              <ErrorAlert error={error} handleClearError={handleClearError} />
             </Grid>
             <Grid xs={12}>
               <EmailInput

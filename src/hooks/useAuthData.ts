@@ -19,6 +19,10 @@ const useAuthData = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+  const handleClearError = () => {
+    setError('');
+  };
+
   const handleOnChangeFirstName = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -93,6 +97,7 @@ const useAuthData = () => {
     password,
     confirmPassword,
     error,
+    handleClearError,
     handleOnChangeFirstName,
     handleOnChangeLastName,
     handleOnChangeEmail,
