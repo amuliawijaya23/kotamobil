@@ -17,8 +17,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '~/redux/store';
 import { getUserData } from '~/redux/reducers/userSlice';
 
-import useAuthData from '~/hooks/useAuthData';
-
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
   handleSidebarOpen?: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -43,13 +41,16 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 const Layout = () => {
-  const { logout } = useAuthData();
   const user = useAppSelector(getUserData);
 
   const navigate = useNavigate();
 
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+  };
+
+  const handleOnClickLogin = () => {
+    navigate('/login');
   };
 
   const handleOnClickRegister = () => {
@@ -70,11 +71,12 @@ const Layout = () => {
             <Box>
               <Typography variant="h6" noWrap component={'h1'}>
                 GudangMobil
+                {user?.firstName}
               </Typography>
             </Box>
             <Box>
               <Button
-                onClick={logout}
+                onClick={handleOnClickLogin}
                 onMouseDown={handleMouseDown}
                 color="inherit"
                 variant="text"

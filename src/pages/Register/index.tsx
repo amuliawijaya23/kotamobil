@@ -10,6 +10,7 @@ import {
   Link,
 } from '@mui/material';
 
+import NameInput from '~/components/Authentication/NameInput';
 import EmailInput from '~/components/Authentication/EmailInput';
 import PasswordInput from '~/components/Authentication/PasswordInput';
 import ErrorAlert from '~/components/Authentication/ErrorAlert';
@@ -31,6 +32,7 @@ const Register = () => {
     handleOnChangeEmail,
     handleOnChangePassword,
     handleOnChangeConfirmPassword,
+    handleRegister,
   } = useAuthData();
 
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -67,29 +69,45 @@ const Register = () => {
                 sx={{ width: 100, height: 100, mb: 1 }}
               />
               <Typography variant="h4" component="h1">
-                Sign In
+                Sign Up
               </Typography>
               <ErrorAlert error={error} handleClearError={handleClearError} />
             </Grid>
             <Grid xs={12}>
+              <NameInput
+                value={firstName}
+                label="First Name"
+                onChangeHandler={handleOnChangeFirstName}
+              />
+              <NameInput
+                value={lastName}
+                label="Last Name"
+                onChangeHandler={handleOnChangeLastName}
+              />
               <EmailInput
                 value={email}
-                onChangeHandler={handleOnChangeEmail}
                 isValidEmail={isValidEmail}
+                onChangeHandler={handleOnChangeEmail}
               />
               <PasswordInput
                 value={password}
+                label="Password"
                 onChangeHandler={handleOnChangePassword}
+              />
+              <PasswordInput
+                value={confirmPassword}
+                label="Confirm Password"
+                onChangeHandler={handleOnChangeConfirmPassword}
               />
             </Grid>
             <Grid xs={6}>
               <Button
                 fullWidth
                 variant="contained"
-                onClick={() => {}}
+                onClick={handleRegister}
                 onMouseDown={handleMouseDown}
               >
-                Sign In
+                Sign Up
               </Button>
             </Grid>
             <Grid xs={6}>

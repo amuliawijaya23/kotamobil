@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAppDispatch } from '~/redux/store';
@@ -54,9 +54,42 @@ const useAuthData = () => {
     setConfirmPassword(event.target.value);
   };
 
-  const handleLogin = async (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleRegister = async () => {
     try {
-      event.preventDefault();
+      if (!firstName || !email || !password || !confirmPassword) {
+        return setError('Missint parameter');
+      }
+
+      if (!isValidEmail) {
+        return setError('Invalid email address');
+      }
+
+      if (password !== confirmPassword) {
+        return setError('Passwords do not match');
+      }
+
+      const response = await axios.post('/api/auth/register', {
+        firstName,
+        lastName,
+        email,
+        password,
+      });
+
+      if (response.status !== 200) {
+        return setError(response.data.message);
+      }
+
+      dispatch(login(response.data));
+      navigate('/', { replace: true });
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return setError(error?.response?.data?.message);
+      }
+    }
+  };
+
+  const handleLogin = async () => {
+    try {
       if (!email || !password) {
         return setError('Missing parameter');
       }
@@ -108,6 +141,7 @@ const useAuthData = () => {
     handleOnChangePassword,
     handleOnChangeConfirmPassword,
     handleLogin,
+    handleRegister,
     handleLogout,
   };
 };
