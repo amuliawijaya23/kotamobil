@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -68,13 +68,17 @@ const useAuthData = () => {
       const response = await axios.post('/api/auth/login', { email, password });
 
       if (response.status !== 200) {
-        return setError(response.data.message);
+        setError(response.data.message);
+        navigate('/', { replace: true });
+        return;
       }
 
       dispatch(login(response.data.user));
       navigate('/', { replace: true });
     } catch (error) {
-      console.log(error);
+      if (error instanceof AxiosError) {
+        return setError(error?.response?.data?.message);
+      }
     }
   };
 
