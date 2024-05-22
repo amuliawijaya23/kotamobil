@@ -1,3 +1,5 @@
+import React from 'react';
+
 import {
   Unstable_Grid2 as Grid,
   Box,
@@ -7,7 +9,6 @@ import {
   Typography,
   Link,
 } from '@mui/material';
-import React from 'react';
 
 import EmailInput from '~/components/Authentication/EmailInput';
 import PasswordInput from '~/components/Authentication/PasswordInput';
@@ -15,16 +16,21 @@ import ErrorAlert from '~/components/Authentication/ErrorAlert';
 
 import useAuthData from '~/hooks/useAuthData';
 
-const Login = () => {
+const Register = () => {
   const {
+    firstName,
+    lastName,
     email,
     isValidEmail,
     password,
+    confirmPassword,
     error,
     handleClearError,
+    handleOnChangeFirstName,
+    handleOnChangeLastName,
     handleOnChangeEmail,
     handleOnChangePassword,
-    handleLogin,
+    handleOnChangeConfirmPassword,
   } = useAuthData();
 
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -80,7 +86,7 @@ const Login = () => {
               <Button
                 fullWidth
                 variant="contained"
-                onClick={handleLogin}
+                onClick={() => {}}
                 onMouseDown={handleMouseDown}
               >
                 Sign In
@@ -97,9 +103,9 @@ const Login = () => {
             </Grid>
             <Grid xs={12} mb={1}>
               <Typography variant="subtitle1">
-                Not a member?{' '}
-                <Link color="inherit" href="/register">
-                  <b>Sign Up</b>
+                Already have an account?{' '}
+                <Link color="inherit" href="/login">
+                  <b>Sign In</b>
                 </Link>
               </Typography>
             </Grid>
@@ -110,4 +116,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

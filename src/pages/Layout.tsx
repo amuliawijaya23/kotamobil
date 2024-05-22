@@ -12,9 +12,12 @@ import {
   Button,
 } from '@mui/material';
 
-import { useAppSelector, useAppDispatch } from '~/redux/store';
-import { toggleTheme, getTheme } from '~/redux/reducers/themeSlice';
+import { useNavigate } from 'react-router-dom';
+
+import { useAppSelector } from '~/redux/store';
 import { getUserData } from '~/redux/reducers/userSlice';
+
+import useAuthData from '~/hooks/useAuthData';
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -40,13 +43,17 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 const Layout = () => {
+  const { logout } = useAuthData();
   const user = useAppSelector(getUserData);
-  const theme = useAppSelector(getTheme);
 
-  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
-  const toggleThemeMode = () => {
-    dispatch(toggleTheme());
+  const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
+
+  const handleOnClickRegister = () => {
+    navigate('/register');
   };
 
   return (
@@ -66,10 +73,20 @@ const Layout = () => {
               </Typography>
             </Box>
             <Box>
-              <Button color="inherit" variant="text">
+              <Button
+                onClick={logout}
+                onMouseDown={handleMouseDown}
+                color="inherit"
+                variant="text"
+              >
                 Login
               </Button>
-              <Button color="inherit" variant="text">
+              <Button
+                onClick={handleOnClickRegister}
+                onMouseDown={handleMouseDown}
+                color="inherit"
+                variant="text"
+              >
                 Register
               </Button>
             </Box>

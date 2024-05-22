@@ -22,9 +22,7 @@ const PasswordInput = ({ value, onChangeHandler }: PasswordInputProps) => {
 
   const handleShowPassword = () => setShowPassword((show) => !show);
 
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) => {
+  const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
 
@@ -46,7 +44,7 @@ const PasswordInput = ({ value, onChangeHandler }: PasswordInputProps) => {
             <IconButton
               aria-label="toggle password visibility"
               onClick={handleShowPassword}
-              onMouseDown={handleMouseDownPassword}
+              onMouseDown={handleMouseDown}
               edge="end"
             >
               {showPassword ? <VisibilityOff /> : <Visibility />}
