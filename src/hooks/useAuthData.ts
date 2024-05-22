@@ -106,7 +106,10 @@ const useAuthData = () => {
         return;
       }
 
-      dispatch(login(response.data.user));
+      const userData = { ...response.data.user };
+      delete userData.password;
+
+      dispatch(login(userData));
       navigate('/', { replace: true });
     } catch (error) {
       if (error instanceof AxiosError) {

@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
+const LC_USER_DATA = 'LC_USER_DATA';
 
 export interface UserData {
   _id: string;
@@ -23,10 +24,15 @@ export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    logout: () => initialState,
+    logout: (state) => {
+      state.isAuthenticated = false;
+      state.data = null;
+      localStorage.removeItem(LC_USER_DATA);
+    },
     login: (state, action: PayloadAction<UserData>) => {
       state.isAuthenticated = true;
       state.data = action.payload;
+      localStorage.setItem(LC_USER_DATA, JSON.stringify(action.payload));
     },
   },
 });
