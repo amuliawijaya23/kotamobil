@@ -23,7 +23,7 @@ const PasswordInput = ({
   label,
   onChangeHandler,
 }: PasswordInputProps) => {
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const handleShowPassword = () => setShowPassword((show) => !show);
 

@@ -32,6 +32,7 @@ const Register = () => {
     handleOnChangeEmail,
     handleOnChangePassword,
     handleOnChangeConfirmPassword,
+    handleRegister,
   } = useAuthData();
 
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -103,7 +104,7 @@ const Register = () => {
               <Button
                 fullWidth
                 variant="contained"
-                onClick={() => {}}
+                onClick={handleRegister}
                 onMouseDown={handleMouseDown}
               >
                 Sign Up
