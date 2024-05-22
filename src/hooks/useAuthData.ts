@@ -2,10 +2,10 @@ import axios from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useAppDispatch } from '../redux/store';
-import { login, logout } from '../redux/reducers/userSlice';
+import { useAppDispatch } from '~/redux/store';
+import { login, logout } from '~/redux/reducers/userSlice';
 
-import { validateEmail } from '../helpers';
+import { validateEmail } from '~/helpers';
 
 const useAuthData = () => {
   const [firstName, setFirstName] = useState<string>('');

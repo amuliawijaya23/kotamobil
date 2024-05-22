@@ -1,8 +1,10 @@
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
-import { useAppSelector } from '../redux/store';
-import { getTheme } from '../redux/reducers/themeSlice';
+// import { useAppSelector } from '../redux/store';
+
+import { useAppSelector } from '~/redux/store';
+import { getTheme } from '~/redux/reducers/themeSlice';
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';

@@ -1,3 +1,4 @@
+import React from 'react';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import {
   Box,
@@ -8,17 +9,16 @@ import {
   IconButton,
   Button,
 } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 
-import { styled } from '@mui/material/styles';
 import { Outlet } from 'react-router-dom';
-import { useAppSelector, useAppDispatch } from '../redux/store';
+import { useAppSelector, useAppDispatch } from '~/redux/store';
 
-import { toggleTheme, getTheme } from '../redux/reducers/themeSlice';
-import React from 'react';
-import { getUserData } from '../redux/reducers/userSlice';
+import { toggleTheme, getTheme } from '~/redux/reducers/themeSlice';
+import { getUserData } from '~/redux/reducers/userSlice';
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
