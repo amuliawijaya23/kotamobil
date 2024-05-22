@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,14 +10,18 @@ import { validateEmail } from '~/helpers';
 const useAuthData = () => {
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
-  const [email, setEmail] = useState<string>('screaming7@gmail.com');
+  const [email, setEmail] = useState<string>('');
   const [isValidEmail, setIsValidEmail] = useState<boolean>(false);
-  const [password, setPassword] = useState<string>('jikulon');
+  const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  const handleClearError = () => {
+    setError('');
+  };
 
   const handleOnChangeFirstName = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -64,13 +68,17 @@ const useAuthData = () => {
       const response = await axios.post('/api/auth/login', { email, password });
 
       if (response.status !== 200) {
-        return setError(response.data.message);
+        setError(response.data.message);
+        navigate('/', { replace: true });
+        return;
       }
 
       dispatch(login(response.data.user));
       navigate('/', { replace: true });
     } catch (error) {
-      console.log(error);
+      if (error instanceof AxiosError) {
+        return setError(error?.response?.data?.message);
+      }
     }
   };
 
@@ -89,9 +97,11 @@ const useAuthData = () => {
     firstName,
     lastName,
     email,
+    isValidEmail,
     password,
     confirmPassword,
     error,
+    handleClearError,
     handleOnChangeFirstName,
     handleOnChangeLastName,
     handleOnChangeEmail,
