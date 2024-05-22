@@ -1,4 +1,7 @@
 import React from 'react';
+import { Outlet } from 'react-router-dom';
+
+import { styled } from '@mui/material/styles';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import {
   Box,
@@ -6,17 +9,10 @@ import {
   Container,
   Toolbar,
   Typography,
-  IconButton,
   Button,
 } from '@mui/material';
-import { styled } from '@mui/material/styles';
 
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
-
-import { Outlet } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '~/redux/store';
-
 import { toggleTheme, getTheme } from '~/redux/reducers/themeSlice';
 import { getUserData } from '~/redux/reducers/userSlice';
 
@@ -54,7 +50,7 @@ const Layout = () => {
   };
 
   return (
-    <Box component={Paper} sx={{ display: 'flex' }}>
+    <Box component={Paper}>
       <Container component={'header'}>
         <AppBar position="fixed">
           <Toolbar
@@ -70,23 +66,17 @@ const Layout = () => {
               </Typography>
             </Box>
             <Box>
-              {/* <IconButton
-                onClick={toggleThemeMode}
-                color={theme === 'light' ? 'secondary' : 'info'}
-              >
-                {theme === 'light' ? <Brightness7Icon /> : <Brightness4Icon />}
-              </IconButton> */}
-              <Button>
-                <Typography>Login</Typography>
+              <Button color="inherit" variant="text">
+                Login
               </Button>
-              <Button>
-                <Typography>Register</Typography>
+              <Button color="inherit" variant="text">
+                Register
               </Button>
             </Box>
           </Toolbar>
         </AppBar>
       </Container>
-      <Container component={'main'} sx={{ minHeight: '100vh' }}>
+      <Container component="main">
         <Toolbar />
         <Outlet />
       </Container>
