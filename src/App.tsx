@@ -3,7 +3,11 @@ import Layout from './pages/Layout';
 import Login from './pages/Login';
 import Register from './pages/Register';
 
+import useSession from './hooks/useSession';
+
 function App() {
+  const { isAuthenticated } = useSession();
+
   return (
     <Router>
       <Routes>
