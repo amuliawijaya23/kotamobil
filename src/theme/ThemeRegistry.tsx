@@ -17,6 +17,7 @@ const typographyOptions = {
 const paletteOptions = {
   primary: {
     main: '#002147',
+    contrastText: '#ffffff',
   },
   secondary: {
     main: '#ffdf00',
@@ -42,10 +43,11 @@ const darkTheme = createTheme({
     background: {
       default: '#000000',
     },
+    ...paletteOptions,
     text: {
       primary: '#f5f5f5',
+      secondary: '#bf00ff',
     },
-    ...paletteOptions,
   },
 });
 
@@ -56,10 +58,11 @@ const lightTheme = createTheme({
     background: {
       default: '#ffffff',
     },
-    text: {
-      primary: '#343434',
-    },
     ...paletteOptions,
+    text: {
+      primary: '#000000',
+      secondary: '#bf00ff',
+    },
   },
 });
 
