@@ -73,6 +73,7 @@ const Login = () => {
               />
               <PasswordInput
                 value={password}
+                label="Password"
                 onChangeHandler={handleOnChangePassword}
               />
             </Grid>

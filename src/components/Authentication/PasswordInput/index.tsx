@@ -12,12 +12,17 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 interface PasswordInputProps {
   value: string;
+  label: string;
   onChangeHandler: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
 }
 
-const PasswordInput = ({ value, onChangeHandler }: PasswordInputProps) => {
+const PasswordInput = ({
+  value,
+  label,
+  onChangeHandler,
+}: PasswordInputProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleShowPassword = () => setShowPassword((show) => !show);
@@ -33,12 +38,12 @@ const PasswordInput = ({ value, onChangeHandler }: PasswordInputProps) => {
       variant="outlined"
       sx={{ mt: 1, mb: 1 }}
     >
-      <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+      <InputLabel htmlFor="outlined-adornment-password">{label}</InputLabel>
       <OutlinedInput
         type={showPassword ? 'text' : 'password'}
         onChange={onChangeHandler}
         value={value}
-        label="Password"
+        label={label}
         endAdornment={
           <InputAdornment position="end">
             <IconButton
