@@ -49,8 +49,8 @@ const NavBar = () => {
     navigate('/');
   };
 
-  const handleOnClickListings = () => {
-    navigate('/listings');
+  const handleOnClickVehicles = () => {
+    navigate('/vehicles');
   };
 
   const handleOnClickContacts = () => {
@@ -115,12 +115,12 @@ const NavBar = () => {
           {session.isAuthenticated && (
             <>
               <Button
-                onClick={handleOnClickListings}
+                onClick={handleOnClickVehicles}
                 onMouseDown={handleMouseDown}
                 color="inherit"
                 variant="text"
               >
-                Listings
+                Vehicles
               </Button>
               <Button
                 onClick={handleOnClickContacts}

@@ -6,6 +6,7 @@ import UnauthenticatedRoute from './components/RouteProtection/UnauthenticatedRo
 import Layout from './pages/Layout';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Vehicles from './pages/Vehicles';
 
 import useSession from './hooks/useSession';
 
@@ -34,8 +35,12 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<>Hello</>} />
           <Route
-            path="/listings"
-            element={<AuthenticatedRoute>Listings</AuthenticatedRoute>}
+            path="/vehicles"
+            element={
+              <AuthenticatedRoute>
+                <Vehicles />
+              </AuthenticatedRoute>
+            }
           />
           <Route
             path="/contacts"

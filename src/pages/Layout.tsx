@@ -1,19 +1,19 @@
 import { Outlet } from 'react-router-dom';
 
-import { Box, Paper, Container, Toolbar } from '@mui/material';
+import { Box, Paper, Toolbar } from '@mui/material';
 
 import NavBar from '~/components/Navigation';
 
 const Layout = () => {
   return (
     <Box component={Paper}>
-      <Container component={'header'}>
+      <Box component={'header'}>
         <NavBar />
-      </Container>
-      <Container component="main">
+      </Box>
+      <Box component="main" sx={{ width: '100vw', minHeight: '100vh' }}>
         <Toolbar />
         <Outlet />
-      </Container>
+      </Box>
     </Box>
   );
 };
