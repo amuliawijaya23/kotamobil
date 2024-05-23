@@ -23,13 +23,13 @@ const stringToColor = (string: string) => {
 
 const StringAvatar = ({ name }: StringAvataProps) => {
   const props = {
-    sx: { bgcolor: stringToColor(name), width: 40, height: 40 },
+    sx: { bgcolor: stringToColor(name) },
     children:
       name.split(' ').length > 1
         ? `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`
         : name[0],
   };
-  return <Avatar {...props} />;
+  return <Avatar sizes="small" {...props} />;
 };
 
 export default StringAvatar;

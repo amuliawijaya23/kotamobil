@@ -37,6 +37,10 @@ function App() {
             path="/listings"
             element={<AuthenticatedRoute>Listings</AuthenticatedRoute>}
           />
+          <Route
+            path="/contacts"
+            element={<AuthenticatedRoute>Contacts</AuthenticatedRoute>}
+          />
         </Route>
         <Route path="*" element={<>NOT FOUND</>} />
       </Routes>

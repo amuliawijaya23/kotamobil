@@ -39,7 +39,11 @@ const UserProfile = () => {
 
   return (
     <>
-      <IconButton onClick={handleProfileOpen} onMouseDown={handleMouseDown}>
+      <IconButton
+        size="small"
+        onClick={handleProfileOpen}
+        onMouseDown={handleMouseDown}
+      >
         {user?.picture ? (
           <Avatar src={user?.picture} sx={{ width: 40, height: 40 }} />
         ) : (

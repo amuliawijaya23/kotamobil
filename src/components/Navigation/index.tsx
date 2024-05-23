@@ -1,6 +1,8 @@
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import { styled } from '@mui/material/styles';
-import { Box, Toolbar, Typography, Button } from '@mui/material';
+import { Box, Toolbar, Typography, Button, IconButton } from '@mui/material';
+
+import HomeIcon from '@mui/icons-material/Home';
 
 import UserProfile from './UserProfile';
 
@@ -37,8 +39,22 @@ const NavBar = () => {
 
   const navigate = useNavigate();
 
-  const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMouseDown = (
+    event: React.MouseEvent<HTMLButtonElement | HTMLParagraphElement>,
+  ) => {
     event.preventDefault();
+  };
+
+  const handleOnClickHome = () => {
+    navigate('/');
+  };
+
+  const handleOnClickListings = () => {
+    navigate('/listings');
+  };
+
+  const handleOnClickContacts = () => {
+    navigate('/contacts');
   };
 
   const handleOnClickLogin = () => {
@@ -58,10 +74,64 @@ const NavBar = () => {
           alignItems: 'center',
         }}
       >
-        <Box>
-          <Typography variant="h6" noWrap component={'h1'}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Typography
+            onClick={handleOnClickHome}
+            onMouseDown={handleMouseDown}
+            variant="h6"
+            noWrap
+            component={'h1'}
+            sx={{
+              cursor: 'pointer',
+              display: {
+                xs: session.isAuthenticated ? 'none' : 'flex',
+                sm: 'flex',
+              },
+              mr: 3,
+            }}
+          >
             GudangMobil
           </Typography>
+          <IconButton
+            onClick={handleOnClickHome}
+            onMouseDown={handleMouseDown}
+            size="small"
+            color="inherit"
+            sx={{
+              display: {
+                xs: session.isAuthenticated ? 'flex' : 'none',
+                sm: 'none',
+              },
+            }}
+          >
+            <HomeIcon />
+          </IconButton>
+          {session.isAuthenticated && (
+            <>
+              <Button
+                onClick={handleOnClickListings}
+                onMouseDown={handleMouseDown}
+                color="inherit"
+                variant="text"
+              >
+                Listings
+              </Button>
+              <Button
+                onClick={handleOnClickContacts}
+                onMouseDown={handleMouseDown}
+                color="inherit"
+                variant="text"
+              >
+                Contacts
+              </Button>
+            </>
+          )}
         </Box>
         {session.isAuthenticated && (
           <Box>
