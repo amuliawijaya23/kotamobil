@@ -71,7 +71,6 @@ const Layout = () => {
             <Box>
               <Typography variant="h6" noWrap component={'h1'}>
                 GudangMobil
-                {user?.firstName}
               </Typography>
             </Box>
             <Box>
