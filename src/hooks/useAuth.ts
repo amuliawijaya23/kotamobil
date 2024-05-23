@@ -57,7 +57,7 @@ const useAuthData = () => {
   const handleRegister = async () => {
     try {
       if (!firstName || !email || !password || !confirmPassword) {
-        return setError('Missint parameter');
+        return setError('Missing parameter');
       }
 
       if (!isValidEmail) {
@@ -102,7 +102,6 @@ const useAuthData = () => {
 
       if (response.status !== 200) {
         setError(response.data.message);
-        navigate('/', { replace: true });
         return;
       }
 
@@ -120,10 +119,12 @@ const useAuthData = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.delete('/api/auth/logout');
+      const response = await axios.delete('/api/auth/logout');
 
-      dispatch(logout());
-      navigate('/', { replace: true });
+      if (response.status === 200) {
+        dispatch(logout());
+        return navigate('/login', { replace: true });
+      }
     } catch (error) {
       console.log(error);
     }

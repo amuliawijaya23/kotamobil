@@ -5,6 +5,7 @@ import {
   OutlinedInput,
   InputAdornment,
   IconButton,
+  FormHelperText,
 } from '@mui/material';
 
 import Visibility from '@mui/icons-material/Visibility';
@@ -16,12 +17,14 @@ interface PasswordInputProps {
   onChangeHandler: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
+  error: string;
 }
 
 const PasswordInput = ({
   value,
   label,
   onChangeHandler,
+  error,
 }: PasswordInputProps) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
@@ -44,6 +47,10 @@ const PasswordInput = ({
         onChange={onChangeHandler}
         value={value}
         label={label}
+        error={
+          Boolean(error && value.length === 0) ||
+          Boolean(error === 'Passwords do not match')
+        }
         endAdornment={
           <InputAdornment position="end">
             <IconButton
@@ -57,6 +64,9 @@ const PasswordInput = ({
           </InputAdornment>
         }
       />
+      {error && value.length === 0 && (
+        <FormHelperText>Missing parameter</FormHelperText>
+      )}
     </FormControl>
   );
 };

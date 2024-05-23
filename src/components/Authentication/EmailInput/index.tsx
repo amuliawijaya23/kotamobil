@@ -11,12 +11,14 @@ interface EmailInputProps {
   onChangeHandler: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
+  error: string;
 }
 
 const EmailInput = ({
   value,
   isValidEmail,
   onChangeHandler,
+  error,
 }: EmailInputProps) => {
   return (
     <FormControl
@@ -31,10 +33,17 @@ const EmailInput = ({
         onChange={onChangeHandler}
         value={value}
         label="Email"
-        error={!isValidEmail && value.length > 0}
+        error={
+          Boolean(!isValidEmail && value.length > 0) ||
+          Boolean(error && !isValidEmail) ||
+          Boolean(error && value.length === 0)
+        }
       />
       {!isValidEmail && value.length > 0 && (
         <FormHelperText>Invalid email address</FormHelperText>
+      )}
+      {error && value.length === 0 && (
+        <FormHelperText>Missing parameter</FormHelperText>
       )}
     </FormControl>
   );

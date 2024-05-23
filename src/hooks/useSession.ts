@@ -14,16 +14,9 @@ const useSession = () => {
 
   useEffect(() => {
     if (Cookies.get(COOKIE_NAME)) {
-      const user = localStorage.getItem(LC_USER_DATA);
-      dispatch(login(JSON.parse(user || '{}')));
+      dispatch(login(JSON.parse(localStorage.getItem(LC_USER_DATA) || '{}')));
     }
   }, [dispatch]);
-
-  const isAuthenticated = () => {
-    return !!Cookies.get(COOKIE_NAME);
-  };
-
-  return { isAuthenticated };
 };
 
 export default useSession;

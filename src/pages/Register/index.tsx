@@ -15,7 +15,7 @@ import EmailInput from '~/components/Authentication/EmailInput';
 import PasswordInput from '~/components/Authentication/PasswordInput';
 import ErrorAlert from '~/components/Authentication/ErrorAlert';
 
-import useAuthData from '~/hooks/useAuthData';
+import useAuthData from '~/hooks/useAuth';
 
 const Register = () => {
   const {
@@ -78,26 +78,31 @@ const Register = () => {
                 value={firstName}
                 label="First Name"
                 onChangeHandler={handleOnChangeFirstName}
+                error={error}
               />
               <NameInput
                 value={lastName}
                 label="Last Name"
                 onChangeHandler={handleOnChangeLastName}
+                error={error}
               />
               <EmailInput
                 value={email}
                 isValidEmail={isValidEmail}
                 onChangeHandler={handleOnChangeEmail}
+                error={error}
               />
               <PasswordInput
                 value={password}
                 label="Password"
                 onChangeHandler={handleOnChangePassword}
+                error={error}
               />
               <PasswordInput
                 value={confirmPassword}
                 label="Confirm Password"
                 onChangeHandler={handleOnChangeConfirmPassword}
+                error={error}
               />
             </Grid>
             <Grid xs={6}>

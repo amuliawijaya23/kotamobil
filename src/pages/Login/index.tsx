@@ -13,7 +13,7 @@ import EmailInput from '~/components/Authentication/EmailInput';
 import PasswordInput from '~/components/Authentication/PasswordInput';
 import ErrorAlert from '~/components/Authentication/ErrorAlert';
 
-import useAuthData from '~/hooks/useAuthData';
+import useAuthData from '~/hooks/useAuth';
 
 const Login = () => {
   const {
@@ -70,11 +70,13 @@ const Login = () => {
                 value={email}
                 onChangeHandler={handleOnChangeEmail}
                 isValidEmail={isValidEmail}
+                error={error}
               />
               <PasswordInput
                 value={password}
                 label="Password"
                 onChangeHandler={handleOnChangePassword}
+                error={error}
               />
             </Grid>
             <Grid xs={6}>

@@ -6,7 +6,7 @@ import Register from './pages/Register';
 import useSession from './hooks/useSession';
 
 function App() {
-  const { isAuthenticated } = useSession();
+  useSession();
 
   return (
     <Router>

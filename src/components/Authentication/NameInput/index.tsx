@@ -6,11 +6,22 @@ interface NameInputProps {
   onChangeHandler: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
+  error: string;
 }
 
-import { FormControl, InputLabel, OutlinedInput } from '@mui/material';
+import {
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  OutlinedInput,
+} from '@mui/material';
 
-const NameInput = ({ value, label, onChangeHandler }: NameInputProps) => {
+const NameInput = ({
+  value,
+  label,
+  onChangeHandler,
+  error,
+}: NameInputProps) => {
   return (
     <FormControl
       fullWidth
@@ -24,7 +35,11 @@ const NameInput = ({ value, label, onChangeHandler }: NameInputProps) => {
         onChange={onChangeHandler}
         value={value}
         label={label}
+        error={Boolean(error && label === 'First Name' && value.length === 0)}
       />
+      {error && label === 'First Name' && value.length === 0 && (
+        <FormHelperText>Missing Parameter</FormHelperText>
+      )}
     </FormControl>
   );
 };
