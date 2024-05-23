@@ -49,8 +49,8 @@ const NavBar = () => {
     navigate('/');
   };
 
-  const handleOnClickVehicles = () => {
-    navigate('/vehicles');
+  const handleOnClickInventory = () => {
+    navigate('/inventory');
   };
 
   const handleOnClickContacts = () => {
@@ -115,12 +115,12 @@ const NavBar = () => {
           {session.isAuthenticated && (
             <>
               <Button
-                onClick={handleOnClickVehicles}
+                onClick={handleOnClickInventory}
                 onMouseDown={handleMouseDown}
                 color="inherit"
                 variant="text"
               >
-                Vehicles
+                Inventory
               </Button>
               <Button
                 onClick={handleOnClickContacts}

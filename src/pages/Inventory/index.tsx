@@ -13,10 +13,6 @@ import {
   ListItemButton,
   ListItemText,
   ListItemIcon,
-  Card,
-  CardActionArea,
-  CardMedia,
-  CardContent,
 } from '@mui/material';
 
 import FilterListIcon from '@mui/icons-material/FilterList';
@@ -24,7 +20,7 @@ import AddIcon from '@mui/icons-material/Add';
 
 import ColorLensIcon from '@mui/icons-material/ColorLens';
 
-const Vehicles = () => {
+const Inventory = () => {
   const [open, setOpen] = useState(false);
 
   const handleToggleDrawer = () => {
@@ -71,40 +67,27 @@ const Vehicles = () => {
               <Typography>5 Listings</Typography>
             </Box>
             <Box>
-              <IconButton
-                onClick={handleToggleDrawer}
-                onMouseDown={handleMouseDown}
-              >
-                <FilterListIcon />
-              </IconButton>
-              <IconButton>
-                <AddIcon />
-              </IconButton>
+              <Tooltip title="Filter">
+                <IconButton
+                  onClick={handleToggleDrawer}
+                  onMouseDown={handleMouseDown}
+                >
+                  <FilterListIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Add listing">
+                <IconButton>
+                  <AddIcon />
+                </IconButton>
+              </Tooltip>
             </Box>
           </Toolbar>
           <Divider />
         </Grid>
-        <Grid xs={12} sm={4} lg={3} xl={2}>
-          <Card>
-            <CardActionArea>
-              <CardMedia
-                component="img"
-                src="./src/assets/coming-soon.jpg"
-                height="250"
-                alt="2017 Honda HR-V"
-              />
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="h5">
-                  2017 Honda HR-V
-                </Typography>
-                <Typography variant="body1">Honda HR-V Bekas</Typography>
-              </CardContent>
-            </CardActionArea>
-          </Card>
-        </Grid>
+        <Grid xs={12} sm={4} lg={3} xl={2}></Grid>
       </Grid>
     </Box>
   );
 };
 
-export default Vehicles;
+export default Inventory;
