@@ -16,8 +16,12 @@ import {
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-import { useAppSelector } from '~/redux/store';
-import { getQueryData } from '~/redux/reducers/inventorySlice';
+import { useAppSelector, useAppDispatch } from '~/redux/store';
+import {
+  getQueryData,
+  updateMakeSelections,
+  updateModelSelections,
+} from '~/redux/reducers/inventorySlice';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -36,6 +40,8 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 }));
 
 const InventorySidebar = () => {
+  const dispatch = useAppDispatch();
+
   const queryData = useAppSelector(getQueryData);
 
   const makes = queryData ? Object.keys(queryData.makes) : [];
@@ -89,8 +95,12 @@ const InventorySidebar = () => {
                 <FormControlLabel
                   key={`${make}-checkbox`}
                   label={<Typography variant="subtitle2">{make}</Typography>}
+                  value={make}
                   control={
-                    <Checkbox checked={queryData.makes[make].selected} />
+                    <Checkbox
+                      checked={queryData.makes[make].selected}
+                      onChange={() => dispatch(updateMakeSelections(make))}
+                    />
                   }
                 />
               ))}
@@ -139,9 +149,18 @@ const InventorySidebar = () => {
                   <FormControlLabel
                     key={`${model}-checkbox`}
                     label={<Typography variant="subtitle2">{model}</Typography>}
+                    value={model}
                     control={
                       <Checkbox
                         checked={queryData.makes[thisMake].models[model]}
+                        onChange={() =>
+                          dispatch(
+                            updateModelSelections({
+                              make: thisMake,
+                              model: model,
+                            }),
+                          )
+                        }
                       />
                     }
                   />

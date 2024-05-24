@@ -12,6 +12,7 @@ import {
 import SpeedIcon from '@mui/icons-material/Speed';
 import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import ColorLensIcon from '@mui/icons-material/ColorLens';
 
 import { NumericFormat } from 'react-number-format';
 
@@ -50,16 +51,16 @@ const VehicleCard = ({ vehicle }: { vehicle: VehicleData }) => {
             gutterBottom: true,
           }}
         />
-        <CardContent>
-          <Grid container>
+        <CardContent sx={{ mt: -2 }}>
+          <Grid container spacing={1}>
             <Grid
-              xs={4}
+              xs={6}
               display="flex"
               justifyContent="start"
               alignItems="center"
             >
               <SpeedIcon color="inherit" sx={{ mr: 1 }} />
-              <Typography variant="body2" component="p">
+              <Typography variant="subtitle2" component="p">
                 <NumericFormat
                   displayType="text"
                   value={vehicle.odometer}
@@ -70,25 +71,40 @@ const VehicleCard = ({ vehicle }: { vehicle: VehicleData }) => {
               </Typography>
             </Grid>
             <Grid
-              xs={4}
+              xs={6}
               display="flex"
               justifyContent="start"
               alignItems="center"
             >
               <LocalGasStationIcon color="inherit" sx={{ mr: 1 }} />
-              <Typography variant="body2" component="p">
+              <Typography
+                variant="subtitle2"
+                fontSize={'0.65rem'}
+                component="p"
+              >
                 {vehicle.fuelType}
               </Typography>
             </Grid>
             <Grid
-              xs={4}
+              xs={6}
               display="flex"
               justifyContent="start"
               alignItems="center"
             >
               <DragIndicatorIcon color="inherit" sx={{ mr: 1 }} />
-              <Typography variant="body2" component="p">
+              <Typography variant="subtitle2" component="p">
                 {vehicle.transmission}
+              </Typography>
+            </Grid>
+            <Grid
+              xs={6}
+              display="flex"
+              justifyContent="start"
+              alignItems="center"
+            >
+              <ColorLensIcon color="inherit" sx={{ mr: 1 }} />
+              <Typography variant="subtitle2" component="p">
+                {vehicle.color}
               </Typography>
             </Grid>
           </Grid>

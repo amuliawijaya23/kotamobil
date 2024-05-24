@@ -39,10 +39,34 @@ export const inventorySlice = createSlice({
       }
       state.queryData = queryData;
     },
+    updateMakeSelections: (state, action: PayloadAction<string>) => {
+      if (state.queryData) {
+        state.queryData.makes[action.payload].selected =
+          !state.queryData?.makes[action.payload].selected;
+      }
+    },
+    updateModelSelections: (
+      state,
+      action: PayloadAction<{ make: string; model: string }>,
+    ) => {
+      if (state.queryData) {
+        state.queryData.makes[action.payload.make].models[
+          action.payload.model
+        ] =
+          !state.queryData.makes[action.payload.make].models[
+            action.payload.model
+          ];
+      }
+    },
   },
 });
 
-export const { setInventoryData, setQueryData } = inventorySlice.actions;
+export const {
+  setInventoryData,
+  setQueryData,
+  updateMakeSelections,
+  updateModelSelections,
+} = inventorySlice.actions;
 export const getInventory = (state: RootState) => state.inventory.data;
 export const getQueryData = (state: RootState) => state.inventory.queryData;
 export default inventorySlice.reducer;
