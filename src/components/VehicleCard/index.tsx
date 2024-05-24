@@ -4,7 +4,6 @@ import {
   CardActionArea,
   CardMedia,
   CardHeader,
-  Icon,
   CardContent,
   Typography,
   Unstable_Grid2 as Grid,
