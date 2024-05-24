@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import type { VehicleData } from '~/redux/reducers/vehicleSlice';
 import {
   Unstable_Grid2 as Grid,
   Box,
@@ -17,10 +18,20 @@ import {
 
 import FilterListIcon from '@mui/icons-material/FilterList';
 import AddIcon from '@mui/icons-material/Add';
-
 import ColorLensIcon from '@mui/icons-material/ColorLens';
 
+import VehicleCard from '~/components/VehicleCard';
+
+import useInventoryData from '~/hooks/useInventoryData';
+
+import { useAppSelector } from '~/redux/store';
+import { getInventory } from '~/redux/reducers/inventorySlice';
+
 const Inventory = () => {
+  useInventoryData();
+
+  const inventory = useAppSelector(getInventory);
+
   const [open, setOpen] = useState(false);
 
   const handleToggleDrawer = () => {
@@ -64,7 +75,9 @@ const Inventory = () => {
             }}
           >
             <Box>
-              <Typography>5 Listings</Typography>
+              <Typography>{`${inventory?.length} Vehicle${
+                inventory && inventory?.length > 1 ? 's' : ''
+              }`}</Typography>
             </Box>
             <Box>
               <Tooltip title="Filter">
@@ -84,7 +97,11 @@ const Inventory = () => {
           </Toolbar>
           <Divider />
         </Grid>
-        <Grid xs={12} sm={4} lg={3} xl={2}></Grid>
+        {inventory?.map((vehicle: VehicleData) => (
+          <Grid key={`${vehicle.name}-card`} xs={12} sm={4} lg={3} xl={2}>
+            <VehicleCard vehicle={vehicle} />
+          </Grid>
+        ))}
       </Grid>
     </Box>
   );

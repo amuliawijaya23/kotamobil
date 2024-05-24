@@ -1,4 +1,5 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { RootState } from '../store';
 
 import type { VehicleData } from './vehicleSlice';
 
@@ -21,4 +22,5 @@ export const inventorySlice = createSlice({
 });
 
 export const { setInventoryData } = inventorySlice.actions;
+export const getInventory = (state: RootState) => state.inventory.data;
 export default inventorySlice.reducer;
