@@ -3,11 +3,15 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
 import userReducer from './reducers/userSlice';
 import themeReducer from './reducers/themeSlice';
+import inventoryReducer from './reducers/inventorySlice';
+import vehicleReducer from './reducers/vehicleSlice';
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
     theme: themeReducer,
+    inventory: inventoryReducer,
+    vehicle: vehicleReducer,
   },
   devTools: true,
 });
