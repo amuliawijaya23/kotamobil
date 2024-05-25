@@ -26,6 +26,7 @@ interface VehicleStatusProps {
   price: string | number | null | undefined;
   marketPrice: string | number | null | undefined;
   purchasePrice: string | number | null | undefined;
+  soldPrice: string | number | null | undefined;
   condition: string;
   plateNumber: string;
   taxDate: Date | null;
@@ -38,6 +39,7 @@ interface VehicleStatusProps {
   handlePriceChange: (value: number | null) => void;
   handleMarketPriceChange: (value: number | null) => void;
   handlePurchasePriceChange: (value: number | null) => void;
+  handleSoldPriceChange: (value: number | null) => void;
   handleConditionChange: (e: SelectChangeEvent) => void;
   handlePlateNumberChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -54,6 +56,7 @@ const VehicleStatus = ({
   price,
   marketPrice,
   purchasePrice,
+  soldPrice,
   condition,
   plateNumber,
   taxDate,
@@ -64,6 +67,7 @@ const VehicleStatus = ({
   handlePriceChange,
   handleMarketPriceChange,
   handlePurchasePriceChange,
+  handleSoldPriceChange,
   handleConditionChange,
   handlePlateNumberChange,
   handleTaxDateChange,
@@ -91,7 +95,7 @@ const VehicleStatus = ({
             label="Name"
             error={Boolean(error && !name)}
           />
-          {error && !name && <FormHelperText>{error}</FormHelperText>}
+          {error && !name && <FormHelperText error>{error}</FormHelperText>}
         </FormControl>
       </Grid>
       <Grid xs={12} sm={6} md={4}>
@@ -109,7 +113,7 @@ const VehicleStatus = ({
             <MenuItem value="Available">Available</MenuItem>
             <MenuItem value="Sold">Sold</MenuItem>
           </Select>
-          {error && !status && <FormHelperText>{error}</FormHelperText>}
+          {error && !status && <FormHelperText error>{error}</FormHelperText>}
         </FormControl>
       </Grid>
       <Grid xs={12}></Grid>
@@ -124,6 +128,7 @@ const VehicleStatus = ({
               size: 'small',
               error: Boolean(error && !dateAdded),
               helperText: error && !dateAdded && `${error}`,
+              FormHelperTextProps: { error: true },
             },
           }}
         />
@@ -140,6 +145,7 @@ const VehicleStatus = ({
                 size: 'small',
                 error: Boolean(error && status === 'Sold' && !dateSold),
                 helperText: error && status === 'Sold' && !dateSold && error,
+                FormHelperTextProps: { error: true },
               },
             }}
           />
@@ -169,6 +175,7 @@ const VehicleStatus = ({
           isAllowed={undefined}
           error={Boolean(error && !price)}
           helperText={error && !price && error}
+          FormHelperTextProps={{ error: true }}
           value={price}
           fullWidth
           displayType="input"
@@ -190,6 +197,7 @@ const VehicleStatus = ({
               handleMarketPriceChange(values.floatValue);
             }
           }}
+          isAllowed={undefined}
           value={marketPrice}
           fullWidth
           displayType="input"
@@ -211,6 +219,7 @@ const VehicleStatus = ({
               handlePurchasePriceChange(values.floatValue);
             }
           }}
+          isAllowed={undefined}
           value={purchasePrice}
           fullWidth
           displayType="input"
@@ -222,6 +231,33 @@ const VehicleStatus = ({
           prefix="Rp "
         />
       </Grid>
+      {status === 'Sold' && (
+        <Grid xs={12} sm={6}>
+          <NumericFormat
+            onValueChange={(values) => {
+              if (!values.floatValue) {
+                handleSoldPriceChange(null);
+              }
+              if (values.floatValue) {
+                handleSoldPriceChange(values.floatValue);
+              }
+            }}
+            isAllowed={undefined}
+            error={Boolean(error && !soldPrice)}
+            helperText={error && status === 'Sold' && !soldPrice && error}
+            FormHelperTextProps={{ error: true }}
+            value={soldPrice}
+            fullWidth
+            displayType="input"
+            customInput={TextField}
+            size="small"
+            label="Sold Price"
+            thousandSeparator="."
+            decimalSeparator=","
+            prefix="Rp "
+          />
+        </Grid>
+      )}
       <Grid xs={12}>
         <Typography
           gutterBottom
@@ -251,7 +287,9 @@ const VehicleStatus = ({
               <MenuItem value="New">New</MenuItem>
               <MenuItem value="Used">Used</MenuItem>
             </Select>
-            {error && !condition && <FormHelperText>{error}</FormHelperText>}
+            {error && !condition && (
+              <FormHelperText error>{error}</FormHelperText>
+            )}
           </FormControl>
         </Box>
       </Grid>
@@ -286,6 +324,7 @@ const VehicleStatus = ({
                   error: Boolean(error && condition === 'Used' && !taxDate),
                   helperText:
                     error && condition === 'Used' && !taxDate && error,
+                  FormHelperTextProps: { error: true },
                 },
               }}
             />

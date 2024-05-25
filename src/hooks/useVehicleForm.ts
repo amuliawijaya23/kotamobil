@@ -1,26 +1,14 @@
+import axios, { AxiosError } from 'axios';
+
 import { useState } from 'react';
+
 import { SelectChangeEvent } from '@mui/material';
 
-// vin,
-//   make,
-//   model,
-//   assembly,
-//   year,
-//   odometer,
-//   color,
-//   transmission,
-//   fuelType,
-//   description,
-//   handleVinChange,
-//   handleAssemblyChange,
-//   handleYearChange,
-//   handleOdometerChange,
-//   handleColorChange,
-//   handleTransmissionChange,
-//   handleFuelTypeChange,
-//   handleDescriptionChange,
+import { useAppDispatch } from '~/redux/store';
+import { AddVehicleToInventory } from '~/redux/reducers/inventorySlice';
 
 const useVehicleForm = () => {
+  const dispatch = useAppDispatch();
   // Form error state
   const [error, setError] = useState('');
   // VehicleStatus State
@@ -33,6 +21,9 @@ const useVehicleForm = () => {
     string | number | null | undefined
   >(null);
   const [purchasePrice, setPurchasePrice] = useState<
+    string | number | null | undefined
+  >(null);
+  const [soldPrice, setSoldPrice] = useState<
     string | number | null | undefined
   >(null);
   const [condition, setCondition] = useState<string>('New');
@@ -84,6 +75,10 @@ const useVehicleForm = () => {
 
   const handlePurchasePriceChange = (value: number | null | undefined) => {
     setPurchasePrice(value);
+  };
+
+  const handleSoldPriceChange = (value: number | null | undefined) => {
+    setSoldPrice(value);
   };
 
   const handleConditionChange = (event: SelectChangeEvent) => {
@@ -180,6 +175,57 @@ const useVehicleForm = () => {
 
   // VehicleForm State
 
+  const handleOnSave = async () => {
+    try {
+      let success = false;
+      const data: Record<string, unknown> = {
+        name,
+        vin,
+        make,
+        model,
+        year,
+        odometer,
+        price,
+        color,
+        condition,
+        assembly,
+        transmission,
+        fuelType,
+        sold: status === 'Sold' ? true : false,
+        dateAdded,
+      };
+
+      if (status === 'Sold') {
+        data.dateSold = dateSold;
+        data.soldPrice = soldPrice;
+      }
+
+      if (condition === 'Used') {
+        data.plateNumber = plateNumber;
+        data.taxDate = taxDate;
+      }
+
+      description && (data.description = description);
+      marketPrice && (data.marketPrice = marketPrice);
+      purchasePrice && (data.purchasePrice = purchasePrice);
+
+      const specs = specification.filter((s) => s);
+      specs.length > 0 && (data.specification = specs);
+
+      const response = await axios.post('/api/vehicle/add', data);
+
+      dispatch(AddVehicleToInventory(response.data));
+      clearVehicleForm();
+      success = true;
+      return success;
+    } catch (error) {
+      console.log(error);
+      if (error instanceof AxiosError) {
+        return setError(error?.response?.data?.message);
+      }
+    }
+  };
+
   const handleClearError = () => {
     setError('');
   };
@@ -193,6 +239,7 @@ const useVehicleForm = () => {
     setPrice(null);
     setMarketPrice(null);
     setPurchasePrice(null);
+    setSoldPrice(null);
     setCondition('New');
     setPlateNumber('');
     setTaxDate(null);
@@ -218,6 +265,7 @@ const useVehicleForm = () => {
     price,
     marketPrice,
     purchasePrice,
+    soldPrice,
     condition,
     plateNumber,
     taxDate,
@@ -234,6 +282,7 @@ const useVehicleForm = () => {
     specification,
     setError,
     handleClearError,
+    handleOnSave,
     handleVehicleNameChange,
     handleStatusChange,
     handleDateAddedChange,
@@ -241,6 +290,7 @@ const useVehicleForm = () => {
     handlePriceChange,
     handleMarketPriceChange,
     handlePurchasePriceChange,
+    handleSoldPriceChange,
     handleConditionChange,
     handlePlateNumberChange,
     handleTaxDateChange,
