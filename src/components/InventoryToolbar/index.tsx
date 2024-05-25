@@ -7,10 +7,14 @@ import { useAppSelector } from '~/redux/store';
 import { getInventory } from '~/redux/reducers/inventorySlice';
 
 interface InventoryToolbarProps {
-  handleToggleDrawer: () => void;
+  handleToggleFilter: () => void;
+  handleToggleForm: () => void;
 }
 
-const InventoryToolbar = ({ handleToggleDrawer }: InventoryToolbarProps) => {
+const InventoryToolbar = ({
+  handleToggleFilter,
+  handleToggleForm,
+}: InventoryToolbarProps) => {
   const inventory = useAppSelector(getInventory);
 
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -34,14 +38,14 @@ const InventoryToolbar = ({ handleToggleDrawer }: InventoryToolbarProps) => {
       <Box>
         <Tooltip title="Filter">
           <IconButton
-            onClick={handleToggleDrawer}
+            onClick={handleToggleFilter}
             onMouseDown={handleMouseDown}
           >
             <FilterListIcon />
           </IconButton>
         </Tooltip>
         <Tooltip title="Add listing">
-          <IconButton>
+          <IconButton onClick={handleToggleForm} onMouseDown={handleMouseDown}>
             <AddIcon />
           </IconButton>
         </Tooltip>

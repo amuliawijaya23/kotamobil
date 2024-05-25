@@ -12,6 +12,7 @@ import {
 
 import InventoryToolbar from '~/components/InventoryToolbar';
 import InventorySidebar from '~/components/InventorySidebar';
+import VehicleForm from '~/components/VehicleForm';
 import VehicleCard from '~/components/VehicleCard';
 
 import useInventoryData from '~/hooks/useInventoryData';
@@ -45,21 +46,30 @@ const Inventory = () => {
 
   const inventory = useAppSelector(getInventory);
 
-  const [open, setOpen] = useState(false);
+  const [openFilter, setOpenFilter] = useState(false);
+  const [openForm, setOpenForm] = useState(false);
 
-  const handleToggleDrawer = () => {
-    setOpen(!open);
+  const handleToggleFilter = () => {
+    setOpenFilter(!openFilter);
   };
 
-  const handleCloseDrawer = () => {
-    setOpen(false);
+  const handleCloseFilter = () => {
+    setOpenFilter(false);
+  };
+
+  const handleToggleForm = () => {
+    setOpenForm(!openForm);
+  };
+
+  const handleCloseForm = () => {
+    setOpenForm(false);
   };
 
   return (
     <Box sx={{ display: 'flex' }}>
       <Drawer
         variant="persistent"
-        open={open}
+        open={openFilter}
         anchor="left"
         sx={{
           display: { xs: 'none', lg: 'block' },
@@ -76,9 +86,9 @@ const Inventory = () => {
         <InventorySidebar />
       </Drawer>
       <Drawer
-        open={open}
+        open={openFilter}
         anchor="left"
-        onClose={handleCloseDrawer}
+        onClose={handleCloseFilter}
         PaperProps={{ sx: { width: drawerWidth } }}
         sx={{
           display: { xs: 'block', lg: 'none' },
@@ -88,10 +98,13 @@ const Inventory = () => {
         <Divider />
         <InventorySidebar />
       </Drawer>
-      <Main open={open} sx={{ display: { xs: 'none', lg: 'flex' } }}>
+      <Main open={openFilter} sx={{ display: { xs: 'none', lg: 'flex' } }}>
         <Grid container component={Box} p={2} spacing={2} mt={1} width="100%">
           <Grid xs={12}>
-            <InventoryToolbar handleToggleDrawer={handleToggleDrawer} />
+            <InventoryToolbar
+              handleToggleFilter={handleToggleFilter}
+              handleToggleForm={handleToggleForm}
+            />
             <Divider />
           </Grid>
           {inventory?.map((vehicle: VehicleData) => (
@@ -104,7 +117,10 @@ const Inventory = () => {
       <Box sx={{ display: { xs: 'flex', lg: 'none' }, width: '100%' }}>
         <Grid container component={Box} p={2} spacing={2} mt={1} width="100%">
           <Grid xs={12}>
-            <InventoryToolbar handleToggleDrawer={handleToggleDrawer} />
+            <InventoryToolbar
+              handleToggleFilter={handleToggleFilter}
+              handleToggleForm={handleToggleForm}
+            />
             <Divider />
           </Grid>
           {inventory?.map((vehicle: VehicleData) => (
@@ -121,6 +137,7 @@ const Inventory = () => {
           ))}
         </Grid>
       </Box>
+      <VehicleForm open={openForm} handleCloseForm={handleCloseForm} />
     </Box>
   );
 };

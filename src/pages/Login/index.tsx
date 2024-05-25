@@ -11,7 +11,7 @@ import React from 'react';
 
 import EmailInput from '~/components/Authentication/EmailInput';
 import PasswordInput from '~/components/Authentication/PasswordInput';
-import ErrorAlert from '~/components/Authentication/ErrorAlert';
+import ErrorAlert from '~/components/ErrorAlert';
 
 import useAuthData from '~/hooks/useAuth';
 
