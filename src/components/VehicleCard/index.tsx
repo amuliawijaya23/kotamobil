@@ -23,7 +23,9 @@ const VehicleCard = ({ vehicle }: { vehicle: VehicleData }) => {
         <CardMedia
           component="img"
           src={
-            vehicle.images ? vehicle.images[0] : './src/assets/coming-soon.jpg'
+            vehicle.images && vehicle.images.length > 0
+              ? vehicle.images[0]
+              : './src/assets/coming-soon.jpg'
           }
           height="250"
           sx={{ objectFit: 'cover' }}

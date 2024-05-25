@@ -14,7 +14,7 @@ export interface VehicleData {
   assembly: string;
   transmission: string;
   fuelType: string;
-  taxDate: Date;
+  taxDate?: Date;
   price: number;
   ownerId: string;
   dateAdded: Date;
@@ -24,6 +24,8 @@ export interface VehicleData {
   description?: string;
   creditPrice?: number;
   marketPrice?: number;
+  purchasePrice?: number;
+  soldPrice?: number;
   dateSold?: Date;
 }
 

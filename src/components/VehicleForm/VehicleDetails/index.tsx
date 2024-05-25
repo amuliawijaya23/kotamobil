@@ -100,7 +100,7 @@ const VehicleDetails = ({
             type="text"
             label="Vehicle Identification Number"
           />
-          {error && !vin && <FormHelperText>{error}</FormHelperText>}
+          {error && !vin && <FormHelperText error>{error}</FormHelperText>}
         </FormControl>
       </Grid>
       <Grid xs={12} sm={6}>
@@ -113,7 +113,7 @@ const VehicleDetails = ({
             type="text"
             label="Make"
           />
-          {error && !make && <FormHelperText>{error}</FormHelperText>}
+          {error && !make && <FormHelperText error>{error}</FormHelperText>}
         </FormControl>
       </Grid>
       <Grid xs={12} sm={6}>
@@ -126,7 +126,7 @@ const VehicleDetails = ({
             type="text"
             label="Model"
           />
-          {error && !model && <FormHelperText>{error}</FormHelperText>}
+          {error && !model && <FormHelperText error>{error}</FormHelperText>}
         </FormControl>
       </Grid>
       <Grid xs={12} sm={6}>
@@ -144,7 +144,7 @@ const VehicleDetails = ({
             <MenuItem value="Complete-Knock-Down">Complete-Knock-Down</MenuItem>
             <MenuItem value="Complete-Built-Up">Complete-Built-Up</MenuItem>
           </Select>
-          {error && !assembly && <FormHelperText>{error}</FormHelperText>}
+          {error && !assembly && <FormHelperText error>{error}</FormHelperText>}
         </FormControl>
       </Grid>
       <Grid xs={12} sm={6}>
@@ -157,7 +157,7 @@ const VehicleDetails = ({
             type="number"
             label="Year"
           />
-          {error && !year && <FormHelperText>{error}</FormHelperText>}
+          {error && !year && <FormHelperText error>{error}</FormHelperText>}
         </FormControl>
       </Grid>
       <Grid xs={12} sm={6}>
@@ -170,7 +170,7 @@ const VehicleDetails = ({
             type="number"
             label="Odometer"
           />
-          {error && !odometer && <FormHelperText>{error}</FormHelperText>}
+          {error && !odometer && <FormHelperText error>{error}</FormHelperText>}
         </FormControl>
       </Grid>
       <Grid xs={12} sm={6}>
@@ -183,7 +183,7 @@ const VehicleDetails = ({
             type="text"
             label="Color"
           />
-          {error && !color && <FormHelperText>{error}</FormHelperText>}
+          {error && !color && <FormHelperText error>{error}</FormHelperText>}
         </FormControl>
       </Grid>
       <Grid xs={12} sm={6}>
@@ -203,7 +203,9 @@ const VehicleDetails = ({
             <MenuItem value="Automatic">Automatic</MenuItem>
             <MenuItem value="Manual">Manual</MenuItem>
           </Select>
-          {error && !transmission && <FormHelperText>{error}</FormHelperText>}
+          {error && !transmission && (
+            <FormHelperText error>{error}</FormHelperText>
+          )}
         </FormControl>
       </Grid>
       <Grid xs={12} sm={6}>
@@ -223,13 +225,14 @@ const VehicleDetails = ({
             <MenuItem value="Hybrid">Hybrid</MenuItem>
             <MenuItem value="Electric">Electric</MenuItem>
           </Select>
-          {error && !fuelType && <FormHelperText>{error}</FormHelperText>}
+          {error && !fuelType && <FormHelperText error>{error}</FormHelperText>}
         </FormControl>
       </Grid>
       <Grid xs={12}>
         <TextField
           value={description}
           onChange={handleDescriptionChange}
+          helperText={50 - description.length}
           multiline
           fullWidth
           rows={3}

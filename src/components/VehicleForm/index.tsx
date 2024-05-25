@@ -41,6 +41,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
     price,
     marketPrice,
     purchasePrice,
+    soldPrice,
     condition,
     plateNumber,
     taxDate,
@@ -57,6 +58,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
     specification,
     setError,
     handleClearError,
+    handleOnSave,
     handleVehicleNameChange,
     handleStatusChange,
     handleDateAddedChange,
@@ -64,6 +66,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
     handlePriceChange,
     handleMarketPriceChange,
     handlePurchasePriceChange,
+    handleSoldPriceChange,
     handleConditionChange,
     handlePlateNumberChange,
     handleTaxDateChange,
@@ -97,7 +100,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
           break;
         }
 
-        if (status === 'Sold' && (!price || !dateSold)) {
+        if (status === 'Sold' && (!soldPrice || !dateSold)) {
           setError('Missing required parameter');
           break;
         }
@@ -144,6 +147,13 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
     handleCloseForm();
   };
 
+  const onSave = async () => {
+    if (await handleOnSave()) {
+      clearVehicleForm();
+      handleCloseForm();
+    }
+  };
+
   return (
     <Drawer
       anchor="right"
@@ -169,6 +179,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
             price={price}
             marketPrice={marketPrice}
             purchasePrice={purchasePrice}
+            soldPrice={soldPrice}
             condition={condition}
             plateNumber={plateNumber}
             taxDate={taxDate}
@@ -179,6 +190,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
             handlePriceChange={handlePriceChange}
             handleMarketPriceChange={handleMarketPriceChange}
             handlePurchasePriceChange={handlePurchasePriceChange}
+            handleSoldPriceChange={handleSoldPriceChange}
             handleConditionChange={handleConditionChange}
             handlePlateNumberChange={handlePlateNumberChange}
             handleTaxDateChange={handleTaxDateChange}
@@ -252,7 +264,13 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
             </Button>
           )}
           {step === process.length - 1 && (
-            <Button variant="contained" color="primary" sx={{ ml: 1 }}>
+            <Button
+              onClick={onSave}
+              onMouseDown={handleMouseDown}
+              variant="contained"
+              color="primary"
+              sx={{ ml: 1 }}
+            >
               Save
             </Button>
           )}

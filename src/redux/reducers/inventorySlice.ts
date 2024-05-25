@@ -30,7 +30,7 @@ export const inventorySlice = createSlice({
       for (const vehicle of action.payload) {
         if (!queryData.makes[vehicle.make]) {
           queryData.makes[vehicle.make] = { selected: true, models: {} };
-          queryData.makes[vehicle.make].models[vehicle.name] = true;
+          queryData.makes[vehicle.make].models[vehicle.model] = true;
         } else {
           if (!queryData.makes[vehicle.make].models[vehicle.model]) {
             queryData.makes[vehicle.make].models[vehicle.model] = true;
@@ -38,6 +38,11 @@ export const inventorySlice = createSlice({
         }
       }
       state.queryData = queryData;
+    },
+    AddVehicleToInventory: (state, action: PayloadAction<VehicleData>) => {
+      if (state.data) {
+        state.data.unshift(action.payload);
+      }
     },
     updateMakeSelections: (state, action: PayloadAction<string>) => {
       if (state.queryData) {
@@ -64,6 +69,7 @@ export const inventorySlice = createSlice({
 export const {
   setInventoryData,
   setQueryData,
+  AddVehicleToInventory,
   updateMakeSelections,
   updateModelSelections,
 } = inventorySlice.actions;
