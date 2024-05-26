@@ -27,7 +27,7 @@ const VehicleCard = ({ vehicle }: { vehicle: VehicleData }) => {
               ? vehicle.images[0]
               : './src/assets/coming-soon.jpg'
           }
-          height="250"
+          height="240"
           sx={{ objectFit: 'cover' }}
           alt={vehicle.name}
         />

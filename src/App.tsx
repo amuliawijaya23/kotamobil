@@ -4,9 +4,11 @@ import AuthenticatedRoute from './components/RouteProtection/AuthenticatedRoute'
 import UnauthenticatedRoute from './components/RouteProtection/UnauthenticatedRoute';
 
 import Layout from './pages/Layout';
+import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Inventory from './pages/Inventory';
+import PageNotFound from './pages/PageNotFound';
 
 import useSession from './hooks/useSession';
 
@@ -33,7 +35,7 @@ function App() {
           }
         />
         <Route path="/" element={<Layout />}>
-          <Route index element={<>Hello</>} />
+          <Route index element={<Home />} />
           <Route
             path="/inventory"
             element={
@@ -47,7 +49,7 @@ function App() {
             element={<AuthenticatedRoute>Contacts</AuthenticatedRoute>}
           />
         </Route>
-        <Route path="*" element={<>NOT FOUND</>} />
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </Router>
   );

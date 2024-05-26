@@ -8,6 +8,7 @@ import {
 } from '@mui/material';
 
 import ErrorAlert from '../ErrorAlert';
+import VehicleImages from './VehicleImages';
 import VehicleStatus from './VehicleStatus';
 import VehicleDetails from './VehicleDetails';
 import VehicleSpecifications from './VehicleSpecifications';
@@ -20,10 +21,10 @@ const VEHICLE_SPECIFICATIONS = 'VEHICLE_SPECIFICATIONS';
 const VEHICLE_IMAGES = 'VEHICLE_IMAGES';
 
 const process: string[] = [
+  VEHICLE_IMAGES,
   VEHICLE_STATUS_AND_PRICING,
   VEHICLE_DETAILS,
   VEHICLE_SPECIFICATIONS,
-  VEHICLE_IMAGES,
 ];
 
 interface VehicleFormProps {
@@ -35,6 +36,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
   const {
     error,
     name,
+    images,
     status,
     dateAdded,
     dateSold,
@@ -58,6 +60,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
     specification,
     setError,
     handleClearError,
+    onDrop,
     handleOnSave,
     handleVehicleNameChange,
     handleStatusChange,
@@ -94,6 +97,10 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
 
   const handleNextStep = () => {
     switch (process[step]) {
+      case VEHICLE_IMAGES: {
+        setStep((prev) => prev + 1);
+        break;
+      }
       case VEHICLE_STATUS_AND_PRICING: {
         if (!name || !status || !dateAdded || !price || !condition) {
           setError('Missing required parameter');
@@ -131,10 +138,6 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
         handleClearError();
         break;
       }
-      case VEHICLE_SPECIFICATIONS: {
-        setStep((prev) => prev + 1);
-        break;
-      }
     }
   };
 
@@ -151,6 +154,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
     if (await handleOnSave()) {
       clearVehicleForm();
       handleCloseForm();
+      setStep(0);
     }
   };
 
@@ -169,7 +173,8 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
         <Grid xs={12}>
           <ErrorAlert error={error} handleClearError={handleClearError} />
         </Grid>
-        {step === 0 && (
+        {step === 0 && <VehicleImages images={images} onDrop={onDrop} />}
+        {step === 1 && (
           <VehicleStatus
             error={error}
             name={name}
@@ -196,7 +201,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
             handleTaxDateChange={handleTaxDateChange}
           />
         )}
-        {step === 1 && (
+        {step === 2 && (
           <VehicleDetails
             error={error}
             vin={vin}
@@ -221,7 +226,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
             handleDescriptionChange={handleDescriptionChange}
           />
         )}
-        {step === 2 && (
+        {step === 3 && (
           <VehicleSpecifications
             specification={specification}
             handleSpecificationChange={handleSpecificationChange}

@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 import { SelectChangeEvent } from '@mui/material';
 
@@ -11,6 +11,10 @@ const useVehicleForm = () => {
   const dispatch = useAppDispatch();
   // Form error state
   const [error, setError] = useState('');
+
+  // VehicleImages State
+  const [images, setImages] = useState<File[] | undefined | null>(null);
+
   // VehicleStatus State
   const [name, setName] = useState<string>('');
   const [status, setStatus] = useState<string>('Available');
@@ -44,6 +48,21 @@ const useVehicleForm = () => {
 
   // VehicleSpecifications State
   const [specification, setSpecification] = useState<string[]>(['']);
+
+  // Change Handlers for VehicleImages
+
+  const onDrop = useCallback(
+    (acceptedFiles: File[] | undefined) => {
+      if (acceptedFiles) {
+        if (images) {
+          const currentImages = images?.concat(acceptedFiles);
+          return setImages(currentImages);
+        }
+        return setImages(acceptedFiles);
+      }
+    },
+    [images],
+  );
 
   // ChangeEvent Handlers for VehicleStatus
 
@@ -178,6 +197,17 @@ const useVehicleForm = () => {
   const handleOnSave = async () => {
     try {
       let success = false;
+      const formData = new FormData();
+      if (images) {
+        for (const [index, image] of images.entries()) {
+          if (index === 0) {
+            formData.set('images', image);
+          } else {
+            formData.append('images', image);
+          }
+        }
+      }
+
       const data: Record<string, unknown> = {
         name,
         vin,
@@ -212,7 +242,9 @@ const useVehicleForm = () => {
       const specs = specification.filter((s) => s);
       specs.length > 0 && (data.specification = specs);
 
-      const response = await axios.post('/api/vehicle/add', data);
+      formData.set('data', JSON.stringify(data));
+
+      const response = await axios.post('/api/vehicle/add', formData);
 
       dispatch(AddVehicleToInventory(response.data));
       clearVehicleForm();
@@ -233,6 +265,7 @@ const useVehicleForm = () => {
   const clearVehicleForm = () => {
     setError('');
     setName('');
+    setImages(null);
     setStatus('Available');
     setDateAdded(new Date(Date.now()));
     setDateSold(null);
@@ -258,6 +291,7 @@ const useVehicleForm = () => {
 
   return {
     error,
+    images,
     name,
     status,
     dateAdded,
@@ -282,6 +316,7 @@ const useVehicleForm = () => {
     specification,
     setError,
     handleClearError,
+    onDrop,
     handleOnSave,
     handleVehicleNameChange,
     handleStatusChange,
