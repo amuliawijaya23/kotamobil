@@ -16,10 +16,14 @@ import ColorLensIcon from '@mui/icons-material/ColorLens';
 
 import { NumericFormat } from 'react-number-format';
 
+import { useNavigate } from 'react-router-dom';
+
 const VehicleCard = ({ vehicle }: { vehicle: VehicleData }) => {
+  const navigate = useNavigate();
+
   return (
     <Card raised>
-      <CardActionArea>
+      <CardActionArea onClick={() => navigate(`/vehicle/${vehicle._id}`)}>
         <CardMedia
           component="img"
           src={

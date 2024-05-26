@@ -1,7 +1,10 @@
 import { useCallback, useEffect } from 'react';
 import axios from 'axios';
 
-import { useAppDispatch } from '~/redux/store';
+import { useAppDispatch, useAppSelector } from '~/redux/store';
+
+import { getSession } from '~/redux/reducers/userSlice';
+
 import {
   setInventoryData,
   setQueryData,
@@ -10,18 +13,22 @@ import {
 const useInventoryData = () => {
   const dispatch = useAppDispatch();
 
+  const session = useAppSelector(getSession);
+
   const getUserInventory = useCallback(async () => {
     try {
-      const response = await axios.get('/api/vehicle');
+      if (session.isAuthenticated) {
+        const response = await axios.get('/api/vehicle');
 
-      if (response.status === 200 && response.data.length > 0) {
-        dispatch(setInventoryData(response.data));
-        dispatch(setQueryData(response.data));
+        if (response.status === 200 && response.data.length > 0) {
+          dispatch(setInventoryData(response.data));
+          dispatch(setQueryData(response.data));
+        }
       }
     } catch (error) {
       console.log(error);
     }
-  }, [dispatch]);
+  }, [dispatch, session.isAuthenticated]);
 
   useEffect(() => {
     getUserInventory();

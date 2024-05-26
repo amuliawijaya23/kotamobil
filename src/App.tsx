@@ -8,12 +8,15 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Inventory from './pages/Inventory';
+import Vehicle from './pages/Vehicle';
 import PageNotFound from './pages/PageNotFound';
 
 import useSession from './hooks/useSession';
+import useInventoryData from './hooks/useInventoryData';
 
 function App() {
   useSession();
+  useInventoryData();
 
   return (
     <Router>
@@ -45,10 +48,19 @@ function App() {
             }
           />
           <Route
+            path="/vehicle/:id"
+            element={
+              <AuthenticatedRoute>
+                <Vehicle />
+              </AuthenticatedRoute>
+            }
+          />
+          <Route
             path="/contacts"
             element={<AuthenticatedRoute>Contacts</AuthenticatedRoute>}
           />
         </Route>
+        <Route path="/404" element={<PageNotFound />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </Router>

@@ -49,17 +49,16 @@ const VehicleImages = ({ images, onDrop }: VehicleImagesProps) => {
                 />
               </ImageListItem>
             ))}
-          {!images &&
-            [1].map((n) => (
-              <ImageListItem key={`image-placeholder-${n}`}>
-                <img
-                  loading="lazy"
-                  alt="img-placeholder"
-                  srcSet={`./src/assets/placeholder-image.png`}
-                  src={'./src/assets/placeholder-image.png'}
-                />
-              </ImageListItem>
-            ))}
+          {!images && (
+            <ImageListItem key={`image-placeholder`}>
+              <img
+                loading="lazy"
+                alt="img-placeholder"
+                srcSet={`./src/assets/placeholder-image.png`}
+                src={'./src/assets/placeholder-image.png'}
+              />
+            </ImageListItem>
+          )}
         </ImageList>
       </Grid>
       <Grid xs={12}>

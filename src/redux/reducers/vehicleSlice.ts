@@ -1,4 +1,5 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { RootState } from '../store';
 
 export interface VehicleData {
   _id: string;
@@ -44,8 +45,10 @@ export const vehicleSlice = createSlice({
     setVehicleData: (state, action: PayloadAction<VehicleData>) => {
       state.data = action.payload;
     },
+    resetVehicleData: () => initialState,
   },
 });
 
-export const { setVehicleData } = vehicleSlice.actions;
+export const { setVehicleData, resetVehicleData } = vehicleSlice.actions;
+export const getVehicleData = (state: RootState) => state.vehicle.data;
 export default vehicleSlice.reducer;
