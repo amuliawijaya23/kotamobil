@@ -7,6 +7,7 @@ import Layout from './pages/Layout';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Inventory from './pages/Inventory';
+import PageNotFound from './pages/PageNotFound';
 
 import useSession from './hooks/useSession';
 
@@ -47,7 +48,7 @@ function App() {
             element={<AuthenticatedRoute>Contacts</AuthenticatedRoute>}
           />
         </Route>
-        <Route path="*" element={<>NOT FOUND</>} />
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </Router>
   );
