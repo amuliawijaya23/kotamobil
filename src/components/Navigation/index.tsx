@@ -1,6 +1,6 @@
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import { styled } from '@mui/material/styles';
-import { Box, Toolbar, Button, IconButton } from '@mui/material';
+import { Box, Toolbar, Button, IconButton, Typography } from '@mui/material';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import HomeIcon from '@mui/icons-material/Home';
@@ -90,23 +90,23 @@ const NavBar = () => {
             alignItems: 'center',
           }}
         >
-          <Box
+          <Typography
+            onClick={handleOnClickHome}
+            onMouseDown={handleMouseDown}
+            variant="h6"
+            noWrap
+            component={'h1'}
             sx={{
-              mr: 3,
+              cursor: 'pointer',
               display: {
                 xs: session.isAuthenticated ? 'none' : 'flex',
                 sm: 'flex',
               },
+              mr: 3,
             }}
           >
-            <img
-              src="./src/assets/gudangmobil.png"
-              alt="gudangmobil"
-              style={{ height: 50, width: 125, cursor: 'pointer' }}
-              onClick={handleOnClickHome}
-              onMouseDown={handleMouseDown}
-            />
-          </Box>
+            GudangMobil
+          </Typography>
           <IconButton
             onClick={handleOnClickHome}
             onMouseDown={handleMouseDown}

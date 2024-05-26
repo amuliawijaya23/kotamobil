@@ -15,8 +15,6 @@ import InventorySidebar from '~/components/InventorySidebar';
 import VehicleForm from '~/components/VehicleForm';
 import VehicleCard from '~/components/VehicleCard';
 
-import useInventoryData from '~/hooks/useInventoryData';
-
 import { useAppSelector } from '~/redux/store';
 import { getInventory } from '~/redux/reducers/inventorySlice';
 
@@ -42,8 +40,6 @@ const Main = styled(Box, { shouldForwardProp: (prop) => prop !== 'open' })<{
 }));
 
 const Inventory = () => {
-  useInventoryData();
-
   const inventory = useAppSelector(getInventory);
 
   const [openFilter, setOpenFilter] = useState(false);
