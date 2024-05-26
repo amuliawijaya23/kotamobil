@@ -1,5 +1,3 @@
-import { useState, useCallback } from 'react';
-
 import {
   Divider,
   Typography,
@@ -14,26 +12,17 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 import { useDropzone } from 'react-dropzone';
 
-const VehicleImages = () => {
-  const [images, setImages] = useState<File[] | undefined | null>(null);
+interface VehicleImagesProps {
+  images: File[] | undefined | null;
+  onDrop: (acceptedFiles: File[] | undefined) => void;
+}
 
-  const onDrop = useCallback(
-    (acceptedFiles: File[] | undefined) => {
-      if (acceptedFiles) {
-        if (images) {
-          const currentImages = images?.concat(acceptedFiles);
-          return setImages(currentImages);
-        }
-        return setImages(acceptedFiles);
-      }
-    },
-    [images],
-  );
-
+const VehicleImages = ({ images, onDrop }: VehicleImagesProps) => {
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
     noClick: true,
   });
+
   return (
     <>
       <Grid xs={12}>

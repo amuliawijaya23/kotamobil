@@ -36,6 +36,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
   const {
     error,
     name,
+    images,
     status,
     dateAdded,
     dateSold,
@@ -59,6 +60,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
     specification,
     setError,
     handleClearError,
+    onDrop,
     handleOnSave,
     handleVehicleNameChange,
     handleStatusChange,
@@ -152,6 +154,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
     if (await handleOnSave()) {
       clearVehicleForm();
       handleCloseForm();
+      setStep(0);
     }
   };
 
@@ -170,7 +173,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
         <Grid xs={12}>
           <ErrorAlert error={error} handleClearError={handleClearError} />
         </Grid>
-        {step === 0 && <VehicleImages />}
+        {step === 0 && <VehicleImages images={images} onDrop={onDrop} />}
         {step === 1 && (
           <VehicleStatus
             error={error}
