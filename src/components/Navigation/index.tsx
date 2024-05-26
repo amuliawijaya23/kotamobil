@@ -1,15 +1,18 @@
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import { styled } from '@mui/material/styles';
-import { Box, Toolbar, Typography, Button, IconButton } from '@mui/material';
-
+import { Box, Toolbar, Button, IconButton } from '@mui/material';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 import HomeIcon from '@mui/icons-material/Home';
 
 import UserProfile from './UserProfile';
 
 import { useNavigate } from 'react-router-dom';
 
+import { useAppDispatch } from '~/redux/store';
 import { useAppSelector } from '~/redux/store';
 import { getSession } from '~/redux/reducers/userSlice';
+import { getTheme, toggleTheme } from '~/redux/reducers/themeSlice';
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -36,6 +39,9 @@ const AppBar = styled(MuiAppBar, {
 
 const NavBar = () => {
   const session = useAppSelector(getSession);
+  const theme = useAppSelector(getTheme);
+
+  const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
 
@@ -65,6 +71,10 @@ const NavBar = () => {
     navigate('/register');
   };
 
+  const toggleThemeMode = () => {
+    dispatch(toggleTheme());
+  };
+
   return (
     <AppBar position="fixed">
       <Toolbar
@@ -77,27 +87,26 @@ const NavBar = () => {
         <Box
           sx={{
             display: 'flex',
-            justifyContent: 'center',
             alignItems: 'center',
           }}
         >
-          <Typography
-            onClick={handleOnClickHome}
-            onMouseDown={handleMouseDown}
-            variant="h6"
-            noWrap
-            component={'h1'}
+          <Box
             sx={{
-              cursor: 'pointer',
+              mr: 3,
               display: {
                 xs: session.isAuthenticated ? 'none' : 'flex',
                 sm: 'flex',
               },
-              mr: 3,
             }}
           >
-            GudangMobil
-          </Typography>
+            <img
+              src="./src/assets/gudangmobil.png"
+              alt="gudangmobil"
+              style={{ height: 50, width: 125, cursor: 'pointer' }}
+              onClick={handleOnClickHome}
+              onMouseDown={handleMouseDown}
+            />
+          </Box>
           <IconButton
             onClick={handleOnClickHome}
             onMouseDown={handleMouseDown}
@@ -133,31 +142,32 @@ const NavBar = () => {
             </>
           )}
         </Box>
-        {session.isAuthenticated && (
-          <Box>
-            <UserProfile />
-          </Box>
-        )}
-        {!session.isAuthenticated && (
-          <Box>
-            <Button
-              onClick={handleOnClickLogin}
-              onMouseDown={handleMouseDown}
-              color="inherit"
-              variant="text"
-            >
-              Login
-            </Button>
-            <Button
-              onClick={handleOnClickRegister}
-              onMouseDown={handleMouseDown}
-              color="inherit"
-              variant="text"
-            >
-              Register
-            </Button>
-          </Box>
-        )}
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <IconButton onClick={toggleThemeMode} color="inherit" sx={{ mr: 2 }}>
+            {theme === 'light' ? <Brightness7Icon /> : <Brightness4Icon />}
+          </IconButton>
+          {session.isAuthenticated && <UserProfile />}
+          {!session.isAuthenticated && (
+            <>
+              <Button
+                onClick={handleOnClickLogin}
+                onMouseDown={handleMouseDown}
+                color="inherit"
+                variant="text"
+              >
+                Login
+              </Button>
+              <Button
+                onClick={handleOnClickRegister}
+                onMouseDown={handleMouseDown}
+                color="inherit"
+                variant="text"
+              >
+                Register
+              </Button>
+            </>
+          )}
+        </Box>
       </Toolbar>
     </AppBar>
   );

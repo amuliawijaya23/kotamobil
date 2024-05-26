@@ -98,8 +98,12 @@ const Inventory = () => {
         <Divider />
         <InventorySidebar />
       </Drawer>
-      <Main open={openFilter} sx={{ display: { xs: 'none', lg: 'flex' } }}>
-        <Grid container component={Box} p={2} spacing={2} mt={1} width="100%">
+      <Main
+        open={openFilter}
+        sx={{ display: { xs: 'none', lg: 'flex' }, justifyContent: 'center' }}
+      >
+        <Grid container component={Box} p={2} spacing={2} width="100%">
+          <Toolbar />
           <Grid xs={12}>
             <InventoryToolbar
               handleToggleFilter={handleToggleFilter}
@@ -114,8 +118,15 @@ const Inventory = () => {
           ))}
         </Grid>
       </Main>
-      <Box sx={{ display: { xs: 'flex', lg: 'none' }, width: '100%' }}>
+      <Box
+        sx={{
+          display: { xs: 'flex', lg: 'none' },
+          justifyContent: 'center',
+          width: '100%',
+        }}
+      >
         <Grid container component={Box} p={2} spacing={2} mt={1} width="100%">
+          <Toolbar />
           <Grid xs={12}>
             <InventoryToolbar
               handleToggleFilter={handleToggleFilter}

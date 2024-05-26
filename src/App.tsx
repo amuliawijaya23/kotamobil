@@ -4,6 +4,7 @@ import AuthenticatedRoute from './components/RouteProtection/AuthenticatedRoute'
 import UnauthenticatedRoute from './components/RouteProtection/UnauthenticatedRoute';
 
 import Layout from './pages/Layout';
+import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Inventory from './pages/Inventory';
@@ -34,7 +35,7 @@ function App() {
           }
         />
         <Route path="/" element={<Layout />}>
-          <Route index element={<>Hello</>} />
+          <Route index element={<Home />} />
           <Route
             path="/inventory"
             element={
