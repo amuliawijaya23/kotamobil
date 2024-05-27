@@ -128,14 +128,32 @@ const useVehicleForm = () => {
   const onDrop = useCallback(
     (acceptedFiles: File[] | undefined) => {
       if (acceptedFiles) {
+        let currentImagesLength = 0;
+        if (vehicle?.images) {
+          currentImagesLength += vehicle.images.length;
+        }
+
         if (images) {
+          currentImagesLength += images.length;
+
+          if (currentImagesLength + acceptedFiles.length > 10) {
+            return setError(
+              'You have exceeded the maximum number of allowed images',
+            );
+          }
           const currentImages = images?.concat(acceptedFiles);
           return setImages(currentImages);
+        }
+
+        if (currentImagesLength + acceptedFiles.length > 10) {
+          return setError(
+            'You have exceeded the maximum number of allowed images',
+          );
         }
         return setImages(acceptedFiles);
       }
     },
-    [images],
+    [images, vehicle],
   );
 
   // ChangeEvent Handlers for VehicleStatus

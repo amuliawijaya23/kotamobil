@@ -12,7 +12,11 @@ import { getVehicleData } from '~/redux/reducers/vehicleSlice';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
-const VehicleImages = () => {
+interface VehicleImagesProps {
+  handleOpenImages: (index: number) => void;
+}
+
+const VehicleImages = ({ handleOpenImages }: VehicleImagesProps) => {
   const vehicle = useAppSelector(getVehicleData);
 
   const theme = useTheme();
@@ -37,35 +41,38 @@ const VehicleImages = () => {
   return (
     <>
       {vehicle?.images ? (
-        <Grid xs={12}>
-          <ImageList
-            cols={imageListCol}
-            rowHeight={250}
-            sx={{
-              minHeight: 250,
-              maxHeight: 505,
-            }}
-          >
-            {vehicle?.images.map((image, index) => (
-              <ImageListItem
-                key={`vehicle-display-image-${index}`}
-                sx={{ cursor: 'pointer' }}
-              >
-                <img
-                  loading="lazy"
-                  alt={`image`}
-                  srcSet={`${image}`}
-                  src={`${image}`}
-                  style={{
-                    height: 240,
-                    border: 'solid 1px',
-                    objectFit: 'cover',
-                  }}
-                />
-              </ImageListItem>
-            ))}
-          </ImageList>
-        </Grid>
+        <>
+          <Grid xs={12}>
+            <ImageList
+              cols={imageListCol}
+              rowHeight={250}
+              sx={{
+                minHeight: 250,
+                maxHeight: 505,
+              }}
+            >
+              {vehicle?.images.map((image, index) => (
+                <ImageListItem
+                  key={`vehicle-display-image-${index}`}
+                  sx={{ cursor: 'pointer' }}
+                  onClick={() => handleOpenImages(index)}
+                >
+                  <img
+                    loading="lazy"
+                    alt={`image`}
+                    srcSet={`${image}`}
+                    src={`${image}`}
+                    style={{
+                      height: 240,
+                      border: 'solid 1px',
+                      objectFit: 'cover',
+                    }}
+                  />
+                </ImageListItem>
+              ))}
+            </ImageList>
+          </Grid>
+        </>
       ) : (
         <Grid xs={12}>
           <Box
