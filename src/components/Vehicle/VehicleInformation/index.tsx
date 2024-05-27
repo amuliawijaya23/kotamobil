@@ -13,7 +13,11 @@ const VehicleInformation = () => {
     <>
       <Grid xs={6} display="flex" flexDirection="column">
         {vehicle?.marketPrice && (
-          <Typography variant="body1" component="p" fontSize={'1.2em'}>
+          <Typography
+            variant="body1"
+            component="p"
+            sx={{ fontSize: { xs: '0.8em', sm: '1.2em' } }}
+          >
             <b>MSRP:</b>{' '}
             <NumericFormat
               displayType="text"
@@ -24,7 +28,11 @@ const VehicleInformation = () => {
             />
           </Typography>
         )}
-        <Typography variant="body1" component="p" fontSize={'1.2em'}>
+        <Typography
+          variant="body1"
+          component="p"
+          sx={{ fontSize: { xs: '0.8em', sm: '1.2em' } }}
+        >
           <b>Price:</b>{' '}
           <NumericFormat
             displayType="text"
@@ -37,7 +45,11 @@ const VehicleInformation = () => {
       </Grid>
       <Grid xs={6}>
         {vehicle?.purchasePrice && (
-          <Typography variant="body1" component="p" fontSize={'1.2em'}>
+          <Typography
+            variant="body1"
+            component="p"
+            sx={{ fontSize: { xs: '0.8em', sm: '1.2em' } }}
+          >
             <b>Purchase Price:</b>{' '}
             <NumericFormat
               displayType="text"
@@ -49,7 +61,11 @@ const VehicleInformation = () => {
           </Typography>
         )}
         {vehicle?.sold && (
-          <Typography variant="body1" component="p" fontSize={'1.2em'}>
+          <Typography
+            variant="body1"
+            component="p"
+            sx={{ fontSize: { xs: '0.8em', sm: '1.2em' } }}
+          >
             <b>Sold Price:</b>{' '}
             <NumericFormat
               displayType="text"
