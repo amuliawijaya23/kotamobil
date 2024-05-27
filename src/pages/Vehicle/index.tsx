@@ -28,7 +28,7 @@ const Vehicle = () => {
   const vehicle = useAppSelector(getVehicleData);
 
   const [open, setOpen] = useState<boolean>(false);
-  const [openImages, setOpenImages] = useState<boolean>(true);
+  const [openImages, setOpenImages] = useState<boolean>(false);
   const [activeStep, setActiveStep] = useState<number>(0);
 
   const handleOpenForm = () => {
