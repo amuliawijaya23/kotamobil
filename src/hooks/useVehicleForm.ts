@@ -59,7 +59,34 @@ const useVehicleForm = () => {
 
   // Change Handlers for VehicleImages
 
-  const initializeUpdateForm = useCallback(() => {
+  const resetForm = () => {
+    setError('');
+    setName('');
+    setImages(null);
+    setStatus('Available');
+    setDateAdded(new Date(Date.now()));
+    setDateSold(null);
+    setPrice(null);
+    setMarketPrice(null);
+    setPurchasePrice(null);
+    setSoldPrice(null);
+    setCondition('New');
+    setPlateNumber('');
+    setTaxDate(null);
+    setVin('');
+    setMake('');
+    setModel('');
+    setAssembly('');
+    setYear(false);
+    setOdometer(false);
+    setColor('');
+    setTransmission('Automatic');
+    setFuelType('Petrol');
+    setDescription('');
+    setSpecification(['']);
+  };
+
+  const initializeForm = useCallback(() => {
     if (vehicle) {
       setName(vehicle.name);
       setStatus(vehicle.sold ? 'Sold' : 'Available');
@@ -90,9 +117,13 @@ const useVehicleForm = () => {
         vehicle.soldPrice && setSoldPrice(vehicle.soldPrice);
       }
     }
+
+    return () => {
+      resetForm();
+    };
   }, [vehicle]);
 
-  useEffect(initializeUpdateForm, [initializeUpdateForm]);
+  useEffect(initializeForm, [initializeForm]);
 
   const onDrop = useCallback(
     (acceptedFiles: File[] | undefined) => {
@@ -317,32 +348,9 @@ const useVehicleForm = () => {
 
   const clearVehicleForm = () => {
     if (vehicle) {
-      initializeUpdateForm();
+      initializeForm();
     } else {
-      setError('');
-      setName('');
-      setImages(null);
-      setStatus('Available');
-      setDateAdded(new Date(Date.now()));
-      setDateSold(null);
-      setPrice(null);
-      setMarketPrice(null);
-      setPurchasePrice(null);
-      setSoldPrice(null);
-      setCondition('New');
-      setPlateNumber('');
-      setTaxDate(null);
-      setVin('');
-      setMake('');
-      setModel('');
-      setAssembly('');
-      setYear(false);
-      setOdometer(false);
-      setColor('');
-      setTransmission('Automatic');
-      setFuelType('Petrol');
-      setDescription('');
-      setSpecification(['']);
+      resetForm();
     }
   };
 

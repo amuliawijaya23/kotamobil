@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import {
   Drawer,
   Toolbar,
-  Divider,
   Unstable_Grid2 as Grid,
+  Snackbar,
+  Alert,
   Button,
+  IconButton,
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
-import ErrorAlert from '../ErrorAlert';
 import VehicleImages from './VehicleImages';
 import VehicleStatus from './VehicleStatus';
 import VehicleDetails from './VehicleDetails';
@@ -95,6 +97,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
   const vehicle = useAppSelector(getVehicleData);
 
   const [step, setStep] = useState<number>(0);
+  const [alert, setAlert] = useState<string>('');
 
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -155,140 +158,169 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
     handleCloseForm();
   };
 
+  const handleClearAlert = () => {
+    setAlert('');
+  };
+
   const onSave = async () => {
     if (await handleOnSave()) {
       clearVehicleForm();
+      setAlert(vehicle ? 'Vehicle Updated!' : 'Vehicle Created!');
       handleCloseForm();
       setStep(0);
     }
   };
 
   return (
-    <Drawer
-      anchor="right"
-      open={open}
-      onClose={handleCloseForm}
-      PaperProps={{
-        sx: { width: { xs: '60%', sm: '50%', lg: '40%', xl: '30%' } },
-      }}
-    >
-      <Toolbar />
-      <Divider />
-      <Grid container p={3} spacing={3}>
-        <Grid xs={12}>
-          <ErrorAlert error={error} handleClearError={handleClearError} />
-        </Grid>
-        {step === 0 && (
-          <VehicleStatus
-            error={error}
-            name={name}
-            status={status}
-            dateAdded={dateAdded}
-            dateSold={dateSold}
-            price={price}
-            marketPrice={marketPrice}
-            purchasePrice={purchasePrice}
-            soldPrice={soldPrice}
-            condition={condition}
-            plateNumber={plateNumber}
-            taxDate={taxDate}
-            handleVehicleNameChange={handleVehicleNameChange}
-            handleStatusChange={handleStatusChange}
-            handleDateAddedChange={handleDateAddedChange}
-            handleDateSoldChange={handleDateSoldChange}
-            handlePriceChange={handlePriceChange}
-            handleMarketPriceChange={handleMarketPriceChange}
-            handlePurchasePriceChange={handlePurchasePriceChange}
-            handleSoldPriceChange={handleSoldPriceChange}
-            handleConditionChange={handleConditionChange}
-            handlePlateNumberChange={handlePlateNumberChange}
-            handleTaxDateChange={handleTaxDateChange}
-          />
-        )}
-        {step === 1 && (
-          <VehicleDetails
-            error={error}
-            vin={vin}
-            make={make}
-            model={model}
-            assembly={assembly}
-            year={year}
-            odometer={odometer}
-            color={color}
-            transmission={transmission}
-            fuelType={fuelType}
-            description={description}
-            handleVinChange={handleVinChange}
-            handleMakeChange={handleMakeChange}
-            handleModelChange={handleModelChange}
-            handleAssemblyChange={handleAssemblyChange}
-            handleYearChange={handleYearChange}
-            handleOdometerChange={handleOdometerChange}
-            handleColorChange={handleColorChange}
-            handleTransmissionChange={handleTransmissionChange}
-            handleFuelTypeChange={handleFuelTypeChange}
-            handleDescriptionChange={handleDescriptionChange}
-          />
-        )}
-        {step === 2 && <VehicleImages images={images} onDrop={onDrop} />}
-        {step === 3 && (
-          <VehicleSpecifications
-            specification={specification}
-            handleSpecificationChange={handleSpecificationChange}
-            handleAddSpecification={handleAddSpecification}
-            handleRemoveSpecification={handleRemoveSpecification}
-          />
-        )}
-        <Grid xs={12} display="flex" justifyContent="end" mt={2}>
+    <>
+      <Snackbar
+        open={Boolean(error || alert)}
+        autoHideDuration={6000}
+        onClose={error ? handleClearError : handleClearAlert}
+        action={
+          <IconButton
+            size="small"
+            color="inherit"
+            onClick={error ? handleClearError : handleClearAlert}
+          >
+            <CloseIcon />
+          </IconButton>
+        }
+      >
+        <Alert
+          onClose={error ? handleClearError : handleClearAlert}
+          severity={error ? 'error' : 'success'}
+        >
+          {error ? error : alert}
+        </Alert>
+      </Snackbar>
+      <Drawer
+        anchor="right"
+        open={open}
+        onClose={handleCloseForm}
+        PaperProps={{
+          sx: { width: { xs: '60%', sm: '50%', lg: '40%', xl: '30%' } },
+        }}
+      >
+        <Toolbar />
+        <Grid container p={3} spacing={3}>
+          <Grid
+            xs={12}
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            {step === 0 && (
+              <Button
+                onClick={handleOnCancel}
+                onMouseDown={handleMouseDown}
+                variant="text"
+                color="error"
+                sx={{ width: 50 }}
+              >
+                Cancel
+              </Button>
+            )}
+            {step > 0 && (
+              <Button
+                onClick={handlePreviousStep}
+                onMouseDown={handleMouseDown}
+                variant="text"
+                color="primary"
+                sx={{ width: 50 }}
+              >
+                Back
+              </Button>
+            )}
+            {step < process.length - 1 && (
+              <Button
+                onClick={handleNextStep}
+                onMouseDown={handleMouseDown}
+                variant="text"
+                color="primary"
+                sx={{ width: 50 }}
+              >
+                {process[step] == VEHICLE_IMAGES && !images && !vehicle?.images
+                  ? 'Skip'
+                  : 'Next'}
+              </Button>
+            )}
+            {step === process.length - 1 && (
+              <Button
+                onClick={onSave}
+                onMouseDown={handleMouseDown}
+                variant="text"
+                color="primary"
+                sx={{ width: 50 }}
+              >
+                Save
+              </Button>
+            )}
+          </Grid>
           {step === 0 && (
-            <Button
-              onClick={handleOnCancel}
-              onMouseDown={handleMouseDown}
-              variant="contained"
-              color="error"
-              sx={{ mr: 1 }}
-            >
-              Cancel
-            </Button>
+            <VehicleStatus
+              error={error}
+              name={name}
+              status={status}
+              dateAdded={dateAdded}
+              dateSold={dateSold}
+              price={price}
+              marketPrice={marketPrice}
+              purchasePrice={purchasePrice}
+              soldPrice={soldPrice}
+              condition={condition}
+              plateNumber={plateNumber}
+              taxDate={taxDate}
+              handleVehicleNameChange={handleVehicleNameChange}
+              handleStatusChange={handleStatusChange}
+              handleDateAddedChange={handleDateAddedChange}
+              handleDateSoldChange={handleDateSoldChange}
+              handlePriceChange={handlePriceChange}
+              handleMarketPriceChange={handleMarketPriceChange}
+              handlePurchasePriceChange={handlePurchasePriceChange}
+              handleSoldPriceChange={handleSoldPriceChange}
+              handleConditionChange={handleConditionChange}
+              handlePlateNumberChange={handlePlateNumberChange}
+              handleTaxDateChange={handleTaxDateChange}
+            />
           )}
-          {step > 0 && (
-            <Button
-              onClick={handlePreviousStep}
-              onMouseDown={handleMouseDown}
-              variant="contained"
-              color="inherit"
-              sx={{ mr: 1 }}
-            >
-              Back
-            </Button>
+          {step === 1 && (
+            <VehicleDetails
+              error={error}
+              vin={vin}
+              make={make}
+              model={model}
+              assembly={assembly}
+              year={year}
+              odometer={odometer}
+              color={color}
+              transmission={transmission}
+              fuelType={fuelType}
+              description={description}
+              handleVinChange={handleVinChange}
+              handleMakeChange={handleMakeChange}
+              handleModelChange={handleModelChange}
+              handleAssemblyChange={handleAssemblyChange}
+              handleYearChange={handleYearChange}
+              handleOdometerChange={handleOdometerChange}
+              handleColorChange={handleColorChange}
+              handleTransmissionChange={handleTransmissionChange}
+              handleFuelTypeChange={handleFuelTypeChange}
+              handleDescriptionChange={handleDescriptionChange}
+            />
           )}
-          {step < process.length - 1 && (
-            <Button
-              onClick={handleNextStep}
-              onMouseDown={handleMouseDown}
-              variant="contained"
-              color="primary"
-              sx={{ ml: 1 }}
-            >
-              {process[step] == VEHICLE_IMAGES && !images && !vehicle?.images
-                ? 'Skip'
-                : 'Next'}
-            </Button>
-          )}
-          {step === process.length - 1 && (
-            <Button
-              onClick={onSave}
-              onMouseDown={handleMouseDown}
-              variant="contained"
-              color="primary"
-              sx={{ ml: 1 }}
-            >
-              Save
-            </Button>
+          {step === 2 && <VehicleImages images={images} onDrop={onDrop} />}
+          {step === 3 && (
+            <VehicleSpecifications
+              specification={specification}
+              handleSpecificationChange={handleSpecificationChange}
+              handleAddSpecification={handleAddSpecification}
+              handleRemoveSpecification={handleRemoveSpecification}
+            />
           )}
         </Grid>
-      </Grid>
-    </Drawer>
+      </Drawer>
+    </>
   );
 };
 

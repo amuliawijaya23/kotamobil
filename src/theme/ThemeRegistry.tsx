@@ -9,6 +9,17 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
+declare module '@mui/material/styles' {
+  interface BreakpointOverrides {
+    xs: true;
+    sm: true;
+    md: true;
+    lg: true;
+    xl: true;
+    ultra: true;
+  }
+}
+
 const typographyOptions = {
   fontSize: 12,
   fontFamily: 'Roboto',
@@ -57,6 +68,16 @@ export const ThemeRegistry = ({ children }: { children: React.ReactNode }) => {
   const theme = useAppSelector(getTheme);
 
   const appTheme = createTheme({
+    breakpoints: {
+      values: {
+        xs: 0,
+        sm: 600,
+        md: 960,
+        lg: 1280,
+        xl: 1920,
+        ultra: 2560,
+      },
+    },
     typography: typographyOptions,
     palette: {
       mode: theme === 'dark' ? 'dark' : 'light',

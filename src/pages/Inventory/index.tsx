@@ -10,10 +10,10 @@ import {
   Divider,
 } from '@mui/material';
 
-import InventoryToolbar from '~/components/InventoryToolbar';
-import InventorySidebar from '~/components/InventorySidebar';
+import InventoryToolbar from '~/components/Inventory/InventoryToolbar';
+import InventorySidebar from '~/components/Inventory/InventorySidebar';
 import VehicleForm from '~/components/VehicleForm';
-import VehicleCard from '~/components/VehicleCard';
+import VehicleCard from '~/components/Inventory/VehicleCard';
 
 import { useAppSelector } from '~/redux/store';
 import { getInventory } from '~/redux/reducers/inventorySlice';
@@ -108,7 +108,14 @@ const Inventory = () => {
             <Divider />
           </Grid>
           {inventory?.map((vehicle: VehicleData) => (
-            <Grid key={`${vehicle.name}-card`} xs={12} sm={4} lg={3} xl={2}>
+            <Grid
+              key={`${vehicle.name}-card`}
+              xs={12}
+              sm={4}
+              lg={3}
+              xl={2}
+              ultra={1}
+            >
               <VehicleCard vehicle={vehicle} />
             </Grid>
           ))}
@@ -131,14 +138,7 @@ const Inventory = () => {
             <Divider />
           </Grid>
           {inventory?.map((vehicle: VehicleData) => (
-            <Grid
-              key={`${vehicle.name}-card`}
-              xs={12}
-              sm={6}
-              md={4}
-              lg={4}
-              xl={3}
-            >
+            <Grid key={`${vehicle.name}-card`} xs={12} sm={6} md={4}>
               <VehicleCard vehicle={vehicle} />
             </Grid>
           ))}
