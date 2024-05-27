@@ -10,7 +10,7 @@ const Home = () => {
         minHeight: '100vh',
       }}
     >
-      <Grid container p={5} spacing={2} sx={{ mt: { xs: 5 } }}>
+      <Grid container p={10} spacing={2} sx={{ mt: { xs: 5 } }}>
         <Grid xs={12} mb={5}>
           <Typography
             variant="h2"
@@ -24,7 +24,7 @@ const Home = () => {
             Simplifying Vehicle Management for Small Dealerships
           </Typography>
         </Grid>
-        <Grid xs={12} sm={6} md={3}>
+        <Grid xs={12} sm={6} p={2}>
           <Paper sx={{ p: 2, minHeight: 130, border: 'solid 1px' }}>
             <Typography variant="h6" textAlign="center" sx={{ mb: 1 }}>
               Store Vehicle Information
@@ -35,7 +35,7 @@ const Home = () => {
             </Typography>
           </Paper>
         </Grid>
-        <Grid xs={12} sm={6} md={3}>
+        <Grid xs={12} sm={6} p={2}>
           <Paper sx={{ p: 2, minHeight: 130, border: 'solid 1px' }}>
             <Typography variant="h6" textAlign="center" sx={{ mb: 1 }}>
               Upload Pictures
@@ -46,7 +46,7 @@ const Home = () => {
             </Typography>
           </Paper>
         </Grid>
-        <Grid xs={12} sm={6} md={3}>
+        <Grid xs={12} sm={6} p={2}>
           <Paper sx={{ p: 2, minHeight: 130, border: 'solid 1px' }}>
             <Typography variant="h6" textAlign="center" sx={{ mb: 1 }}>
               Track Vehicle Status
@@ -57,7 +57,7 @@ const Home = () => {
             </Typography>
           </Paper>
         </Grid>
-        <Grid xs={12} sm={6} md={3}>
+        <Grid xs={12} sm={6} p={2}>
           <Paper sx={{ p: 2, minHeight: 130, border: 'solid 1px' }}>
             <Typography variant="h6" textAlign="center" sx={{ mb: 1 }}>
               User-Friendly Interface

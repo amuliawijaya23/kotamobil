@@ -12,6 +12,9 @@ import {
   Button,
   ImageList,
   ImageListItem,
+  List,
+  ListItem,
+  ListItemText,
 } from '@mui/material';
 
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -117,8 +120,24 @@ const Vehicle = () => {
                     />
                   </Typography>
                 </Grid>
-                {vehicle.sold && (
-                  <Grid xs={6}>
+                <Grid xs={6}>
+                  {vehicle.purchasePrice && (
+                    <Typography
+                      variant="body1"
+                      component="p"
+                      fontSize={'1.2em'}
+                    >
+                      <b>Purchase Price:</b>{' '}
+                      <NumericFormat
+                        displayType="text"
+                        value={vehicle.purchasePrice}
+                        thousandSeparator="."
+                        decimalSeparator=","
+                        prefix="Rp "
+                      />
+                    </Typography>
+                  )}
+                  {vehicle.sold && (
                     <Typography
                       variant="body1"
                       component="p"
@@ -133,8 +152,8 @@ const Vehicle = () => {
                         prefix="Rp "
                       />
                     </Typography>
-                  </Grid>
-                )}
+                  )}
+                </Grid>
                 <Grid xs={12}>
                   <Divider />
                 </Grid>
@@ -232,16 +251,18 @@ const Vehicle = () => {
             <CardActions>
               <Toolbar>
                 <Button
-                  variant={display === IMAGES ? 'contained' : 'text'}
+                  variant="text"
                   sx={{ width: 150, mr: 0.5 }}
                   onClick={handleDisplayImages}
+                  disabled={Boolean(display === IMAGES)}
                 >
                   Images
                 </Button>
                 <Button
-                  variant={display === SPECIFICATIONS ? 'contained' : 'text'}
+                  variant="text"
                   sx={{ width: 150 }}
                   onClick={handleDisplaySpecifications}
+                  disabled={Boolean(display === SPECIFICATIONS)}
                 >
                   Specifications
                 </Button>
@@ -249,7 +270,7 @@ const Vehicle = () => {
             </CardActions>
             <Divider />
             <CardContent sx={{ minHeight: 255 }}>
-              <Grid container>
+              <Grid container p={1}>
                 {display === IMAGES &&
                   (vehicle.images ? (
                     <Grid xs={12}>
@@ -291,6 +312,48 @@ const Vehicle = () => {
                           This vehicle currently has no images. You can upload
                           images using the form provided by clicking the Update
                           button.
+                        </Typography>
+                      </Box>
+                    </Grid>
+                  ))}
+                {display === SPECIFICATIONS &&
+                  (vehicle.specification && vehicle.specification.length > 0 ? (
+                    <>
+                      <Grid xs={12}>
+                        <List sx={{ listStyleType: 'disc' }}>
+                          <Grid container p={2}>
+                            {vehicle.specification.map((spec) => (
+                              <Grid xs={6}>
+                                <ListItem
+                                  key={spec}
+                                  sx={{ display: 'list-item' }}
+                                >
+                                  <ListItemText>{spec}</ListItemText>
+                                </ListItem>
+                              </Grid>
+                            ))}
+                          </Grid>
+                        </List>
+                      </Grid>
+                    </>
+                  ) : (
+                    <Grid xs={12}>
+                      <Box
+                        sx={{
+                          height: 200,
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Typography
+                          variant="body1"
+                          component="p"
+                          textAlign="center"
+                        >
+                          This vehicle currently has no specifications listed.
+                          You can add vehicle details and specifications using
+                          the form provided by clicking the Update button.
                         </Typography>
                       </Box>
                     </Grid>

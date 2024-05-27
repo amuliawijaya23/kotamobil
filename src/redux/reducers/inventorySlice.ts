@@ -39,9 +39,20 @@ export const inventorySlice = createSlice({
       }
       state.queryData = queryData;
     },
-    AddVehicleToInventory: (state, action: PayloadAction<VehicleData>) => {
+    addVehicleToInventory: (state, action: PayloadAction<VehicleData>) => {
       if (state.data) {
         state.data.unshift(action.payload);
+      }
+    },
+    updateVehicleFromInventory: (state, action: PayloadAction<VehicleData>) => {
+      if (state.data) {
+        const index = state.data?.findIndex(
+          (vehicle) => vehicle._id === action.payload._id,
+        );
+
+        if (index !== -1) {
+          state.data[index] = action.payload;
+        }
       }
     },
     updateMakeSelections: (state, action: PayloadAction<string>) => {
@@ -69,7 +80,8 @@ export const inventorySlice = createSlice({
 export const {
   setInventoryData,
   setQueryData,
-  AddVehicleToInventory,
+  addVehicleToInventory,
+  updateVehicleFromInventory,
   updateMakeSelections,
   updateModelSelections,
 } = inventorySlice.actions;

@@ -1,14 +1,22 @@
 import axios, { AxiosError } from 'axios';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import { SelectChangeEvent } from '@mui/material';
 
-import { useAppDispatch } from '~/redux/store';
-import { AddVehicleToInventory } from '~/redux/reducers/inventorySlice';
+import { useAppDispatch, useAppSelector } from '~/redux/store';
+import { getVehicleData } from '~/redux/reducers/vehicleSlice';
+import {
+  addVehicleToInventory,
+  updateVehicleFromInventory,
+} from '~/redux/reducers/inventorySlice';
 
 const useVehicleForm = () => {
   const dispatch = useAppDispatch();
+
+  // vehicle data for vehicle page update
+  const vehicle = useAppSelector(getVehicleData);
+
   // Form error state
   const [error, setError] = useState('');
 
@@ -51,6 +59,41 @@ const useVehicleForm = () => {
 
   // Change Handlers for VehicleImages
 
+  const initializeUpdateForm = useCallback(() => {
+    if (vehicle) {
+      setName(vehicle.name);
+      setStatus(vehicle.sold ? 'Sold' : 'Available');
+      setDateAdded(vehicle.dateAdded);
+      setPrice(vehicle.price);
+      setVin(vehicle.vin);
+      setMake(vehicle.make);
+      setModel(vehicle.model);
+      setAssembly(vehicle.assembly);
+      setYear(vehicle.year);
+      setOdometer(vehicle.odometer);
+      setColor(vehicle.color);
+      setTransmission(vehicle.transmission);
+      setFuelType(vehicle.fuelType);
+      vehicle.marketPrice && setMarketPrice(vehicle.marketPrice);
+      vehicle.purchasePrice && setPurchasePrice(vehicle.purchasePrice);
+      vehicle.description && setDescription(vehicle.description);
+      vehicle.specification &&
+        vehicle.specification.length > 0 &&
+        setSpecification(vehicle.specification);
+      setCondition(vehicle.condition);
+      if (vehicle.condition === 'Used') {
+        vehicle.plateNumber && setPlateNumber(vehicle.plateNumber);
+        vehicle.taxDate && setTaxDate(vehicle.taxDate);
+      }
+      if (vehicle.sold) {
+        vehicle.dateSold && setDateSold(vehicle.dateSold);
+        vehicle.soldPrice && setSoldPrice(vehicle.soldPrice);
+      }
+    }
+  }, [vehicle]);
+
+  useEffect(initializeUpdateForm, [initializeUpdateForm]);
+
   const onDrop = useCallback(
     (acceptedFiles: File[] | undefined) => {
       if (acceptedFiles) {
@@ -74,6 +117,10 @@ const useVehicleForm = () => {
 
   const handleStatusChange = (event: SelectChangeEvent) => {
     setStatus(event.target.value as string);
+    if (event.target.value === 'Available') {
+      setDateSold(null);
+      setSoldPrice(null);
+    }
   };
 
   const handleDateAddedChange = (input: Date | null) => {
@@ -102,6 +149,10 @@ const useVehicleForm = () => {
 
   const handleConditionChange = (event: SelectChangeEvent) => {
     setCondition(event.target.value as string);
+    if (event.target.value === 'New') {
+      setPlateNumber('');
+      setTaxDate(null);
+    }
   };
 
   const handlePlateNumberChange = (
@@ -197,58 +248,60 @@ const useVehicleForm = () => {
   const handleOnSave = async () => {
     try {
       let success = false;
+
       const formData = new FormData();
-      if (images) {
-        for (const [index, image] of images.entries()) {
-          if (index === 0) {
-            formData.set('images', image);
-          } else {
-            formData.append('images', image);
-          }
-        }
-      }
+      const data: Record<string, unknown> = {};
 
-      const data: Record<string, unknown> = {
-        name,
-        vin,
-        make,
-        model,
-        year,
-        odometer,
-        price,
-        color,
-        condition,
-        assembly,
-        transmission,
-        fuelType,
-        sold: status === 'Sold' ? true : false,
-        dateAdded,
-      };
-
-      if (status === 'Sold') {
-        data.dateSold = dateSold;
-        data.soldPrice = soldPrice;
-      }
-
-      if (condition === 'Used') {
-        data.plateNumber = plateNumber;
-        data.taxDate = taxDate;
-      }
+      data.name = name;
+      data.vin = vin;
+      data.make = make;
+      data.model = model;
+      data.year = year;
+      data.odometer = odometer;
+      data.price = price;
+      data.color = color;
+      data.condition = condition;
+      data.assembly = assembly;
+      data.transmission = transmission;
+      data.fuelType = fuelType;
+      data.sold = status === 'Sold' ? true : false;
+      data.dateAdded = dateAdded;
 
       description && (data.description = description);
       marketPrice && (data.marketPrice = marketPrice);
       purchasePrice && (data.purchasePrice = purchasePrice);
 
-      const specs = specification.filter((s) => s);
-      specs.length > 0 && (data.specification = specs);
+      const specifications = specification.filter((s) => s);
+      specifications.length > 0 && (data.specification = specifications);
+
+      status === 'Sold' &&
+        (data.dateSold = dateSold) &&
+        (data.soldPrice = soldPrice);
+
+      condition === 'Used' &&
+        (data.plateNumber = plateNumber) &&
+        (data.taxDate = taxDate);
 
       formData.set('data', JSON.stringify(data));
 
-      const response = await axios.post('/api/vehicle/add', formData);
+      if (images) {
+        for (const [index, image] of images.entries()) {
+          index === 0
+            ? formData.set('images', image)
+            : formData.append('images', image);
+        }
+      }
 
-      dispatch(AddVehicleToInventory(response.data));
-      clearVehicleForm();
+      const response = vehicle
+        ? await axios.post(`/api/vehicle/update/${vehicle._id}`, formData)
+        : await axios.post('/api/vehicle/add', formData);
+
+      vehicle
+        ? dispatch(updateVehicleFromInventory(response.data))
+        : dispatch(addVehicleToInventory(response.data));
+
       success = true;
+      clearVehicleForm();
       return success;
     } catch (error) {
       console.log(error);
@@ -263,30 +316,34 @@ const useVehicleForm = () => {
   };
 
   const clearVehicleForm = () => {
-    setError('');
-    setName('');
-    setImages(null);
-    setStatus('Available');
-    setDateAdded(new Date(Date.now()));
-    setDateSold(null);
-    setPrice(null);
-    setMarketPrice(null);
-    setPurchasePrice(null);
-    setSoldPrice(null);
-    setCondition('New');
-    setPlateNumber('');
-    setTaxDate(null);
-    setVin('');
-    setMake('');
-    setModel('');
-    setAssembly('');
-    setYear(false);
-    setOdometer(false);
-    setColor('');
-    setTransmission('Automatic');
-    setFuelType('Petrol');
-    setDescription('');
-    setSpecification(['']);
+    if (vehicle) {
+      initializeUpdateForm();
+    } else {
+      setError('');
+      setName('');
+      setImages(null);
+      setStatus('Available');
+      setDateAdded(new Date(Date.now()));
+      setDateSold(null);
+      setPrice(null);
+      setMarketPrice(null);
+      setPurchasePrice(null);
+      setSoldPrice(null);
+      setCondition('New');
+      setPlateNumber('');
+      setTaxDate(null);
+      setVin('');
+      setMake('');
+      setModel('');
+      setAssembly('');
+      setYear(false);
+      setOdometer(false);
+      setColor('');
+      setTransmission('Automatic');
+      setFuelType('Petrol');
+      setDescription('');
+      setSpecification(['']);
+    }
   };
 
   return {

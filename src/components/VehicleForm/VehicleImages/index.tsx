@@ -10,6 +10,9 @@ import {
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
+import { useAppSelector } from '~/redux/store';
+import { getVehicleData } from '~/redux/reducers/vehicleSlice';
+
 import { useDropzone } from 'react-dropzone';
 
 interface VehicleImagesProps {
@@ -18,6 +21,7 @@ interface VehicleImagesProps {
 }
 
 const VehicleImages = ({ images, onDrop }: VehicleImagesProps) => {
+  const vehicle = useAppSelector(getVehicleData);
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
     noClick: true,
@@ -38,6 +42,23 @@ const VehicleImages = ({ images, onDrop }: VehicleImagesProps) => {
       </Grid>
       <Grid xs={12}>
         <ImageList cols={3}>
+          {!images && !vehicle?.images && (
+            <ImageListItem key={`image-placeholder`}>
+              <img
+                loading="lazy"
+                alt="img-placeholder"
+                srcSet={`./src/assets/placeholder-image.png`}
+                src={'./src/assets/placeholder-image.png'}
+              />
+            </ImageListItem>
+          )}
+          {vehicle &&
+            vehicle.images &&
+            vehicle.images.map((image, index) => (
+              <ImageListItem key={`vehicle-image-${index}`}>
+                <img loading="lazy" alt={image} srcSet={image} src={image} />
+              </ImageListItem>
+            ))}
           {images &&
             images.map((image, index) => (
               <ImageListItem key={`image-upload-${index}`}>
@@ -49,16 +70,6 @@ const VehicleImages = ({ images, onDrop }: VehicleImagesProps) => {
                 />
               </ImageListItem>
             ))}
-          {!images && (
-            <ImageListItem key={`image-placeholder`}>
-              <img
-                loading="lazy"
-                alt="img-placeholder"
-                srcSet={`./src/assets/placeholder-image.png`}
-                src={'./src/assets/placeholder-image.png'}
-              />
-            </ImageListItem>
-          )}
         </ImageList>
       </Grid>
       <Grid xs={12}>

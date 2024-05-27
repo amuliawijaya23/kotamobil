@@ -13,6 +13,9 @@ import VehicleStatus from './VehicleStatus';
 import VehicleDetails from './VehicleDetails';
 import VehicleSpecifications from './VehicleSpecifications';
 
+import { useAppSelector } from '~/redux/store';
+import { getVehicleData } from '~/redux/reducers/vehicleSlice';
+
 import useVehicleForm from '~/hooks/useVehicleForm';
 
 const VEHICLE_STATUS_AND_PRICING = 'VEHICLE_STATUS_AND_PRICING';
@@ -21,9 +24,9 @@ const VEHICLE_SPECIFICATIONS = 'VEHICLE_SPECIFICATIONS';
 const VEHICLE_IMAGES = 'VEHICLE_IMAGES';
 
 const process: string[] = [
-  VEHICLE_IMAGES,
   VEHICLE_STATUS_AND_PRICING,
   VEHICLE_DETAILS,
+  VEHICLE_IMAGES,
   VEHICLE_SPECIFICATIONS,
 ];
 
@@ -89,6 +92,8 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
     clearVehicleForm,
   } = useVehicleForm();
 
+  const vehicle = useAppSelector(getVehicleData);
+
   const [step, setStep] = useState<number>(0);
 
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -97,10 +102,6 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
 
   const handleNextStep = () => {
     switch (process[step]) {
-      case VEHICLE_IMAGES: {
-        setStep((prev) => prev + 1);
-        break;
-      }
       case VEHICLE_STATUS_AND_PRICING: {
         if (!name || !status || !dateAdded || !price || !condition) {
           setError('Missing required parameter');
@@ -138,6 +139,10 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
         handleClearError();
         break;
       }
+      case VEHICLE_IMAGES: {
+        setStep((prev) => prev + 1);
+        break;
+      }
     }
   };
 
@@ -173,8 +178,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
         <Grid xs={12}>
           <ErrorAlert error={error} handleClearError={handleClearError} />
         </Grid>
-        {step === 0 && <VehicleImages images={images} onDrop={onDrop} />}
-        {step === 1 && (
+        {step === 0 && (
           <VehicleStatus
             error={error}
             name={name}
@@ -201,7 +205,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
             handleTaxDateChange={handleTaxDateChange}
           />
         )}
-        {step === 2 && (
+        {step === 1 && (
           <VehicleDetails
             error={error}
             vin={vin}
@@ -226,6 +230,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
             handleDescriptionChange={handleDescriptionChange}
           />
         )}
+        {step === 2 && <VehicleImages images={images} onDrop={onDrop} />}
         {step === 3 && (
           <VehicleSpecifications
             specification={specification}
@@ -265,7 +270,9 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
               color="primary"
               sx={{ ml: 1 }}
             >
-              Next
+              {process[step] == VEHICLE_IMAGES && !images && !vehicle?.images
+                ? 'Skip'
+                : 'Next'}
             </Button>
           )}
           {step === process.length - 1 && (
