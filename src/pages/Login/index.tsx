@@ -42,6 +42,7 @@ const Login = () => {
       <Grid xs={12} display="flex" alignItems="center" justifyContent="center">
         <Box
           component="form"
+          onSubmit={handleLogin}
           sx={{
             width: { xs: '70%', sm: '45%', md: '35%', lg: '25%', xl: '15%' },
           }}
@@ -83,19 +84,14 @@ const Login = () => {
               <Button
                 fullWidth
                 variant="contained"
-                onClick={handleLogin}
-                onMouseDown={handleMouseDown}
-              >
-                Sign In
-              </Button>
-            </Grid>
-            <Grid xs={6}>
-              <Button
-                fullWidth
-                variant="contained"
                 onMouseDown={handleMouseDown}
               >
                 Cancel
+              </Button>
+            </Grid>
+            <Grid xs={6}>
+              <Button fullWidth variant="contained" type="submit">
+                Sign In
               </Button>
             </Grid>
             <Grid xs={12} mb={1}>

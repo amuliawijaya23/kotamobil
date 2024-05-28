@@ -74,6 +74,7 @@ export const inventorySlice = createSlice({
           ];
       }
     },
+    resetInventory: () => initialState,
   },
 });
 
@@ -84,6 +85,7 @@ export const {
   updateVehicleFromInventory,
   updateMakeSelections,
   updateModelSelections,
+  resetInventory,
 } = inventorySlice.actions;
 export const getInventory = (state: RootState) => state.inventory.data;
 export const getQueryData = (state: RootState) => state.inventory.queryData;

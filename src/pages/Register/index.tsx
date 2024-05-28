@@ -50,6 +50,7 @@ const Register = () => {
       <Grid xs={12} display="flex" alignItems="center" justifyContent="center">
         <Box
           component="form"
+          onSubmit={handleRegister}
           sx={{
             width: { xs: '70%', sm: '45%', md: '35%', lg: '25%', xl: '15%' },
           }}
@@ -109,19 +110,14 @@ const Register = () => {
               <Button
                 fullWidth
                 variant="contained"
-                onClick={handleRegister}
-                onMouseDown={handleMouseDown}
-              >
-                Sign Up
-              </Button>
-            </Grid>
-            <Grid xs={6}>
-              <Button
-                fullWidth
-                variant="contained"
                 onMouseDown={handleMouseDown}
               >
                 Cancel
+              </Button>
+            </Grid>
+            <Grid xs={6}>
+              <Button fullWidth variant="contained" type="submit">
+                Sign Up
               </Button>
             </Grid>
             <Grid xs={12} mb={1}>

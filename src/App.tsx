@@ -7,16 +7,19 @@ import Layout from './pages/Layout';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Contacts from './pages/Contacts';
 import Inventory from './pages/Inventory';
 import Vehicle from './pages/Vehicle';
 import PageNotFound from './pages/PageNotFound';
 
 import useSession from './hooks/useSession';
 import useInventoryData from './hooks/useInventoryData';
+import useContactsData from './hooks/useContactsData';
 
 function App() {
   useSession();
   useInventoryData();
+  useContactsData();
 
   return (
     <Router>
@@ -57,7 +60,11 @@ function App() {
           />
           <Route
             path="/contacts"
-            element={<AuthenticatedRoute>Contacts</AuthenticatedRoute>}
+            element={
+              <AuthenticatedRoute>
+                <Contacts />
+              </AuthenticatedRoute>
+            }
           />
         </Route>
         <Route path="/404" element={<PageNotFound />} />

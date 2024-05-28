@@ -44,7 +44,7 @@ interface VehicleFormProps {
 }
 
 const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
-  const { handleOnSave, clearVehicleForm } = useVehicleForm();
+  const { images, onDrop, handleOnSave, clearVehicleForm } = useVehicleForm();
 
   const dispatch = useAppDispatch();
 
@@ -228,9 +228,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
                 color="primary"
                 sx={{ width: 50 }}
               >
-                {process[step] == VEHICLE_IMAGES &&
-                !vehicleFormData.images &&
-                !vehicle?.images
+                {process[step] == VEHICLE_IMAGES && !images && !vehicle?.images
                   ? 'Skip'
                   : 'Next'}
               </Button>
@@ -249,7 +247,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
           </Grid>
           {step === 0 && <VehicleStatus />}
           {step === 1 && <VehicleDetails />}
-          {step === 2 && <VehicleImages />}
+          {step === 2 && <VehicleImages images={images} onDrop={onDrop} />}
           {step === 3 && <VehicleSpecifications />}
         </Grid>
       </Drawer>

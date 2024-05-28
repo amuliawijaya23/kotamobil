@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 
-import { useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import { useAppDispatch, useAppSelector } from '~/redux/store';
 import { getVehicleData } from '~/redux/reducers/vehicleSlice';
@@ -42,11 +42,13 @@ const useVehicleForm = () => {
   const vehicle = useAppSelector(getVehicleData);
   const vehicleFormData = useAppSelector(getVehicleFormData);
 
+  const [images, setImages] = useState<File[] | null | undefined>(null);
+
   const initializeForm = useCallback(() => {
     if (vehicle) {
       dispatch(setName(vehicle.name));
       dispatch(setStatus(vehicle.sold ? 'Sold' : 'Available'));
-      dispatch(setDateAdded(vehicle.dateAdded));
+      dispatch(setDateAdded(JSON.stringify(vehicle.dateAdded)));
       dispatch(setPrice(vehicle.price));
       dispatch(setVin(vehicle.vin));
       dispatch(setMake(vehicle.make));
@@ -67,20 +69,62 @@ const useVehicleForm = () => {
       dispatch(setCondition(vehicle.condition));
       if (vehicle.condition === 'Used') {
         vehicle.plateNumber && dispatch(setPlateNumber(vehicle.plateNumber));
-        vehicle.taxDate && dispatch(setTaxDate(vehicle.taxDate));
+        vehicle.taxDate &&
+          dispatch(setTaxDate(JSON.stringify(vehicle.taxDate)));
       }
       if (vehicle.sold) {
-        vehicle.dateSold && dispatch(setDateSold(vehicle.dateSold));
+        vehicle.dateSold &&
+          dispatch(setDateSold(JSON.stringify(vehicle.dateSold)));
         vehicle.soldPrice && dispatch(setSoldPrice(vehicle.soldPrice));
       }
     }
 
     return () => {
       dispatch(resetVehicleForm());
+      setImages(null);
     };
   }, [vehicle, dispatch]);
 
   useEffect(initializeForm, [initializeForm]);
+
+  const onDrop = useCallback(
+    (acceptedFiles: File[] | undefined) => {
+      if (acceptedFiles) {
+        let currentImagesLength = 0;
+        if (vehicle?.images) {
+          currentImagesLength += vehicle.images.length;
+        }
+
+        if (images) {
+          currentImagesLength += images.length;
+
+          if (currentImagesLength + acceptedFiles.length > 10) {
+            return dispatch(
+              setAlert({
+                message:
+                  'You have exceeded the maximum number of allowed images',
+                severity: 'error',
+              }),
+            );
+          }
+          const currentImages = images.concat(acceptedFiles);
+          return setImages(currentImages);
+        }
+
+        if (currentImagesLength + acceptedFiles.length > 10) {
+          return dispatch(
+            setAlert({
+              message: 'You have exceeded the maximum number of allowed images',
+              severity: 'error',
+            }),
+          );
+        }
+
+        return setImages(acceptedFiles);
+      }
+    },
+    [vehicle, images, dispatch],
+  );
 
   const clearVehicleForm = () => {
     if (vehicle) {
@@ -88,6 +132,7 @@ const useVehicleForm = () => {
     } else {
       dispatch(resetVehicleForm());
     }
+    setImages(null);
   };
 
   const handleOnSave = async () => {
@@ -110,7 +155,7 @@ const useVehicleForm = () => {
       data.transmission = vehicleFormData.transmission;
       data.fuelType = vehicleFormData.fuelType;
       data.sold = vehicleFormData.status === 'Sold' ? true : false;
-      data.dateAdded = vehicleFormData.dateAdded;
+      data.dateAdded = JSON.parse(vehicleFormData.dateAdded);
 
       vehicleFormData.description &&
         (data.description = vehicleFormData.description);
@@ -123,17 +168,17 @@ const useVehicleForm = () => {
       specifications.length > 0 && (data.specification = specifications);
 
       vehicleFormData.status === 'Sold' &&
-        (data.dateSold = vehicleFormData.dateSold) &&
+        (data.dateSold = JSON.parse(vehicleFormData.dateSold)) &&
         (data.soldPrice = vehicleFormData.soldPrice);
 
       vehicleFormData.condition === 'Used' &&
         (data.plateNumber = vehicleFormData.plateNumber) &&
-        (data.taxDate = vehicleFormData.taxDate);
+        (data.taxDate = JSON.parse(vehicleFormData.taxDate));
 
       formData.set('data', JSON.stringify(data));
 
-      if (vehicleFormData.images) {
-        for (const [index, image] of vehicleFormData.images.entries()) {
+      if (images) {
+        for (const [index, image] of images.entries()) {
           index === 0
             ? formData.set('images', image)
             : formData.append('images', image);
@@ -165,6 +210,8 @@ const useVehicleForm = () => {
   };
 
   return {
+    images,
+    onDrop,
     handleOnSave,
     clearVehicleForm,
   };

@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import {
   Divider,
   Typography,
@@ -11,59 +10,18 @@ import {
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
-import { useAppSelector, useAppDispatch } from '~/redux/store';
+import { useAppSelector } from '~/redux/store';
 import { getVehicleData } from '~/redux/reducers/vehicleSlice';
-import {
-  getVehicleFormData,
-  setImages,
-  setAlert,
-} from '~/redux/reducers/formSlice';
 
 import { useDropzone } from 'react-dropzone';
 
-const VehicleImages = () => {
+interface VehicleImagesProps {
+  images: File[] | null | undefined;
+  onDrop: (acceptedFiles: File[] | undefined) => void;
+}
+
+const VehicleImages = ({ images, onDrop }: VehicleImagesProps) => {
   const vehicle = useAppSelector(getVehicleData);
-  const vehicleFormData = useAppSelector(getVehicleFormData);
-
-  const dispatch = useAppDispatch();
-
-  const onDrop = useCallback(
-    (acceptedFiles: File[] | undefined) => {
-      if (acceptedFiles) {
-        let currentImagesLength = 0;
-        if (vehicle?.images) {
-          currentImagesLength += vehicle.images.length;
-        }
-
-        if (vehicleFormData.images) {
-          currentImagesLength += vehicleFormData.images.length;
-
-          if (currentImagesLength + acceptedFiles.length > 10) {
-            return dispatch(
-              setAlert({
-                message:
-                  'You have exceeded the maximum number of allowed images',
-                severity: 'error',
-              }),
-            );
-          }
-          const currentImages = vehicleFormData.images.concat(acceptedFiles);
-          return dispatch(setImages(currentImages));
-        }
-
-        if (currentImagesLength + acceptedFiles.length > 10) {
-          return dispatch(
-            setAlert({
-              message: 'You have exceeded the maximum number of allowed images',
-              severity: 'error',
-            }),
-          );
-        }
-        return dispatch(setImages(acceptedFiles));
-      }
-    },
-    [vehicle, vehicleFormData.images, dispatch],
-  );
 
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
@@ -85,7 +43,7 @@ const VehicleImages = () => {
       </Grid>
       <Grid xs={12}>
         <ImageList cols={3}>
-          {!vehicleFormData.images && !vehicle?.images && (
+          {!images && !vehicle?.images && (
             <ImageListItem key={`image-placeholder`}>
               <img
                 loading="lazy"
@@ -102,8 +60,8 @@ const VehicleImages = () => {
                 <img loading="lazy" alt={image} srcSet={image} src={image} />
               </ImageListItem>
             ))}
-          {vehicleFormData.images &&
-            vehicleFormData.images.map((image, index) => (
+          {images &&
+            images.map((image: File, index: number) => (
               <ImageListItem key={`image-upload-${index}`}>
                 <img
                   loading="lazy"

@@ -2,18 +2,17 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 
 export interface VehicleForm {
-  images: File[] | undefined | null;
   name: string;
   status: string;
-  dateAdded: Date | null;
-  dateSold: Date | null;
+  dateAdded: string;
+  dateSold: string;
   price: string | number | null | undefined;
   marketPrice: string | number | null | undefined;
   purchasePrice: string | number | null | undefined;
   soldPrice: string | number | null | undefined;
   condition: string;
   plateNumber: string;
-  taxDate: Date | null;
+  taxDate: string;
   vin: string;
   make: string;
   model: string;
@@ -42,18 +41,17 @@ interface FormState {
 
 const initialState: FormState = {
   vehicle: {
-    images: null,
     name: '',
     status: 'Available',
-    dateAdded: new Date(Date.now()),
-    dateSold: null,
+    dateAdded: JSON.stringify(new Date(Date.now())),
+    dateSold: '',
     price: null,
     marketPrice: null,
     purchasePrice: null,
     soldPrice: null,
     condition: 'New',
     plateNumber: '',
-    taxDate: null,
+    taxDate: '',
     vin: '',
     make: '',
     model: '',
@@ -86,19 +84,16 @@ export const formSlice = createSlice({
     ) => {
       state.alert = action.payload;
     },
-    setImages: (state, action: PayloadAction<File[] | null | undefined>) => {
-      state.vehicle.images = action.payload;
-    },
     setName: (state, action: PayloadAction<string>) => {
       state.vehicle.name = action.payload;
     },
     setStatus: (state, action: PayloadAction<string>) => {
       state.vehicle.status = action.payload;
     },
-    setDateAdded: (state, action: PayloadAction<Date | null>) => {
+    setDateAdded: (state, action: PayloadAction<string>) => {
       state.vehicle.dateAdded = action.payload;
     },
-    setDateSold: (state, action: PayloadAction<Date | null>) => {
+    setDateSold: (state, action: PayloadAction<string>) => {
       state.vehicle.dateSold = action.payload;
     },
     setPrice: (state, action: PayloadAction<number | null>) => {
@@ -119,7 +114,7 @@ export const formSlice = createSlice({
     setPlateNumber: (state, action: PayloadAction<string>) => {
       state.vehicle.plateNumber = action.payload;
     },
-    setTaxDate: (state, action: PayloadAction<Date | null>) => {
+    setTaxDate: (state, action: PayloadAction<string>) => {
       state.vehicle.taxDate = action.payload;
     },
     setVin: (state, action: PayloadAction<string>) => {
@@ -162,7 +157,6 @@ export const {
   resetVehicleForm,
   resetAlert,
   setAlert,
-  setImages,
   setName,
   setStatus,
   setDateAdded,

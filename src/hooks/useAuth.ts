@@ -58,8 +58,11 @@ const useAuthData = () => {
     setConfirmPassword(event.target.value);
   };
 
-  const handleRegister = async () => {
+  const handleRegister = async (
+    event: React.FormEvent<EventTarget | HTMLFormElement>,
+  ) => {
     try {
+      event.preventDefault();
       if (!firstName || !email || !password || !confirmPassword) {
         return setError('Missing parameter');
       }
@@ -96,8 +99,11 @@ const useAuthData = () => {
     }
   };
 
-  const handleLogin = async () => {
+  const handleLogin = async (
+    event: React.FormEvent<EventTarget | HTMLFormElement>,
+  ) => {
     try {
+      event.preventDefault();
       if (!email || !password) {
         return setError('Missing parameter');
       }

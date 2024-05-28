@@ -51,11 +51,11 @@ const VehicleStatus = () => {
   };
 
   const handleDateAddedChange = (input: Date | null) => {
-    dispatch(setDateAdded(input));
+    dispatch(setDateAdded(JSON.stringify(input)));
   };
 
   const handleDateSoldChange = (input: Date | null) => {
-    dispatch(setDateSold(input));
+    dispatch(setDateSold(JSON.stringify(input)));
   };
 
   const handlePriceChange = (value: number | null) => {
@@ -83,7 +83,7 @@ const VehicleStatus = () => {
   };
 
   const handleTaxDateChange = (input: Date | null) => {
-    dispatch(setTaxDate(input));
+    dispatch(setTaxDate(JSON.stringify(input)));
   };
 
   return (
@@ -136,12 +136,18 @@ const VehicleStatus = () => {
           )}
         </FormControl>
       </Grid>
-      <Grid xs={12}></Grid>
+      <Grid xs={12}>
+        {/* {vehicleFormData.status === 'Sold' && (
+          <FormControl size='small'>
+            
+          </FormControl>
+        )} */}
+      </Grid>
       <Grid xs={12} sm={6}>
         <DatePicker
           onChange={handleDateAddedChange}
           label="Date Added"
-          value={vehicleFormData.dateAdded}
+          value={JSON.parse(vehicleFormData.dateAdded)}
           slotProps={{
             textField: {
               fullWidth: true,
@@ -163,7 +169,7 @@ const VehicleStatus = () => {
           <DatePicker
             onChange={handleDateSoldChange}
             label="Date Sold"
-            value={vehicleFormData.dateSold}
+            value={JSON.parse(vehicleFormData.dateSold)}
             slotProps={{
               textField: {
                 fullWidth: true,
@@ -368,7 +374,7 @@ const VehicleStatus = () => {
             <DatePicker
               onChange={handleTaxDateChange}
               label="Tax Date"
-              value={vehicleFormData.taxDate}
+              value={JSON.parse(vehicleFormData.taxDate)}
               slotProps={{
                 textField: {
                   fullWidth: true,
