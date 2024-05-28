@@ -5,6 +5,7 @@ import userReducer from './reducers/userSlice';
 import themeReducer from './reducers/themeSlice';
 import inventoryReducer from './reducers/inventorySlice';
 import vehicleReducer from './reducers/vehicleSlice';
+import formReducer from './reducers/formSlice';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     theme: themeReducer,
     inventory: inventoryReducer,
     vehicle: vehicleReducer,
+    form: formReducer,
   },
   devTools: true,
 });

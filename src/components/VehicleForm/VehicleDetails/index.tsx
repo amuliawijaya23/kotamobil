@@ -14,67 +14,82 @@ import {
   MenuItem,
 } from '@mui/material';
 
-interface VehicleDetailsProps {
-  error: string;
-  vin: string;
-  make: string;
-  model: string;
-  assembly: string;
-  year: number | boolean;
-  odometer: number | boolean;
-  color: string;
-  transmission: string;
-  fuelType: string;
-  description: string;
-  handleVinChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
-  handleMakeChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
-  handleModelChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
-  handleAssemblyChange: (e: SelectChangeEvent) => void;
-  handleYearChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
-  handleOdometerChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
-  handleColorChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
-  handleTransmissionChange: (e: SelectChangeEvent) => void;
-  handleFuelTypeChange: (e: SelectChangeEvent) => void;
-  handleDescriptionChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
-}
+import { useAppSelector, useAppDispatch } from '~/redux/store';
+import {
+  getVehicleFormData,
+  getFormAlert,
+  setVin,
+  setMake,
+  setModel,
+  setAssembly,
+  setYear,
+  setOdometer,
+  setColor,
+  setTransmission,
+  setFuelType,
+  setDescription,
+} from '~/redux/reducers/formSlice';
 
-const VehicleDetails = ({
-  error,
-  vin,
-  make,
-  model,
-  assembly,
-  year,
-  odometer,
-  color,
-  transmission,
-  fuelType,
-  description,
-  handleVinChange,
-  handleMakeChange,
-  handleModelChange,
-  handleAssemblyChange,
-  handleYearChange,
-  handleOdometerChange,
-  handleColorChange,
-  handleTransmissionChange,
-  handleFuelTypeChange,
-  handleDescriptionChange,
-}: VehicleDetailsProps) => {
+const VehicleDetails = () => {
+  const vehicleFormData = useAppSelector(getVehicleFormData);
+  const alert = useAppSelector(getFormAlert);
+
+  const dispatch = useAppDispatch();
+
+  const handleVinChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    dispatch(setVin(event.target.value));
+  };
+
+  const handleMakeChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    dispatch(setMake(event.target.value));
+  };
+
+  const handleModelChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    dispatch(setModel(event.target.value));
+  };
+
+  const handleAssemblyChange = (event: SelectChangeEvent) => {
+    dispatch(setAssembly(event.target.value));
+  };
+
+  const handleYearChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    dispatch(setYear(Number(event.target.value)));
+  };
+
+  const handleOdometerChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    dispatch(setOdometer(Number(event.target.value)));
+  };
+
+  const handleColorChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    dispatch(setColor(event.target.value));
+  };
+
+  const handleTransmissionChange = (event: SelectChangeEvent) => {
+    dispatch(setTransmission(event.target.value));
+  };
+
+  const handleFuelTypeChange = (event: SelectChangeEvent) => {
+    dispatch(setFuelType(event.target.value));
+  };
+
+  const handleDescriptionChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    dispatch(setDescription(event.target.value));
+  };
+
   return (
     <>
       <Grid xs={12}>
@@ -94,48 +109,60 @@ const VehicleDetails = ({
             Vehicle Identification Number
           </InputLabel>
           <OutlinedInput
-            value={vin}
+            value={vehicleFormData.vin}
             onChange={handleVinChange}
-            error={Boolean(error && !vin)}
+            error={Boolean(alert?.severity === 'error' && !vehicleFormData.vin)}
             type="text"
             label="Vehicle Identification Number"
           />
-          {error && !vin && <FormHelperText error>{error}</FormHelperText>}
+          {alert?.severity === 'error' && !vehicleFormData.vin && (
+            <FormHelperText error>{alert.message}</FormHelperText>
+          )}
         </FormControl>
       </Grid>
       <Grid xs={12} sm={6}>
         <FormControl size="small" fullWidth>
           <InputLabel htmlFor="outlined-vehicle-name">Make</InputLabel>
           <OutlinedInput
-            value={make}
+            value={vehicleFormData.make}
             onChange={handleMakeChange}
-            error={Boolean(error && !make)}
+            error={Boolean(
+              alert?.severity === 'error' && !vehicleFormData.make,
+            )}
             type="text"
             label="Make"
           />
-          {error && !make && <FormHelperText error>{error}</FormHelperText>}
+          {alert?.severity === 'error' && !vehicleFormData.make && (
+            <FormHelperText error>{alert.message}</FormHelperText>
+          )}
         </FormControl>
       </Grid>
       <Grid xs={12} sm={6}>
         <FormControl size="small" fullWidth>
           <InputLabel htmlFor="outlined-vehicle-name">Model</InputLabel>
           <OutlinedInput
-            value={model}
+            value={vehicleFormData.model}
             onChange={handleModelChange}
-            error={Boolean(error && !model)}
+            error={Boolean(
+              alert?.severity === 'error' && !vehicleFormData.model,
+            )}
             type="text"
             label="Model"
           />
-          {error && !model && <FormHelperText error>{error}</FormHelperText>}
+          {alert?.severity === 'error' && !vehicleFormData.model && (
+            <FormHelperText error>{alert.message}</FormHelperText>
+          )}
         </FormControl>
       </Grid>
       <Grid xs={12} sm={6}>
         <FormControl size="small" fullWidth>
           <InputLabel id="vehicle-assembly-select-label">Assembly</InputLabel>
           <Select
-            value={assembly}
+            value={vehicleFormData.assembly}
             onChange={handleAssemblyChange}
-            error={Boolean(error && !assembly)}
+            error={Boolean(
+              alert?.severity === 'error' && !vehicleFormData.assembly,
+            )}
             size="small"
             labelId="vehicle-assembly-select-label"
             id="vehicle-assembly-select"
@@ -144,46 +171,60 @@ const VehicleDetails = ({
             <MenuItem value="Complete-Knock-Down">Complete-Knock-Down</MenuItem>
             <MenuItem value="Complete-Built-Up">Complete-Built-Up</MenuItem>
           </Select>
-          {error && !assembly && <FormHelperText error>{error}</FormHelperText>}
+          {alert?.severity === 'error' && !vehicleFormData.assembly && (
+            <FormHelperText error>{alert.message}</FormHelperText>
+          )}
         </FormControl>
       </Grid>
       <Grid xs={12} sm={6}>
         <FormControl size="small" fullWidth>
           <InputLabel htmlFor="outlined-vehicle-year">Year</InputLabel>
           <OutlinedInput
-            value={year}
+            value={vehicleFormData.year}
             onChange={handleYearChange}
-            error={Boolean(error && !year)}
+            error={Boolean(
+              alert?.severity === 'error' && !vehicleFormData.year,
+            )}
             type="number"
             label="Year"
           />
-          {error && !year && <FormHelperText error>{error}</FormHelperText>}
+          {alert?.severity === 'error' && !vehicleFormData.year && (
+            <FormHelperText error>{alert.message}</FormHelperText>
+          )}
         </FormControl>
       </Grid>
       <Grid xs={12} sm={6}>
         <FormControl size="small" fullWidth>
           <InputLabel htmlFor="outlined-vehicle-odometer">Odometer</InputLabel>
           <OutlinedInput
-            value={odometer}
+            value={vehicleFormData.odometer}
             onChange={handleOdometerChange}
-            error={Boolean(error && !odometer)}
+            error={Boolean(
+              alert?.severity === 'error' && !vehicleFormData.odometer,
+            )}
             type="number"
             label="Odometer"
           />
-          {error && !odometer && <FormHelperText error>{error}</FormHelperText>}
+          {alert?.severity === 'error' && !vehicleFormData.odometer && (
+            <FormHelperText error>{alert.message}</FormHelperText>
+          )}
         </FormControl>
       </Grid>
       <Grid xs={12} sm={6}>
         <FormControl size="small" fullWidth>
           <InputLabel htmlFor="outlined-vehicle-color">Color</InputLabel>
           <OutlinedInput
-            value={color}
+            value={vehicleFormData.color}
             onChange={handleColorChange}
-            error={Boolean(error && !color)}
+            error={Boolean(
+              alert?.severity === 'error' && !vehicleFormData.color,
+            )}
             type="text"
             label="Color"
           />
-          {error && !color && <FormHelperText error>{error}</FormHelperText>}
+          {alert?.severity === 'error' && !vehicleFormData.color && (
+            <FormHelperText error>{alert.message}</FormHelperText>
+          )}
         </FormControl>
       </Grid>
       <Grid xs={12} sm={6}>
@@ -192,9 +233,11 @@ const VehicleDetails = ({
             Transmission
           </InputLabel>
           <Select
-            value={transmission}
+            value={vehicleFormData.transmission}
             onChange={handleTransmissionChange}
-            error={Boolean(error && !transmission)}
+            error={Boolean(
+              alert?.severity === 'error' && !vehicleFormData.transmission,
+            )}
             size="small"
             labelId="vehicle-transmission-select-label"
             id="vehicle-transmission-select"
@@ -203,8 +246,8 @@ const VehicleDetails = ({
             <MenuItem value="Automatic">Automatic</MenuItem>
             <MenuItem value="Manual">Manual</MenuItem>
           </Select>
-          {error && !transmission && (
-            <FormHelperText error>{error}</FormHelperText>
+          {alert?.severity === 'error' && !vehicleFormData.transmission && (
+            <FormHelperText error>{alert.message}</FormHelperText>
           )}
         </FormControl>
       </Grid>
@@ -212,9 +255,11 @@ const VehicleDetails = ({
         <FormControl size="small" fullWidth>
           <InputLabel id="vehicle-fuel-select-label">Fuel Type</InputLabel>
           <Select
-            value={fuelType}
+            value={vehicleFormData.fuelType}
             onChange={handleFuelTypeChange}
-            error={Boolean(error && !fuelType)}
+            error={Boolean(
+              alert?.severity === 'error' && !vehicleFormData.fuelType,
+            )}
             size="small"
             labelId="vehicle-fuel-select-label"
             id="vehicle-fuel-select"
@@ -225,14 +270,16 @@ const VehicleDetails = ({
             <MenuItem value="Hybrid">Hybrid</MenuItem>
             <MenuItem value="Electric">Electric</MenuItem>
           </Select>
-          {error && !fuelType && <FormHelperText error>{error}</FormHelperText>}
+          {alert?.severity === 'error' && !vehicleFormData.fuelType && (
+            <FormHelperText error>{alert.message}</FormHelperText>
+          )}
         </FormControl>
       </Grid>
       <Grid xs={12}>
         <TextField
-          value={description}
+          value={vehicleFormData.description}
           onChange={handleDescriptionChange}
-          helperText={50 - description.length}
+          helperText={50 - vehicleFormData.description.length}
           multiline
           fullWidth
           rows={3}
