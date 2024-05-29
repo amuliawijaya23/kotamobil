@@ -9,13 +9,9 @@ import {
   TableContainer,
   TablePagination,
   TableRow,
-  Typography,
   Paper,
   Checkbox,
   IconButton,
-  Tooltip,
-  FormControlLabel,
-  Switch,
 } from '@mui/material';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import FacebookIcon from '@mui/icons-material/Facebook';
@@ -23,6 +19,7 @@ import XIcon from '@mui/icons-material/X';
 
 import ContactsToolbar from '~/components/Contacts/ContactsToolbar';
 import ContactsHeader from '~/components/Contacts/ContactsHeader';
+import ContactForm from '~/components/ContactForm';
 
 import { useAppSelector } from '~/redux/store';
 import { getContactsData } from '~/redux/reducers/contactsSlice';
@@ -36,6 +33,15 @@ const Contacts = () => {
   const [selected, setSelected] = useState<readonly string[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [openForm, setOpenForm] = useState(false);
+
+  const handleOpenForm = () => {
+    setOpenForm(true);
+  };
+
+  const handleCloseForm = () => {
+    setOpenForm(false);
+  };
 
   const handleRequestSort = (event: React.MouseEvent<unknown>) => {
     event.preventDefault();
@@ -102,9 +108,13 @@ const Contacts = () => {
   return (
     <>
       <Toolbar />
+      <ContactForm open={openForm} handleCloseForm={handleCloseForm} />
       <Box sx={{ width: '100%', height: '100vh' }}>
         <Paper sx={{ width: '100%', mb: 2 }}>
-          <ContactsToolbar numSelected={selected.length} />
+          <ContactsToolbar
+            handleOpenForm={handleOpenForm}
+            numSelected={selected.length}
+          />
           <TableContainer>
             <Table sx={{ minWidth: 750, height: '100%' }} size="medium">
               <ContactsHeader
@@ -147,10 +157,17 @@ const Contacts = () => {
                         >
                           {contact.firstName}
                         </TableCell>
-                        <TableCell align="left">{contact.lastName}</TableCell>
-                        <TableCell align="left">{contact.mobile}</TableCell>
-                        <TableCell align="left">{contact.email}</TableCell>
                         <TableCell align="left">
+                          {contact.lastName ? contact.lastName : '-'}
+                        </TableCell>
+                        <TableCell align="left">{contact.mobile}</TableCell>
+                        <TableCell align="left">
+                          {contact.email ? contact.email : '-'}
+                        </TableCell>
+                        <TableCell align="left">
+                          {contact.address ? contact.address : '-'}
+                        </TableCell>
+                        <TableCell align="right">
                           <IconButton
                             size="small"
                             disabled={!contact.instagram}
@@ -160,7 +177,7 @@ const Contacts = () => {
                           <IconButton size="small" disabled={!contact.facebook}>
                             <FacebookIcon sx={{ height: 25, width: 20 }} />
                           </IconButton>
-                          <IconButton size="small" disabled>
+                          <IconButton size="small" disabled={!contact.twitter}>
                             <XIcon sx={{ height: 25, width: 20 }} />
                           </IconButton>
                           <IconButton size="small" disabled={!contact.tiktok}>

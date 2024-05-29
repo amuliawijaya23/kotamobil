@@ -11,6 +11,7 @@ export interface ContactData {
   address?: string;
   facebook?: string;
   instagram?: string;
+  twitter?: string;
   tiktok?: string;
 }
 
@@ -29,10 +30,14 @@ export const contactsSlice = createSlice({
     setContactsData: (state, action: PayloadAction<[ContactData]>) => {
       state.data = action.payload;
     },
+    addContact: (state, action: PayloadAction<ContactData>) => {
+      state.data?.unshift(action.payload);
+    },
     resetContacts: () => initialState,
   },
 });
 
-export const { setContactsData, resetContacts } = contactsSlice.actions;
+export const { setContactsData, addContact, resetContacts } =
+  contactsSlice.actions;
 export const getContactsData = (state: RootState) => state.contacts.data;
 export default contactsSlice.reducer;

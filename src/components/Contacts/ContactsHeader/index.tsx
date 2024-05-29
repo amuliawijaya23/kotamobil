@@ -24,6 +24,7 @@ const headCells = [
   { id: 'lastName', label: 'Last Name' },
   { id: 'mobile', label: 'Mobile' },
   { id: 'email', label: 'Email' },
+  { id: 'address', label: 'Address' },
   { id: 'socials', label: 'Socials' },
 ];
 
@@ -65,8 +66,12 @@ const ContactsHeader = ({
             </Box>
           </TableSortLabel>
         </TableCell>
-        {headCells.map((headcell) => (
-          <TableCell key={headcell.id} align="left" padding="normal">
+        {headCells.map((headcell, index) => (
+          <TableCell
+            key={headcell.id}
+            align={index === headCells.length - 1 ? 'right' : 'left'}
+            padding="normal"
+          >
             {headcell.label}
           </TableCell>
         ))}

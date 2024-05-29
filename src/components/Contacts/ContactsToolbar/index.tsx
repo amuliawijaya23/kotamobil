@@ -1,18 +1,23 @@
 import { Toolbar, Typography, IconButton, Tooltip } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
-import FilterListIcon from '@mui/icons-material/FilterList';
+import AddIcon from '@mui/icons-material/Add';
 
 interface ContactsToolbar {
   numSelected: number;
+  handleOpenForm: () => void;
 }
 
-const ContactsToolbar = ({ numSelected }: ContactsToolbar) => {
+const ContactsToolbar = ({ numSelected, handleOpenForm }: ContactsToolbar) => {
+  const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
+
   return (
     <Toolbar
       sx={{
         pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
+        pr: { xs: 2 },
         ...(numSelected > 0 && {
           bgcolor: (theme) =>
             alpha(
@@ -48,9 +53,9 @@ const ContactsToolbar = ({ numSelected }: ContactsToolbar) => {
           </IconButton>
         </Tooltip>
       ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
+        <Tooltip title="Add Contact">
+          <IconButton onClick={handleOpenForm} onMouseDown={handleMouseDown}>
+            <AddIcon />
           </IconButton>
         </Tooltip>
       )}

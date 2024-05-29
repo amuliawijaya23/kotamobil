@@ -26,7 +26,17 @@ export interface VehicleForm {
   specification: string[];
 }
 
-export interface ContactForm {}
+export interface ContactForm {
+  firstName: string;
+  lastName?: string;
+  mobile: string;
+  email?: string;
+  address?: string;
+  instagram?: string;
+  facebook?: string;
+  tiktok?: string;
+  twitter?: string;
+}
 
 export interface FormAlert {
   message: string;
@@ -35,7 +45,7 @@ export interface FormAlert {
 
 interface FormState {
   vehicle: VehicleForm;
-  contact: ContactForm | null;
+  contact: ContactForm;
   alert: FormAlert | null;
 }
 
@@ -64,7 +74,17 @@ const initialState: FormState = {
     description: '',
     specification: [''],
   },
-  contact: null,
+  contact: {
+    firstName: '',
+    lastName: '',
+    mobile: '62',
+    email: '',
+    address: '',
+    instagram: '',
+    facebook: '',
+    tiktok: '',
+    twitter: '',
+  },
   alert: null,
 };
 
@@ -72,9 +92,6 @@ export const formSlice = createSlice({
   name: 'form',
   initialState,
   reducers: {
-    resetVehicleForm: (state) => {
-      state.vehicle = initialState.vehicle;
-    },
     resetAlert: (state) => {
       state.alert = initialState.alert;
     },
@@ -83,6 +100,10 @@ export const formSlice = createSlice({
       action: PayloadAction<{ message: string; severity: string }>,
     ) => {
       state.alert = action.payload;
+    },
+    // reducer actions for vehicle form
+    resetVehicleForm: (state) => {
+      state.vehicle = initialState.vehicle;
     },
     setName: (state, action: PayloadAction<string>) => {
       state.vehicle.name = action.payload;
@@ -150,6 +171,37 @@ export const formSlice = createSlice({
     setSpecification: (state, action: PayloadAction<string[]>) => {
       state.vehicle.specification = action.payload;
     },
+    // reducer actions for contact form
+    resetContactForm: (state) => {
+      state.contact = initialState.contact;
+    },
+    setFirstName: (state, action: PayloadAction<string>) => {
+      state.contact.firstName = action.payload;
+    },
+    setLastName: (state, action: PayloadAction<string>) => {
+      state.contact.lastName = action.payload;
+    },
+    setMobile: (state, action: PayloadAction<string>) => {
+      state.contact.mobile = action.payload;
+    },
+    setEmail: (state, action: PayloadAction<string>) => {
+      state.contact.email = action.payload;
+    },
+    setAddress: (state, action: PayloadAction<string>) => {
+      state.contact.address = action.payload;
+    },
+    setInstagram: (state, action: PayloadAction<string>) => {
+      state.contact.instagram = action.payload;
+    },
+    setFacebook: (state, action: PayloadAction<string>) => {
+      state.contact.facebook = action.payload;
+    },
+    setTwitter: (state, action: PayloadAction<string>) => {
+      state.contact.twitter = action.payload;
+    },
+    setTiktok: (state, action: PayloadAction<string>) => {
+      state.contact.tiktok = action.payload;
+    },
   },
 });
 
@@ -179,7 +231,18 @@ export const {
   setFuelType,
   setDescription,
   setSpecification,
+  resetContactForm,
+  setFirstName,
+  setLastName,
+  setMobile,
+  setEmail,
+  setAddress,
+  setInstagram,
+  setFacebook,
+  setTwitter,
+  setTiktok,
 } = formSlice.actions;
 export const getVehicleFormData = (state: RootState) => state.form.vehicle;
+export const getContactFormData = (state: RootState) => state.form.contact;
 export const getFormAlert = (state: RootState) => state.form.alert;
 export default formSlice.reducer;

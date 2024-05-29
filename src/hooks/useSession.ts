@@ -18,8 +18,8 @@ const useSession = () => {
     }
 
     return () => {
-      dispatch(logout());
-      Cookies.remove(COOKIE_NAME);
+      // dispatch(logout());
+      // Cookies.remove(COOKIE_NAME);
     };
   }, [dispatch]);
 };
