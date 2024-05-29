@@ -1,7 +1,8 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 
-interface ContactData {
+export interface ContactData {
+  _id: string;
   ownerId: string;
   firstName: string;
   lastName?: string;
