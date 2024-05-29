@@ -72,7 +72,7 @@ const Register = () => {
               <Typography variant="h4" component="h1">
                 Sign Up
               </Typography>
-              <ErrorAlert error={error} handleClearError={handleClearError} />
+              <ErrorAlert error={error} onClearError={handleClearError} />
             </Grid>
             <Grid xs={12}>
               <NameInput

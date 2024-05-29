@@ -15,21 +15,30 @@ import {
   setFacebook,
   setTwitter,
   setTiktok,
+  resetContactForm,
 } from '~/redux/reducers/formSlice';
 import { addContact } from '~/redux/reducers/contactsSlice';
 import { validateEmail } from '~/helpers';
 
+const initialCountry = {
+  label: 'Indonesia',
+  code: 'ID',
+  phone: '62',
+};
+
 const useContactForm = () => {
   const [isValidEmail, setIsValidEmail] = useState(false);
-  const [country, setCountry] = useState<CountryType | null>({
-    label: 'Indonesia',
-    code: 'ID',
-    phone: '62',
-  });
+  const [country, setCountry] = useState<CountryType | null>(initialCountry);
 
   const dispatch = useAppDispatch();
 
   const contactFormData = useAppSelector(getContactFormData);
+
+  const handleResetForm = () => {
+    dispatch(resetContactForm());
+    setIsValidEmail(false);
+    setCountry(initialCountry);
+  };
 
   const handleFirstNameChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -134,6 +143,7 @@ const useContactForm = () => {
   return {
     isValidEmail,
     country,
+    handleResetForm,
     handleFirstNameChange,
     handleLastNameChange,
     handleEmailChange,

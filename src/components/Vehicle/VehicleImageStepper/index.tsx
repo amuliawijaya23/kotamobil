@@ -15,10 +15,10 @@ import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 
 interface VehicleImageStepperProps {
   open: boolean;
-  handleOnClose: () => void;
   activeStep: number;
-  handleNextActiveStep: () => void;
-  handlePrevActiveStep: () => void;
+  onClose: () => void;
+  onNext: () => void;
+  onPrev: () => void;
 }
 
 const style = {
@@ -35,15 +35,15 @@ const style = {
 
 const VehicleImageStepper = ({
   open,
-  handleOnClose,
   activeStep,
-  handleNextActiveStep,
-  handlePrevActiveStep,
+  onClose,
+  onNext,
+  onPrev,
 }: VehicleImageStepperProps) => {
   const vehicle = useAppSelector(getVehicleData);
 
   return (
-    <Modal open={open} onClose={handleOnClose}>
+    <Modal open={open} onClose={onClose}>
       <Box sx={style}>
         {vehicle?.images && (
           <>
@@ -77,7 +77,7 @@ const VehicleImageStepper = ({
                       vehicle.images?.length &&
                       activeStep === vehicle.images.length - 1,
                   )}
-                  onClick={handleNextActiveStep}
+                  onClick={onNext}
                 >
                   Next <KeyboardArrowRight />
                 </Button>
@@ -86,7 +86,7 @@ const VehicleImageStepper = ({
                 <Button
                   size="small"
                   disabled={activeStep === 0}
-                  onClick={handlePrevActiveStep}
+                  onClick={onPrev}
                 >
                   <KeyboardArrowLeft /> Back{' '}
                 </Button>

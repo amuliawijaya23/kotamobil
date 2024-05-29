@@ -21,18 +21,18 @@ import { countryCodes } from '~/helpers/selectData';
 interface ContactInformationProps {
   isValidEmail: boolean;
   country: CountryType | null;
-  handleFirstNameChange: (
+  onFirstNameChange: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
-  handleLastNameChange: (
+  onLastNameChange: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
-  handleEmailChange: (
+  onEmailChange: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
-  handleCountryChange: (event: unknown, values: CountryType | null) => void;
-  handleMobileChange: (input: string) => void;
-  handleAddressChange: (
+  onCountryChange: (event: unknown, values: CountryType | null) => void;
+  onMobileChange: (input: string) => void;
+  onAddressChange: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
 }
@@ -40,12 +40,12 @@ interface ContactInformationProps {
 const ContactInformation = ({
   isValidEmail,
   country,
-  handleFirstNameChange,
-  handleLastNameChange,
-  handleEmailChange,
-  handleCountryChange,
-  handleMobileChange,
-  handleAddressChange,
+  onFirstNameChange,
+  onLastNameChange,
+  onEmailChange,
+  onCountryChange,
+  onMobileChange,
+  onAddressChange,
 }: ContactInformationProps) => {
   const contactFormData = useAppSelector(getContactFormData);
   const alert = useAppSelector(getFormAlert);
@@ -67,7 +67,7 @@ const ContactInformation = ({
           <InputLabel htmlFor="outlined-vehicle-name">First Name</InputLabel>
           <OutlinedInput
             value={contactFormData.firstName}
-            onChange={handleFirstNameChange}
+            onChange={onFirstNameChange}
             error={Boolean(
               alert?.severity === 'error' && !contactFormData.firstName,
             )}
@@ -93,7 +93,7 @@ const ContactInformation = ({
           <InputLabel htmlFor="outlined-vehicle-name">Last Name</InputLabel>
           <OutlinedInput
             value={contactFormData.lastName}
-            onChange={handleLastNameChange}
+            onChange={onLastNameChange}
             type="text"
             label="Last Name"
           />
@@ -104,7 +104,7 @@ const ContactInformation = ({
           <InputLabel htmlFor="outlined-vehicle-name">Email</InputLabel>
           <OutlinedInput
             value={contactFormData.email}
-            onChange={handleEmailChange}
+            onChange={onEmailChange}
             error={Boolean(
               !isValidEmail &&
                 contactFormData.email &&
@@ -123,7 +123,7 @@ const ContactInformation = ({
           <InputLabel htmlFor="outlined-vehicle-name">Address</InputLabel>
           <OutlinedInput
             value={contactFormData.address}
-            onChange={handleAddressChange}
+            onChange={onAddressChange}
             type="text"
             label="Address"
           />
@@ -134,7 +134,7 @@ const ContactInformation = ({
           id="country-select"
           options={countryCodes}
           value={country}
-          onChange={handleCountryChange}
+          onChange={onCountryChange}
           autoHighlight
           componentsProps={{ popper: { style: { width: ' fit-content' } } }}
           getOptionLabel={(option) => option.label}
@@ -171,7 +171,7 @@ const ContactInformation = ({
       <Grid xs={8}>
         <NumericFormat
           onValueChange={(values) => {
-            handleMobileChange(values.formattedValue);
+            onMobileChange(values.formattedValue);
           }}
           isAllowed={undefined}
           error={Boolean(alert?.severity == 'error' && !contactFormData.mobile)}

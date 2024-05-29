@@ -16,12 +16,7 @@ import ContactSocials from './ContactSocials';
 import useContactForm from '~/hooks/useContactForm';
 
 import { useAppSelector, useAppDispatch } from '~/redux/store';
-import {
-  getFormAlert,
-  resetAlert,
-  resetContactForm,
-  setAlert,
-} from '~/redux/reducers/formSlice';
+import { getFormAlert, resetAlert, setAlert } from '~/redux/reducers/formSlice';
 
 interface ContactFormProps {
   open: boolean;
@@ -44,6 +39,7 @@ const ContactForm = ({ open, handleCloseForm }: ContactFormProps) => {
   const {
     isValidEmail,
     country,
+    handleResetForm,
     handleFirstNameChange,
     handleLastNameChange,
     handleEmailChange,
@@ -70,7 +66,7 @@ const ContactForm = ({ open, handleCloseForm }: ContactFormProps) => {
   };
 
   const onClose = () => {
-    dispatch(resetContactForm());
+    handleResetForm();
     handleCloseForm();
   };
 
@@ -79,8 +75,7 @@ const ContactForm = ({ open, handleCloseForm }: ContactFormProps) => {
       dispatch(
         setAlert({ message: 'New Contact Created!', severity: 'success' }),
       );
-      dispatch(resetContactForm());
-      handleCloseForm();
+      onClose();
     }
   };
 
@@ -114,21 +109,21 @@ const ContactForm = ({ open, handleCloseForm }: ContactFormProps) => {
             <ContactInformation
               isValidEmail={isValidEmail}
               country={country}
-              handleFirstNameChange={handleFirstNameChange}
-              handleLastNameChange={handleLastNameChange}
-              handleEmailChange={handleEmailChange}
-              handleCountryChange={handleCountryChange}
-              handleMobileChange={handleMobileChange}
-              handleAddressChange={handleAddressChange}
+              onFirstNameChange={handleFirstNameChange}
+              onLastNameChange={handleLastNameChange}
+              onEmailChange={handleEmailChange}
+              onCountryChange={handleCountryChange}
+              onMobileChange={handleMobileChange}
+              onAddressChange={handleAddressChange}
             />
             <Grid xs={12}>
               <Divider />
             </Grid>
             <ContactSocials
-              handleInstagramChange={handleInstagramChange}
-              handleFacebookchange={handleFacebookchange}
-              handleTwitterChange={handleTwitterChange}
-              handleTiktokChange={handleTiktokChange}
+              onInstagramchange={handleInstagramChange}
+              onFaceBookChange={handleFacebookchange}
+              onTwitterChange={handleTwitterChange}
+              onTiktokChange={handleTiktokChange}
             />
           </Grid>
           <Grid xs={12} mt={2} display="flex" justifyContent="end">

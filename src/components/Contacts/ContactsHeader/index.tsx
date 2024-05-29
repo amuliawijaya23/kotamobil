@@ -16,8 +16,8 @@ import { getContactsData } from '~/redux/reducers/contactsSlice';
 interface ContactsHeaderProps {
   numSelected: number;
   order: Order;
-  handleSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleRequestSort: (event: React.MouseEvent<unknown>) => void;
+  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onRequestSort: (event: React.MouseEvent<unknown>) => void;
 }
 
 const headCells = [
@@ -31,8 +31,8 @@ const headCells = [
 const ContactsHeader = ({
   numSelected,
   order,
-  handleSelectAllClick,
-  handleRequestSort,
+  onSelectAllClick,
+  onRequestSort,
 }: ContactsHeaderProps) => {
   const contacts = useAppSelector(getContactsData);
 
@@ -50,7 +50,7 @@ const ContactsHeader = ({
                 contacts.length > 0 &&
                 numSelected === contacts.length,
             )}
-            onChange={handleSelectAllClick}
+            onChange={onSelectAllClick}
             inputProps={{ 'aria-label': 'select all contacts' }}
           />
         </TableCell>
@@ -58,7 +58,7 @@ const ContactsHeader = ({
           <TableSortLabel
             active={true}
             direction={order}
-            onClick={handleRequestSort}
+            onClick={onRequestSort}
           >
             First Name
             <Box component="span" sx={visuallyHidden}>

@@ -5,10 +5,10 @@ import AddIcon from '@mui/icons-material/Add';
 
 interface ContactsToolbar {
   numSelected: number;
-  handleOpenForm: () => void;
+  onOpenForm: () => void;
 }
 
-const ContactsToolbar = ({ numSelected, handleOpenForm }: ContactsToolbar) => {
+const ContactsToolbar = ({ numSelected, onOpenForm }: ContactsToolbar) => {
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
@@ -54,7 +54,7 @@ const ContactsToolbar = ({ numSelected, handleOpenForm }: ContactsToolbar) => {
         </Tooltip>
       ) : (
         <Tooltip title="Add Contact">
-          <IconButton onClick={handleOpenForm} onMouseDown={handleMouseDown}>
+          <IconButton onClick={onOpenForm} onMouseDown={handleMouseDown}>
             <AddIcon />
           </IconButton>
         </Tooltip>

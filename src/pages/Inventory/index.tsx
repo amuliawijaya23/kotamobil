@@ -102,8 +102,8 @@ const Inventory = () => {
           <Toolbar />
           <Grid xs={12}>
             <InventoryToolbar
-              handleToggleFilter={handleToggleFilter}
-              handleToggleForm={handleToggleForm}
+              onToggleFilter={handleToggleFilter}
+              onToggleForm={handleToggleForm}
             />
             <Divider />
           </Grid>
@@ -132,8 +132,8 @@ const Inventory = () => {
           <Toolbar />
           <Grid xs={12}>
             <InventoryToolbar
-              handleToggleFilter={handleToggleFilter}
-              handleToggleForm={handleToggleForm}
+              onToggleFilter={handleToggleFilter}
+              onToggleForm={handleToggleForm}
             />
             <Divider />
           </Grid>

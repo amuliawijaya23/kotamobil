@@ -14,25 +14,25 @@ import { useAppSelector } from '~/redux/store';
 import { getContactFormData } from '~/redux/reducers/formSlice';
 
 interface ContactSocialsProps {
-  handleInstagramChange: (
+  onInstagramchange: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
-  handleFacebookchange: (
+  onFaceBookChange: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
-  handleTwitterChange: (
+  onTwitterChange: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
-  handleTiktokChange: (
+  onTiktokChange: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
 }
 
 const ContactSocials = ({
-  handleInstagramChange,
-  handleFacebookchange,
-  handleTwitterChange,
-  handleTiktokChange,
+  onInstagramchange,
+  onFaceBookChange,
+  onTwitterChange,
+  onTiktokChange,
 }: ContactSocialsProps) => {
   const contactFormData = useAppSelector(getContactFormData);
 
@@ -54,7 +54,7 @@ const ContactSocials = ({
             id="outlined-adornment-instagram"
             type="text"
             placeholder="Instagram"
-            onChange={handleInstagramChange}
+            onChange={onInstagramchange}
             value={contactFormData.instagram}
             startAdornment={
               <InputAdornment position="start">
@@ -70,7 +70,7 @@ const ContactSocials = ({
             id="outlined-adornment-facebook"
             type="text"
             placeholder="Facebook"
-            onChange={handleFacebookchange}
+            onChange={onFaceBookChange}
             value={contactFormData.facebook}
             startAdornment={
               <InputAdornment position="start">
@@ -86,7 +86,7 @@ const ContactSocials = ({
             id="outlined-adornment-instagram"
             type="text"
             placeholder="X"
-            onChange={handleTwitterChange}
+            onChange={onTwitterChange}
             value={contactFormData.twitter}
             startAdornment={
               <InputAdornment position="start">
@@ -102,7 +102,7 @@ const ContactSocials = ({
             id="outlined-adornment-instagram"
             type="text"
             placeholder="TikTok"
-            onChange={handleTiktokChange}
+            onChange={onTiktokChange}
             value={contactFormData.tiktok}
             startAdornment={
               <InputAdornment position="start">

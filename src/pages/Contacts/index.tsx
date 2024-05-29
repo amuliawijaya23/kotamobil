@@ -78,7 +78,7 @@ const Contacts = () => {
     setSelected(newSelected);
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
@@ -112,7 +112,7 @@ const Contacts = () => {
       <Box sx={{ width: '100%', height: '100vh' }}>
         <Paper sx={{ width: '100%', mb: 2 }}>
           <ContactsToolbar
-            handleOpenForm={handleOpenForm}
+            onOpenForm={handleOpenForm}
             numSelected={selected.length}
           />
           <TableContainer>
@@ -120,8 +120,8 @@ const Contacts = () => {
               <ContactsHeader
                 numSelected={selected.length}
                 order={order}
-                handleRequestSort={handleRequestSort}
-                handleSelectAllClick={handleSelectAllClick}
+                onRequestSort={handleRequestSort}
+                onSelectAllClick={handleSelectAllClick}
               />
               <TableBody>
                 {visibleRows &&

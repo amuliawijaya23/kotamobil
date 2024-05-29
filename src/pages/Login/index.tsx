@@ -64,7 +64,7 @@ const Login = () => {
               <Typography variant="h4" component="h1">
                 Sign In
               </Typography>
-              <ErrorAlert error={error} handleClearError={handleClearError} />
+              <ErrorAlert error={error} onClearError={handleClearError} />
             </Grid>
             <Grid xs={12}>
               <EmailInput
