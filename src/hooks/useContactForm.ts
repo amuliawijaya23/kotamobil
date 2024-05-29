@@ -93,6 +93,7 @@ const useContactForm = () => {
 
   const handleOnSave = async () => {
     try {
+      let success = false;
       const formData = { ...contactFormData };
 
       if (!formData.firstName || !formData.mobile) {
@@ -113,7 +114,9 @@ const useContactForm = () => {
       const response = await axios.post('/api/contact/add', formData);
 
       if (response.status == 200 && response.data) {
-        return dispatch(addContact(response.data));
+        dispatch(addContact(response.data));
+        success = true;
+        return success;
       }
     } catch (error) {
       console.log(error);

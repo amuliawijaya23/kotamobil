@@ -20,6 +20,7 @@ import {
   getFormAlert,
   resetAlert,
   resetContactForm,
+  setAlert,
 } from '~/redux/reducers/formSlice';
 
 interface ContactFormProps {
@@ -71,6 +72,16 @@ const ContactForm = ({ open, handleCloseForm }: ContactFormProps) => {
   const onClose = () => {
     dispatch(resetContactForm());
     handleCloseForm();
+  };
+
+  const onSave = async () => {
+    if (await handleOnSave()) {
+      dispatch(
+        setAlert({ message: 'New Contact Created!', severity: 'success' }),
+      );
+      dispatch(resetContactForm());
+      handleCloseForm();
+    }
   };
 
   return (
@@ -130,7 +141,7 @@ const ContactForm = ({ open, handleCloseForm }: ContactFormProps) => {
               Cancel
             </Button>
             <Button
-              onClick={handleOnSave}
+              onClick={onSave}
               onMouseDown={handleMouseDown}
               sx={{ width: 50 }}
             >
