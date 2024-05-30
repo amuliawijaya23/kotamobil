@@ -7,21 +7,40 @@ import {
   Button,
   ImageList,
   ImageListItem,
+  IconButton,
 } from '@mui/material';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
-import { useAppSelector } from '~/redux/store';
-import { getVehicleData } from '~/redux/reducers/vehicleSlice';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 import { useDropzone } from 'react-dropzone';
 
 interface VehicleImagesProps {
   images: File[] | null | undefined;
+  vehicleImages: { key: string; url: string }[] | null;
   onDrop: (acceptedFiles: File[] | undefined) => void;
+  onRemoveVehicleImages: (index: number) => void;
+  onRemoveUploadedImages: (index: number) => void;
 }
 
-const VehicleImages = ({ images, onDrop }: VehicleImagesProps) => {
-  const vehicle = useAppSelector(getVehicleData);
+const VehicleImages = ({
+  images,
+  vehicleImages,
+  onDrop,
+  onRemoveVehicleImages,
+  onRemoveUploadedImages,
+}: VehicleImagesProps) => {
+  const theme = useTheme();
+
+  const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
+
+  let imageListCol = 2;
+
+  if (isMdUp) {
+    imageListCol = 5;
+  }
 
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
@@ -39,36 +58,66 @@ const VehicleImages = ({ images, onDrop }: VehicleImagesProps) => {
         >
           Vehicle Images
         </Typography>
+
         <Divider />
       </Grid>
+
       <Grid xs={12}>
-        <ImageList cols={3}>
-          {!images && !vehicle?.images && (
-            <ImageListItem key={`image-placeholder`}>
-              <img
-                loading="lazy"
-                alt="img-placeholder"
-                srcSet={`./src/assets/placeholder-image.png`}
-                src={'./src/assets/placeholder-image.png'}
-              />
-            </ImageListItem>
-          )}
-          {vehicle &&
-            vehicle.images &&
-            vehicle.images.map((image, index) => (
-              <ImageListItem key={`vehicle-image-${index}`}>
-                <img loading="lazy" alt={image} srcSet={image} src={image} />
+        <ImageList cols={imageListCol} rowHeight={125}>
+          {vehicleImages &&
+            vehicleImages.map((image, index) => (
+              <ImageListItem
+                key={image.key}
+                sx={{
+                  position: 'relative',
+                }}
+              >
+                <img
+                  loading="lazy"
+                  alt={image.key}
+                  srcSet={image.url}
+                  src={image.url}
+                  style={{ height: 120 }}
+                />
+                <IconButton
+                  onClick={() => onRemoveVehicleImages(index)}
+                  sx={{ position: 'absolute', top: '1px', right: '1px' }}
+                >
+                  <RemoveCircleIcon />
+                </IconButton>
+              </ImageListItem>
+            ))}
+          {!vehicleImages ||
+            (vehicleImages.length === 0 && !images && (
+              <ImageListItem key={`image-placeholder`}>
+                <img
+                  loading="lazy"
+                  alt="img-placeholder"
+                  srcSet={`../src/assets/placeholder-image.png`}
+                  src={'../src/assets/placeholder-image.png'}
+                  style={{ height: 120 }}
+                />
               </ImageListItem>
             ))}
           {images &&
             images.map((image: File, index: number) => (
-              <ImageListItem key={`image-upload-${index}`}>
+              <ImageListItem
+                key={`image-upload-${index}`}
+                sx={{ position: 'relative' }}
+              >
                 <img
                   loading="lazy"
                   alt={`image-upload-${index}`}
                   srcSet={`${URL.createObjectURL(image)}`}
                   src={`${URL.createObjectURL(image)}`}
+                  style={{ height: 120 }}
                 />
+                <IconButton
+                  onClick={() => onRemoveUploadedImages(index)}
+                  sx={{ position: 'absolute', top: '1px', right: '1px' }}
+                >
+                  <RemoveCircleIcon />
+                </IconButton>
               </ImageListItem>
             ))}
         </ImageList>

@@ -60,8 +60,8 @@ const VehicleImages = ({ onOpenImages }: VehicleImagesProps) => {
                   <img
                     loading="lazy"
                     alt={`image`}
-                    srcSet={`${image}`}
-                    src={`${image}`}
+                    srcSet={`${image.url}`}
+                    src={`${image.url}`}
                     style={{
                       height: 240,
                       border: 'solid 1px',

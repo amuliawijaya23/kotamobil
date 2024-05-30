@@ -50,8 +50,8 @@ const VehicleImageStepper = ({
             <Card raised>
               <CardMedia
                 component="img"
-                src={vehicle.images[activeStep]}
-                srcSet={vehicle?.images[activeStep]}
+                src={vehicle.images[activeStep].url}
+                srcSet={vehicle?.images[activeStep].url}
                 sx={{
                   height: {
                     xs: 400,

@@ -46,6 +46,15 @@ const useVehicleForm = () => {
   const vehicleFormData = useAppSelector(getVehicleFormData);
 
   const [images, setImages] = useState<File[] | null | undefined>(null);
+
+  const [vehicleImages, setVehicleImages] = useState<
+    { key: string; url: string }[] | null
+  >(vehicle?.images || null);
+
+  const [removedImages, setRemovedImages] = useState<
+    { key: string; url: string }[] | null
+  >(null);
+
   const [contact, setContact] = useState<ContactData | null>(null);
 
   const initializeForm = useCallback(() => {
@@ -71,6 +80,7 @@ const useVehicleForm = () => {
         vehicle.specification.length > 0 &&
         dispatch(setSpecification(vehicle.specification));
       dispatch(setCondition(vehicle.condition));
+      vehicle.images && setVehicleImages(vehicle.images);
       if (vehicle.condition === 'Used') {
         vehicle.plateNumber && dispatch(setPlateNumber(vehicle.plateNumber));
         vehicle.taxDate &&
@@ -88,14 +98,12 @@ const useVehicleForm = () => {
     return () => {
       dispatch(resetVehicleForm());
       setImages(null);
+      setVehicleImages(null);
+      setRemovedImages(null);
     };
   }, [vehicle, contacts, dispatch]);
 
   useEffect(initializeForm, [initializeForm]);
-
-  const handleBuyerChange = (_event: unknown, input: ContactData | null) => {
-    setContact(input);
-  };
 
   const onDrop = useCallback(
     (acceptedFiles: File[] | undefined) => {
@@ -135,6 +143,29 @@ const useVehicleForm = () => {
     [vehicle, images, dispatch],
   );
 
+  const handleRemoveVehicleImages = (index: number) => {
+    if (vehicleImages) {
+      const newVehicleImages = [...vehicleImages];
+      const newRemovedImages = removedImages ? [...removedImages] : [];
+      newRemovedImages.push(vehicleImages[index]);
+      setRemovedImages(newRemovedImages);
+      newVehicleImages.splice(index, 1);
+      setVehicleImages(newVehicleImages);
+    }
+  };
+
+  const handleRemoveUploadedImages = (index: number) => {
+    if (images) {
+      const newImages = [...images];
+      newImages.splice(index, 1);
+      setImages(newImages);
+    }
+  };
+
+  const handleBuyerChange = (_event: unknown, input: ContactData | null) => {
+    setContact(input);
+  };
+
   const clearVehicleForm = () => {
     if (vehicle) {
       initializeForm();
@@ -142,6 +173,7 @@ const useVehicleForm = () => {
       dispatch(resetVehicleForm());
     }
     setImages(null);
+    setRemovedImages(null);
   };
 
   const handleOnSave = async () => {
@@ -184,6 +216,8 @@ const useVehicleForm = () => {
         (data.plateNumber = vehicleFormData.plateNumber) &&
         (data.taxDate = JSON.parse(vehicleFormData.taxDate));
 
+      removedImages && (data.images = removedImages);
+
       formData.set('data', JSON.stringify(data));
 
       if (images) {
@@ -222,8 +256,11 @@ const useVehicleForm = () => {
 
   return {
     images,
+    vehicleImages,
     contact,
     onDrop,
+    handleRemoveVehicleImages,
+    handleRemoveUploadedImages,
     handleBuyerChange,
     handleOnSave,
     clearVehicleForm,

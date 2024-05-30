@@ -46,8 +46,11 @@ interface VehicleFormProps {
 const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
   const {
     images,
+    vehicleImages,
     contact,
     onDrop,
+    handleRemoveVehicleImages,
+    handleRemoveUploadedImages,
     handleBuyerChange,
     handleOnSave,
     clearVehicleForm,
@@ -150,6 +153,7 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
   const onClose = () => {
     onCloseForm();
     clearVehicleForm();
+    setStep(0);
   };
 
   const handleClearAlert = () => {
@@ -259,7 +263,15 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
             />
           )}
           {step === 1 && <VehicleDetails />}
-          {step === 2 && <VehicleImages images={images} onDrop={onDrop} />}
+          {step === 2 && (
+            <VehicleImages
+              images={images}
+              vehicleImages={vehicleImages}
+              onDrop={onDrop}
+              onRemoveVehicleImages={handleRemoveVehicleImages}
+              onRemoveUploadedImages={handleRemoveUploadedImages}
+            />
+          )}
           {step === 3 && <VehicleSpecifications />}
         </Grid>
       </Drawer>

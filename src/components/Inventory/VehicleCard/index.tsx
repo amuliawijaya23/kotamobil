@@ -28,7 +28,7 @@ const VehicleCard = ({ vehicle }: { vehicle: VehicleData }) => {
           component="img"
           src={
             vehicle.images && vehicle.images.length > 0
-              ? vehicle.images[0]
+              ? vehicle.images[0].url
               : './src/assets/coming-soon.jpg'
           }
           height="240"

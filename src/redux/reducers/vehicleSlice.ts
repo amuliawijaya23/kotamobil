@@ -20,7 +20,7 @@ export interface VehicleData {
   ownerId: string;
   buyerId?: string;
   dateAdded: Date;
-  images?: [string];
+  images?: [{ key: string; url: string }];
   plateNumber?: string;
   specification?: [string];
   description?: string;
