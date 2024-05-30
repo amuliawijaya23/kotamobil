@@ -105,7 +105,7 @@ const useContactForm = () => {
       let success = false;
       const formData = { ...contactFormData };
 
-      if (!formData.firstName || !formData.mobile) {
+      if (!formData.firstName || formData.mobile.length > 10) {
         return dispatch(
           setAlert({
             message: 'Missing required parameters',

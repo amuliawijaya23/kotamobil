@@ -108,7 +108,7 @@ const Contacts = () => {
   return (
     <>
       <Toolbar />
-      <ContactForm open={openForm} handleCloseForm={handleCloseForm} />
+      <ContactForm open={openForm} onCloseForm={handleCloseForm} />
       <Box sx={{ width: '100%', height: '100vh' }}>
         <Paper sx={{ width: '100%', mb: 2 }}>
           <ContactsToolbar

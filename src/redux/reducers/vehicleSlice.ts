@@ -18,6 +18,7 @@ export interface VehicleData {
   taxDate?: Date;
   price: number;
   ownerId: string;
+  buyerId?: string;
   dateAdded: Date;
   images?: [string];
   plateNumber?: string;

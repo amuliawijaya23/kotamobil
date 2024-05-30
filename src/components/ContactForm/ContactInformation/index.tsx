@@ -160,6 +160,11 @@ const ContactInformation = ({
               {...params}
               label="Country"
               size="small"
+              helperText={
+                alert?.severity === 'error' &&
+                contactFormData.mobile.length < 10 &&
+                'Missing required parameters'
+              }
               inputProps={{
                 ...params.inputProps,
                 autoComplete: 'new-password', // disable autocomplete and autofill
@@ -174,15 +179,17 @@ const ContactInformation = ({
             onMobileChange(values.formattedValue);
           }}
           isAllowed={undefined}
-          error={Boolean(alert?.severity == 'error' && !contactFormData.mobile)}
+          error={Boolean(
+            alert?.severity === 'error' && contactFormData.mobile.length < 10,
+          )}
           helperText={
-            alert?.severity == 'error' && !contactFormData.mobile
+            alert?.severity == 'error' && contactFormData.mobile.length < 10
               ? alert.message
               : 'Required'
           }
           FormHelperTextProps={{
             error: Boolean(
-              alert?.severity == 'error' && !contactFormData.mobile,
+              alert?.severity === 'error' && contactFormData.mobile.length < 10,
             ),
           }}
           value={contactFormData.mobile}

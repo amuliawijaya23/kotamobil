@@ -62,7 +62,7 @@ const Vehicle = () => {
 
   return (
     <>
-      <VehicleForm open={open} handleCloseForm={handleCloseForm} />
+      <VehicleForm open={open} onCloseForm={handleCloseForm} />
       <VehicleImageStepper
         open={openImages}
         activeStep={activeStep}

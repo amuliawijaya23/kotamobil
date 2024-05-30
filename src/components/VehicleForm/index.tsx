@@ -40,11 +40,18 @@ const process: string[] = [
 
 interface VehicleFormProps {
   open: boolean;
-  handleCloseForm: () => void;
+  onCloseForm: () => void;
 }
 
-const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
-  const { images, onDrop, handleOnSave, clearVehicleForm } = useVehicleForm();
+const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
+  const {
+    images,
+    contact,
+    onDrop,
+    handleBuyerChange,
+    handleOnSave,
+    clearVehicleForm,
+  } = useVehicleForm();
 
   const dispatch = useAppDispatch();
 
@@ -79,7 +86,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
 
         if (
           vehicleFormData.status === 'Sold' &&
-          (!vehicleFormData.soldPrice || !vehicleFormData.dateSold)
+          (!vehicleFormData.soldPrice || !vehicleFormData.dateSold || !contact)
         ) {
           dispatch(
             setAlert({
@@ -140,9 +147,9 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
     setStep((prev) => prev - 1);
   };
 
-  const handleOnCancel = () => {
+  const onClose = () => {
+    onCloseForm();
     clearVehicleForm();
-    handleCloseForm();
   };
 
   const handleClearAlert = () => {
@@ -157,8 +164,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
           severity: 'success',
         }),
       );
-      clearVehicleForm();
-      handleCloseForm();
+      onCloseForm();
       setStep(0);
     }
   };
@@ -185,7 +191,8 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
       <Drawer
         anchor="right"
         open={open}
-        onClose={handleCloseForm}
+        onClose={onClose}
+        slotProps={{ backdrop: { invisible: true } }}
         PaperProps={{
           sx: { width: { xs: '60%', sm: '50%', lg: '40%', xl: '30%' } },
         }}
@@ -200,7 +207,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
           >
             {step === 0 && (
               <Button
-                onClick={handleOnCancel}
+                onClick={onClose}
                 onMouseDown={handleMouseDown}
                 variant="text"
                 color="error"
@@ -245,7 +252,12 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
               </Button>
             )}
           </Grid>
-          {step === 0 && <VehicleStatus />}
+          {step === 0 && (
+            <VehicleStatus
+              contact={contact}
+              onBuyerChange={handleBuyerChange}
+            />
+          )}
           {step === 1 && <VehicleDetails />}
           {step === 2 && <VehicleImages images={images} onDrop={onDrop} />}
           {step === 3 && <VehicleSpecifications />}

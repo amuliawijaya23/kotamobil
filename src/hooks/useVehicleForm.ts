@@ -1,9 +1,11 @@
+import type { ContactData } from '~/redux/reducers/contactsSlice';
 import axios, { AxiosError } from 'axios';
 
 import { useState, useCallback, useEffect } from 'react';
 
 import { useAppDispatch, useAppSelector } from '~/redux/store';
 import { getVehicleData } from '~/redux/reducers/vehicleSlice';
+import { getContactsData } from '~/redux/reducers/contactsSlice';
 import {
   addVehicleToInventory,
   updateVehicleFromInventory,
@@ -40,9 +42,11 @@ const useVehicleForm = () => {
   const dispatch = useAppDispatch();
 
   const vehicle = useAppSelector(getVehicleData);
+  const contacts = useAppSelector(getContactsData);
   const vehicleFormData = useAppSelector(getVehicleFormData);
 
   const [images, setImages] = useState<File[] | null | undefined>(null);
+  const [contact, setContact] = useState<ContactData | null>(null);
 
   const initializeForm = useCallback(() => {
     if (vehicle) {
@@ -76,6 +80,8 @@ const useVehicleForm = () => {
         vehicle.dateSold &&
           dispatch(setDateSold(JSON.stringify(vehicle.dateSold)));
         vehicle.soldPrice && dispatch(setSoldPrice(vehicle.soldPrice));
+        vehicle.buyerId &&
+          setContact(contacts?.find((c) => c._id === vehicle.buyerId) || null);
       }
     }
 
@@ -83,17 +89,20 @@ const useVehicleForm = () => {
       dispatch(resetVehicleForm());
       setImages(null);
     };
-  }, [vehicle, dispatch]);
+  }, [vehicle, contacts, dispatch]);
 
   useEffect(initializeForm, [initializeForm]);
+
+  const handleBuyerChange = (_event: unknown, input: ContactData | null) => {
+    setContact(input);
+  };
 
   const onDrop = useCallback(
     (acceptedFiles: File[] | undefined) => {
       if (acceptedFiles) {
         let currentImagesLength = 0;
-        if (vehicle?.images) {
-          currentImagesLength += vehicle.images.length;
-        }
+
+        vehicle?.images && (currentImagesLength += vehicle?.images?.length);
 
         if (images) {
           currentImagesLength += images.length;
@@ -138,7 +147,6 @@ const useVehicleForm = () => {
   const handleOnSave = async () => {
     try {
       let success = false;
-
       const formData = new FormData();
       const data: Record<string, unknown> = {};
 
@@ -169,7 +177,8 @@ const useVehicleForm = () => {
 
       vehicleFormData.status === 'Sold' &&
         (data.dateSold = JSON.parse(vehicleFormData.dateSold)) &&
-        (data.soldPrice = vehicleFormData.soldPrice);
+        (data.soldPrice = vehicleFormData.soldPrice) &&
+        (data.buyerId = contact?._id);
 
       vehicleFormData.condition === 'Used' &&
         (data.plateNumber = vehicleFormData.plateNumber) &&
@@ -189,12 +198,14 @@ const useVehicleForm = () => {
         ? await axios.post(`/api/vehicle/update/${vehicle._id}`, formData)
         : await axios.post('/api/vehicle/add', formData);
 
-      vehicle
-        ? dispatch(updateVehicleFromInventory(response.data))
-        : dispatch(addVehicleToInventory(response.data));
+      if (response.status === 200 && response.data) {
+        vehicle
+          ? dispatch(updateVehicleFromInventory(response.data))
+          : dispatch(addVehicleToInventory(response.data));
 
-      success = true;
-      clearVehicleForm();
+        success = true;
+        clearVehicleForm();
+      }
       return success;
     } catch (error) {
       console.log(error);
@@ -211,7 +222,9 @@ const useVehicleForm = () => {
 
   return {
     images,
+    contact,
     onDrop,
+    handleBuyerChange,
     handleOnSave,
     clearVehicleForm,
   };

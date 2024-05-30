@@ -20,7 +20,7 @@ import { getFormAlert, resetAlert, setAlert } from '~/redux/reducers/formSlice';
 
 interface ContactFormProps {
   open: boolean;
-  handleCloseForm: () => void;
+  onCloseForm: () => void;
 }
 
 const style = {
@@ -35,7 +35,7 @@ const style = {
   p: 4,
 };
 
-const ContactForm = ({ open, handleCloseForm }: ContactFormProps) => {
+const ContactForm = ({ open, onCloseForm }: ContactFormProps) => {
   const {
     isValidEmail,
     country,
@@ -67,16 +67,17 @@ const ContactForm = ({ open, handleCloseForm }: ContactFormProps) => {
 
   const onClose = () => {
     handleResetForm();
-    handleCloseForm();
+    onCloseForm();
   };
 
   const onSave = async () => {
-    if (await handleOnSave()) {
-      dispatch(
-        setAlert({ message: 'New Contact Created!', severity: 'success' }),
-      );
-      onClose();
-    }
+    await handleOnSave();
+    // if (await handleOnSave()) {
+    //   dispatch(
+    //     setAlert({ message: 'New Contact Created!', severity: 'success' }),
+    //   );
+    //   onClose();
+    // }
   };
 
   return (

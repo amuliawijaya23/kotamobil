@@ -144,7 +144,7 @@ const Inventory = () => {
           ))}
         </Grid>
       </Box>
-      <VehicleForm open={openForm} handleCloseForm={handleCloseForm} />
+      <VehicleForm open={openForm} onCloseForm={handleCloseForm} />
     </Box>
   );
 };
