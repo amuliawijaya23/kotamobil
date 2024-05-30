@@ -16,12 +16,13 @@ import { getVehicleData } from '~/redux/reducers/vehicleSlice';
 import { useDropzone } from 'react-dropzone';
 
 interface VehicleImagesProps {
-  images: File[] | undefined | null;
+  images: File[] | null | undefined;
   onDrop: (acceptedFiles: File[] | undefined) => void;
 }
 
 const VehicleImages = ({ images, onDrop }: VehicleImagesProps) => {
   const vehicle = useAppSelector(getVehicleData);
+
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
     noClick: true,
@@ -60,7 +61,7 @@ const VehicleImages = ({ images, onDrop }: VehicleImagesProps) => {
               </ImageListItem>
             ))}
           {images &&
-            images.map((image, index) => (
+            images.map((image: File, index: number) => (
               <ImageListItem key={`image-upload-${index}`}>
                 <img
                   loading="lazy"

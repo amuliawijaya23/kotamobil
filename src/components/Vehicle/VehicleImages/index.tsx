@@ -13,10 +13,10 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
 interface VehicleImagesProps {
-  handleOpenImages: (index: number) => void;
+  onOpenImages: (index: number) => void;
 }
 
-const VehicleImages = ({ handleOpenImages }: VehicleImagesProps) => {
+const VehicleImages = ({ onOpenImages }: VehicleImagesProps) => {
   const vehicle = useAppSelector(getVehicleData);
 
   const theme = useTheme();
@@ -55,7 +55,7 @@ const VehicleImages = ({ handleOpenImages }: VehicleImagesProps) => {
                 <ImageListItem
                   key={`vehicle-display-image-${index}`}
                   sx={{ cursor: 'pointer' }}
-                  onClick={() => handleOpenImages(index)}
+                  onClick={() => onOpenImages(index)}
                 >
                   <img
                     loading="lazy"

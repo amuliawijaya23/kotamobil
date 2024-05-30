@@ -4,10 +4,10 @@ import CloseIcon from '@mui/icons-material/Close';
 
 interface ErrorAlertProps {
   error: string;
-  handleClearError: () => void;
+  onClearError: () => void;
 }
 
-const ErrorAlert = ({ error, handleClearError }: ErrorAlertProps) => {
+const ErrorAlert = ({ error, onClearError }: ErrorAlertProps) => {
   const handleMouseDownClose = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
@@ -22,7 +22,7 @@ const ErrorAlert = ({ error, handleClearError }: ErrorAlertProps) => {
             aria-label="close alert"
             color="inherit"
             size="small"
-            onClick={handleClearError}
+            onClick={onClearError}
             onMouseDown={handleMouseDownClose}
           >
             <CloseIcon fontSize="inherit" />

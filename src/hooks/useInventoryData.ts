@@ -8,6 +8,7 @@ import { getSession } from '~/redux/reducers/userSlice';
 import {
   setInventoryData,
   setQueryData,
+  resetInventory,
 } from '~/redux/reducers/inventorySlice';
 
 const useInventoryData = () => {
@@ -32,7 +33,11 @@ const useInventoryData = () => {
 
   useEffect(() => {
     getUserInventory();
-  }, [getUserInventory]);
+
+    return () => {
+      dispatch(resetInventory());
+    };
+  }, [dispatch, getUserInventory]);
 };
 
 export default useInventoryData;

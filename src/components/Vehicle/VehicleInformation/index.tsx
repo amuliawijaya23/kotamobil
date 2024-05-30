@@ -5,9 +5,14 @@ import { format } from 'date-fns/format';
 
 import { useAppSelector } from '~/redux/store';
 import { getVehicleData } from '~/redux/reducers/vehicleSlice';
+import { getContactsData } from '~/redux/reducers/contactsSlice';
 
 const VehicleInformation = () => {
   const vehicle = useAppSelector(getVehicleData);
+  const contacts = useAppSelector(getContactsData);
+  const customerData = vehicle?.sold
+    ? contacts?.find((c) => c._id === vehicle.buyerId)
+    : null;
 
   return (
     <>
@@ -105,10 +110,21 @@ const VehicleInformation = () => {
           <b>Assembly:</b> {vehicle?.assembly}
         </Typography>
       </Grid>
+
+      {vehicle?.sold && vehicle?.buyerId && (
+        <Grid xs={12}>
+          <Typography variant="subtitle2" component="p">
+            <b>Buyer:</b> {customerData?.firstName}
+            {customerData?.lastName ? ` ${customerData.lastName}` : ''}
+          </Typography>
+          <Typography variant="subtitle2" component="p">
+            <b>Mobile:</b> {customerData?.mobile}
+          </Typography>
+        </Grid>
+      )}
       <Grid xs={12}>
         <Divider />
       </Grid>
-
       <Grid xs={6}>
         <Typography variant="subtitle2" component="p">
           <b>Make:</b> {vehicle?.make}

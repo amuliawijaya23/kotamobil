@@ -15,8 +15,14 @@ import VehicleStatus from './VehicleStatus';
 import VehicleDetails from './VehicleDetails';
 import VehicleSpecifications from './VehicleSpecifications';
 
-import { useAppSelector } from '~/redux/store';
+import { useAppSelector, useAppDispatch } from '~/redux/store';
 import { getVehicleData } from '~/redux/reducers/vehicleSlice';
+import {
+  getVehicleFormData,
+  getFormAlert,
+  setAlert,
+  resetAlert,
+} from '~/redux/reducers/formSlice';
 
 import useVehicleForm from '~/hooks/useVehicleForm';
 
@@ -34,70 +40,26 @@ const process: string[] = [
 
 interface VehicleFormProps {
   open: boolean;
-  handleCloseForm: () => void;
+  onCloseForm: () => void;
 }
 
-const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
+const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
   const {
-    error,
-    name,
     images,
-    status,
-    dateAdded,
-    dateSold,
-    price,
-    marketPrice,
-    purchasePrice,
-    soldPrice,
-    condition,
-    plateNumber,
-    taxDate,
-    vin,
-    make,
-    model,
-    assembly,
-    year,
-    odometer,
-    color,
-    transmission,
-    fuelType,
-    description,
-    specification,
-    setError,
-    handleClearError,
+    contact,
     onDrop,
+    handleBuyerChange,
     handleOnSave,
-    handleVehicleNameChange,
-    handleStatusChange,
-    handleDateAddedChange,
-    handleDateSoldChange,
-    handlePriceChange,
-    handleMarketPriceChange,
-    handlePurchasePriceChange,
-    handleSoldPriceChange,
-    handleConditionChange,
-    handlePlateNumberChange,
-    handleTaxDateChange,
-    handleVinChange,
-    handleMakeChange,
-    handleModelChange,
-    handleAssemblyChange,
-    handleYearChange,
-    handleOdometerChange,
-    handleColorChange,
-    handleTransmissionChange,
-    handleFuelTypeChange,
-    handleDescriptionChange,
-    handleSpecificationChange,
-    handleAddSpecification,
-    handleRemoveSpecification,
     clearVehicleForm,
   } = useVehicleForm();
 
+  const dispatch = useAppDispatch();
+
   const vehicle = useAppSelector(getVehicleData);
+  const vehicleFormData = useAppSelector(getVehicleFormData);
+  const alert = useAppSelector(getFormAlert);
 
   const [step, setStep] = useState<number>(0);
-  const [alert, setAlert] = useState<string>('');
 
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -106,40 +68,72 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
   const handleNextStep = () => {
     switch (process[step]) {
       case VEHICLE_STATUS_AND_PRICING: {
-        if (!name || !status || !dateAdded || !price || !condition) {
-          setError('Missing required parameter');
+        if (
+          !vehicleFormData.name ||
+          !vehicleFormData.status ||
+          !vehicleFormData.dateAdded ||
+          !vehicleFormData.price ||
+          !vehicleFormData.condition
+        ) {
+          dispatch(
+            setAlert({
+              message: 'Missing required parameter',
+              severity: 'error',
+            }),
+          );
           break;
         }
 
-        if (status === 'Sold' && (!soldPrice || !dateSold)) {
-          setError('Missing required parameter');
+        if (
+          vehicleFormData.status === 'Sold' &&
+          (!vehicleFormData.soldPrice || !vehicleFormData.dateSold || !contact)
+        ) {
+          dispatch(
+            setAlert({
+              message: 'Missing required parameter',
+              severity: 'error',
+            }),
+          );
           break;
         }
 
-        if (condition === 'Used' && (!plateNumber || !taxDate)) {
-          setError('Missing required parameter');
+        if (
+          vehicleFormData.condition === 'Used' &&
+          (!vehicleFormData.plateNumber || !vehicleFormData.taxDate)
+        ) {
+          dispatch(
+            setAlert({
+              message: 'Missing required parameter',
+              severity: 'error',
+            }),
+          );
           break;
         }
         setStep((prev) => prev + 1);
-        handleClearError();
+        dispatch(resetAlert());
         break;
       }
       case VEHICLE_DETAILS: {
         if (
-          !vin ||
-          !make ||
-          !model ||
-          !assembly ||
-          !odometer ||
-          !color ||
-          !transmission ||
-          !fuelType
+          !vehicleFormData.vin ||
+          !vehicleFormData.make ||
+          !vehicleFormData.model ||
+          !vehicleFormData.assembly ||
+          !vehicleFormData.odometer ||
+          !vehicleFormData.color ||
+          !vehicleFormData.transmission ||
+          !vehicleFormData.fuelType
         ) {
-          setError('Missing required Parameter');
+          dispatch(
+            setAlert({
+              message: 'Missing required parameter',
+              severity: 'error',
+            }),
+          );
           break;
         }
         setStep((prev) => prev + 1);
-        handleClearError();
+        dispatch(resetAlert());
         break;
       }
       case VEHICLE_IMAGES: {
@@ -153,20 +147,24 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
     setStep((prev) => prev - 1);
   };
 
-  const handleOnCancel = () => {
+  const onClose = () => {
+    onCloseForm();
     clearVehicleForm();
-    handleCloseForm();
   };
 
   const handleClearAlert = () => {
-    setAlert('');
+    dispatch(resetAlert());
   };
 
   const onSave = async () => {
     if (await handleOnSave()) {
-      clearVehicleForm();
-      setAlert(vehicle ? 'Vehicle Updated!' : 'Vehicle Created!');
-      handleCloseForm();
+      dispatch(
+        setAlert({
+          message: vehicle ? 'Vehicle Updated!' : 'Vehicle Created!',
+          severity: 'success',
+        }),
+      );
+      onCloseForm();
       setStep(0);
     }
   };
@@ -174,30 +172,27 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
   return (
     <>
       <Snackbar
-        open={Boolean(error || alert)}
+        open={Boolean(alert)}
         autoHideDuration={6000}
-        onClose={error ? handleClearError : handleClearAlert}
+        onClose={handleClearAlert}
         action={
-          <IconButton
-            size="small"
-            color="inherit"
-            onClick={error ? handleClearError : handleClearAlert}
-          >
+          <IconButton size="small" color="inherit" onClick={handleClearAlert}>
             <CloseIcon />
           </IconButton>
         }
       >
         <Alert
-          onClose={error ? handleClearError : handleClearAlert}
-          severity={error ? 'error' : 'success'}
+          onClose={handleClearAlert}
+          severity={alert?.severity === 'error' ? 'error' : 'success'}
         >
-          {error ? error : alert}
+          {alert?.message}
         </Alert>
       </Snackbar>
       <Drawer
         anchor="right"
         open={open}
-        onClose={handleCloseForm}
+        onClose={onClose}
+        slotProps={{ backdrop: { invisible: true } }}
         PaperProps={{
           sx: { width: { xs: '60%', sm: '50%', lg: '40%', xl: '30%' } },
         }}
@@ -212,7 +207,7 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
           >
             {step === 0 && (
               <Button
-                onClick={handleOnCancel}
+                onClick={onClose}
                 onMouseDown={handleMouseDown}
                 variant="text"
                 color="error"
@@ -259,65 +254,13 @@ const VehicleForm = ({ open, handleCloseForm }: VehicleFormProps) => {
           </Grid>
           {step === 0 && (
             <VehicleStatus
-              error={error}
-              name={name}
-              status={status}
-              dateAdded={dateAdded}
-              dateSold={dateSold}
-              price={price}
-              marketPrice={marketPrice}
-              purchasePrice={purchasePrice}
-              soldPrice={soldPrice}
-              condition={condition}
-              plateNumber={plateNumber}
-              taxDate={taxDate}
-              handleVehicleNameChange={handleVehicleNameChange}
-              handleStatusChange={handleStatusChange}
-              handleDateAddedChange={handleDateAddedChange}
-              handleDateSoldChange={handleDateSoldChange}
-              handlePriceChange={handlePriceChange}
-              handleMarketPriceChange={handleMarketPriceChange}
-              handlePurchasePriceChange={handlePurchasePriceChange}
-              handleSoldPriceChange={handleSoldPriceChange}
-              handleConditionChange={handleConditionChange}
-              handlePlateNumberChange={handlePlateNumberChange}
-              handleTaxDateChange={handleTaxDateChange}
+              contact={contact}
+              onBuyerChange={handleBuyerChange}
             />
           )}
-          {step === 1 && (
-            <VehicleDetails
-              error={error}
-              vin={vin}
-              make={make}
-              model={model}
-              assembly={assembly}
-              year={year}
-              odometer={odometer}
-              color={color}
-              transmission={transmission}
-              fuelType={fuelType}
-              description={description}
-              handleVinChange={handleVinChange}
-              handleMakeChange={handleMakeChange}
-              handleModelChange={handleModelChange}
-              handleAssemblyChange={handleAssemblyChange}
-              handleYearChange={handleYearChange}
-              handleOdometerChange={handleOdometerChange}
-              handleColorChange={handleColorChange}
-              handleTransmissionChange={handleTransmissionChange}
-              handleFuelTypeChange={handleFuelTypeChange}
-              handleDescriptionChange={handleDescriptionChange}
-            />
-          )}
+          {step === 1 && <VehicleDetails />}
           {step === 2 && <VehicleImages images={images} onDrop={onDrop} />}
-          {step === 3 && (
-            <VehicleSpecifications
-              specification={specification}
-              handleSpecificationChange={handleSpecificationChange}
-              handleAddSpecification={handleAddSpecification}
-              handleRemoveSpecification={handleRemoveSpecification}
-            />
-          )}
+          {step === 3 && <VehicleSpecifications />}
         </Grid>
       </Drawer>
     </>

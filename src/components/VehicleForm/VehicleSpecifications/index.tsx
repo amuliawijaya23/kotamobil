@@ -5,7 +5,6 @@ import {
   Unstable_Grid2 as Grid,
   FormControl,
   Tooltip,
-  FormHelperText,
   InputLabel,
   OutlinedInput,
   IconButton,
@@ -14,22 +13,38 @@ import {
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 
-interface VehicleSpecificationsProps {
-  specification: string[];
-  handleSpecificationChange: (
+import { useAppSelector, useAppDispatch } from '~/redux/store';
+import {
+  getVehicleFormData,
+  setSpecification,
+} from '~/redux/reducers/formSlice';
+
+const VehicleSpecifications = () => {
+  const vehicleFormData = useAppSelector(getVehicleFormData);
+
+  const dispatch = useAppDispatch();
+
+  const handleSpecificationChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     index: number,
-  ) => void;
-  handleAddSpecification: () => void;
-  handleRemoveSpecification: (index: number) => void;
-}
+  ) => {
+    const specification = [...vehicleFormData.specification];
+    specification[index] = event.target.value;
+    dispatch(setSpecification(specification));
+  };
 
-const VehicleSpecifications = ({
-  specification,
-  handleSpecificationChange,
-  handleAddSpecification,
-  handleRemoveSpecification,
-}: VehicleSpecificationsProps) => {
+  const handleAddSpecification = () => {
+    const specification = [...vehicleFormData.specification];
+    specification.push('');
+    dispatch(setSpecification(specification));
+  };
+
+  const handleRemoveSpecification = (index: number) => {
+    const specification = [...vehicleFormData.specification];
+    specification.splice(index, 1);
+    dispatch(setSpecification(specification));
+  };
+
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
@@ -72,7 +87,7 @@ const VehicleSpecifications = ({
           specifications.
         </Typography>
       </Grid>
-      {specification.map((spec, index) => (
+      {vehicleFormData.specification.map((spec, index) => (
         <Grid key={`specification-form-${index}`} xs={12} sm={6}>
           <Box
             sx={{
@@ -91,15 +106,17 @@ const VehicleSpecifications = ({
                 label="Specification"
               />
             </FormControl>
-            <IconButton
-              onClick={() => handleRemoveSpecification(index)}
-              onMouseDown={handleMouseDown}
-              edge="end"
-              size="small"
-              color="inherit"
-            >
-              <RemoveCircleOutlineIcon />
-            </IconButton>
+            <Tooltip title="Remove specification">
+              <IconButton
+                onClick={() => handleRemoveSpecification(index)}
+                onMouseDown={handleMouseDown}
+                edge="end"
+                size="small"
+                color="inherit"
+              >
+                <RemoveCircleOutlineIcon />
+              </IconButton>
+            </Tooltip>
           </Box>
         </Grid>
       ))}

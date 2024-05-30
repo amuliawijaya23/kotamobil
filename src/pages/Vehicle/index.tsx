@@ -62,13 +62,13 @@ const Vehicle = () => {
 
   return (
     <>
-      <VehicleForm open={open} handleCloseForm={handleCloseForm} />
+      <VehicleForm open={open} onCloseForm={handleCloseForm} />
       <VehicleImageStepper
         open={openImages}
         activeStep={activeStep}
-        handleNextActiveStep={handleNextActiveStep}
-        handlePrevActiveStep={handlePrevActiveStep}
-        handleOnClose={handleCloseImages}
+        onNext={handleNextActiveStep}
+        onPrev={handlePrevActiveStep}
+        onClose={handleCloseImages}
       />
       <Toolbar />
       <Grid container p={2} spacing={2} display="flex" justifyContent="center">
@@ -103,7 +103,7 @@ const Vehicle = () => {
             <Divider />
             <CardContent>
               <Grid container spacing={2}>
-                <VehicleImages handleOpenImages={handleOpenImages} />
+                <VehicleImages onOpenImages={handleOpenImages} />
               </Grid>
             </CardContent>
           </Card>

@@ -3,15 +3,19 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
 import userReducer from './reducers/userSlice';
 import themeReducer from './reducers/themeSlice';
+import contactsReducer from './reducers/contactsSlice';
 import inventoryReducer from './reducers/inventorySlice';
 import vehicleReducer from './reducers/vehicleSlice';
+import formReducer from './reducers/formSlice';
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
     theme: themeReducer,
+    contacts: contactsReducer,
     inventory: inventoryReducer,
     vehicle: vehicleReducer,
+    form: formReducer,
   },
   devTools: true,
 });
