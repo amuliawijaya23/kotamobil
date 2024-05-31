@@ -87,6 +87,7 @@ const useAuthData = () => {
       dispatch(login(response.data));
       navigate('/', { replace: true });
     } catch (error) {
+      console.error('Error occured while registering user:', error);
       if (error instanceof AxiosError) {
         return setError(error?.response?.data?.message);
       }
@@ -119,6 +120,7 @@ const useAuthData = () => {
       dispatch(login(userData));
       navigate('/', { replace: true });
     } catch (error) {
+      console.error('Error occured while logging in:', error);
       if (error instanceof AxiosError) {
         return setError(error?.response?.data?.message);
       }
@@ -131,7 +133,7 @@ const useAuthData = () => {
       dispatch(logout());
       return navigate('/login', { replace: true });
     } catch (error) {
-      console.log(error);
+      console.error('Error occured while logging out:', error);
     }
   };
 

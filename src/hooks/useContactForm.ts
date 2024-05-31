@@ -128,7 +128,7 @@ const useContactForm = () => {
         return success;
       }
     } catch (error) {
-      console.log(error);
+      console.error('Error occured while saving contact:', error);
       if (error instanceof AxiosError) {
         dispatch(
           setAlert({

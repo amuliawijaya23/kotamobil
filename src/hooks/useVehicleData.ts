@@ -58,7 +58,7 @@ const useVehicleData = () => {
         navigate('/inventory');
       }
     } catch (error) {
-      console.log(error);
+      console.error('Error occured while deleting vehicle:', error);
     }
   };
 

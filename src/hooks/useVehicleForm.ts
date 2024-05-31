@@ -104,36 +104,37 @@ const useVehicleForm = () => {
   const onDrop = useCallback(
     (acceptedFiles: File[] | undefined) => {
       if (acceptedFiles) {
-        let currentImagesLength = 0;
+        try {
+          const currentImagesLength =
+            (vehicle?.images?.length || 0) + (images?.length || 0);
+          const totalImagesLength = currentImagesLength + acceptedFiles.length;
 
-        vehicle?.images && (currentImagesLength += vehicle?.images?.length);
-
-        if (images) {
-          currentImagesLength += images.length;
-
-          if (currentImagesLength + acceptedFiles.length > 10) {
-            return dispatch(
+          if (totalImagesLength > 10) {
+            dispatch(
               setAlert({
                 message:
                   'You have exceeded the maximum number of allowed images',
                 severity: 'error',
               }),
             );
+            return;
           }
-          const currentImages = images.concat(acceptedFiles);
-          return setImages(currentImages);
-        }
 
-        if (currentImagesLength + acceptedFiles.length > 10) {
-          return dispatch(
+          const updatedImages = images
+            ? images.concat(acceptedFiles)
+            : acceptedFiles;
+
+          setImages(updatedImages);
+        } catch (error) {
+          console.error('Error handling file:', error);
+          dispatch(
             setAlert({
-              message: 'You have exceeded the maximum number of allowed images',
+              message:
+                'An error occured while processing the images. Please try again.',
               severity: 'error',
             }),
           );
         }
-
-        return setImages(acceptedFiles);
       }
     },
     [vehicle, images, dispatch],
