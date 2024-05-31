@@ -14,12 +14,11 @@ import {
   DialogActions,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-
+import Loading from '../Loading';
 import VehicleImages from './VehicleImages';
 import VehicleStatus from './VehicleStatus';
 import VehicleDetails from './VehicleDetails';
 import VehicleSpecifications from './VehicleSpecifications';
-
 import { useAppSelector, useAppDispatch } from '~/redux/store';
 import { getVehicleData } from '~/redux/reducers/vehicleSlice';
 import {
@@ -28,7 +27,6 @@ import {
   setAlert,
   resetAlert,
 } from '~/redux/reducers/formSlice';
-
 import useVehicleForm from '~/hooks/useVehicleForm';
 
 const VEHICLE_STATUS_AND_PRICING = 'VEHICLE_STATUS_AND_PRICING';
@@ -50,6 +48,7 @@ interface VehicleFormProps {
 
 const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
   const {
+    loading,
     images,
     vehicleImages,
     contact,
@@ -174,12 +173,6 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
 
   const onSave = async () => {
     if (await handleOnSave()) {
-      dispatch(
-        setAlert({
-          message: vehicle ? 'Vehicle Updated!' : 'Vehicle Created!',
-          severity: 'success',
-        }),
-      );
       onCloseForm();
       setStep(0);
     }
@@ -232,78 +225,83 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
         }}
       >
         <Toolbar />
-        <Grid container p={3} spacing={3}>
-          <Grid
-            xs={12}
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
+        {loading && <Loading />}
+        {!loading && (
+          <Grid container p={3} spacing={3}>
+            <Grid
+              xs={12}
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              {step === 0 && (
+                <Button
+                  onClick={onClose}
+                  onMouseDown={handleMouseDown}
+                  variant="text"
+                  color="error"
+                  sx={{ width: 50 }}
+                >
+                  Cancel
+                </Button>
+              )}
+              {step > 0 && (
+                <Button
+                  onClick={handlePreviousStep}
+                  onMouseDown={handleMouseDown}
+                  variant="text"
+                  color="primary"
+                  sx={{ width: 50 }}
+                >
+                  Back
+                </Button>
+              )}
+              {step < process.length - 1 && (
+                <Button
+                  onClick={handleNextStep}
+                  onMouseDown={handleMouseDown}
+                  variant="text"
+                  color="primary"
+                  sx={{ width: 50 }}
+                >
+                  {process[step] == VEHICLE_IMAGES &&
+                  !images &&
+                  !vehicle?.images
+                    ? 'Skip'
+                    : 'Next'}
+                </Button>
+              )}
+              {step === process.length - 1 && (
+                <Button
+                  onClick={handleOpenConfirmation}
+                  onMouseDown={handleMouseDown}
+                  variant="text"
+                  color="primary"
+                  sx={{ width: 50 }}
+                >
+                  Save
+                </Button>
+              )}
+            </Grid>
             {step === 0 && (
-              <Button
-                onClick={onClose}
-                onMouseDown={handleMouseDown}
-                variant="text"
-                color="error"
-                sx={{ width: 50 }}
-              >
-                Cancel
-              </Button>
+              <VehicleStatus
+                contact={contact}
+                onBuyerChange={handleBuyerChange}
+              />
             )}
-            {step > 0 && (
-              <Button
-                onClick={handlePreviousStep}
-                onMouseDown={handleMouseDown}
-                variant="text"
-                color="primary"
-                sx={{ width: 50 }}
-              >
-                Back
-              </Button>
+            {step === 1 && <VehicleDetails />}
+            {step === 2 && (
+              <VehicleImages
+                images={images}
+                vehicleImages={vehicleImages}
+                onDrop={onDrop}
+                onRemoveVehicleImages={handleRemoveVehicleImages}
+                onRemoveUploadedImages={handleRemoveUploadedImages}
+              />
             )}
-            {step < process.length - 1 && (
-              <Button
-                onClick={handleNextStep}
-                onMouseDown={handleMouseDown}
-                variant="text"
-                color="primary"
-                sx={{ width: 50 }}
-              >
-                {process[step] == VEHICLE_IMAGES && !images && !vehicle?.images
-                  ? 'Skip'
-                  : 'Next'}
-              </Button>
-            )}
-            {step === process.length - 1 && (
-              <Button
-                onClick={handleOpenConfirmation}
-                onMouseDown={handleMouseDown}
-                variant="text"
-                color="primary"
-                sx={{ width: 50 }}
-              >
-                Save
-              </Button>
-            )}
+            {step === 3 && <VehicleSpecifications />}
           </Grid>
-          {step === 0 && (
-            <VehicleStatus
-              contact={contact}
-              onBuyerChange={handleBuyerChange}
-            />
-          )}
-          {step === 1 && <VehicleDetails />}
-          {step === 2 && (
-            <VehicleImages
-              images={images}
-              vehicleImages={vehicleImages}
-              onDrop={onDrop}
-              onRemoveVehicleImages={handleRemoveVehicleImages}
-              onRemoveUploadedImages={handleRemoveUploadedImages}
-            />
-          )}
-          {step === 3 && <VehicleSpecifications />}
-        </Grid>
+        )}
       </Drawer>
     </>
   );

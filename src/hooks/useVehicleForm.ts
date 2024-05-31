@@ -51,6 +51,7 @@ const useVehicleForm = () => {
     { key: string; url: string }[] | null
   >(null);
   const [contact, setContact] = useState<ContactData | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const initializeForm = useCallback(() => {
     if (vehicle) {
@@ -172,6 +173,7 @@ const useVehicleForm = () => {
   };
 
   const handleOnSave = async () => {
+    setLoading(true);
     try {
       const formData = new FormData();
       const data: Record<string, unknown> = {
@@ -229,10 +231,16 @@ const useVehicleForm = () => {
           : dispatch(action(response.data));
 
         clearVehicleForm();
+        dispatch(
+          setAlert({
+            message: vehicle ? 'Vehicle Updated!' : 'Vehicle Created!',
+            severity: 'success',
+          }),
+        );
         return true;
       }
     } catch (error) {
-      console.log(error);
+      console.error('Error saving vehicle data:', error);
       if (error instanceof AxiosError) {
         dispatch(
           setAlert({
@@ -241,11 +249,14 @@ const useVehicleForm = () => {
           }),
         );
       }
-      return false;
+    } finally {
+      setLoading(false);
     }
+    return false;
   };
 
   return {
+    loading,
     images,
     vehicleImages,
     contact,
