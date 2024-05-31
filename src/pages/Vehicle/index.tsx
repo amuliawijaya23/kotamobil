@@ -9,6 +9,12 @@ import {
   Card,
   CardHeader,
   CardContent,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -28,6 +34,7 @@ const Vehicle = () => {
 
   const [open, setOpen] = useState<boolean>(false);
   const [openImages, setOpenImages] = useState<boolean>(false);
+  const [openConfirmation, setOpenConfirmation] = useState<boolean>(false);
   const [activeStep, setActiveStep] = useState<number>(0);
 
   const handleOpenForm = () => {
@@ -45,6 +52,14 @@ const Vehicle = () => {
 
   const handleCloseImages = () => {
     setOpenImages(false);
+  };
+
+  const handleOpenConfirmation = () => {
+    setOpenConfirmation(true);
+  };
+
+  const handleCloseConfirmation = () => {
+    setOpenConfirmation(false);
   };
 
   const handleNextActiveStep = () => {
@@ -69,6 +84,18 @@ const Vehicle = () => {
         onPrev={handlePrevActiveStep}
         onClose={handleCloseImages}
       />
+      <Dialog open={openConfirmation} onClose={handleCloseConfirmation}>
+        <DialogTitle>{'Delete Vehicle'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete this vehicle?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseConfirmation}>Cancel</Button>
+          <Button onClick={handleOnDelete}>Confirm</Button>
+        </DialogActions>
+      </Dialog>
       <Toolbar />
       <Grid
         container
@@ -86,7 +113,7 @@ const Vehicle = () => {
                 <Box>
                   <Tooltip title="Delete">
                     <IconButton
-                      onClick={handleOnDelete}
+                      onClick={handleOpenConfirmation}
                       size="medium"
                       color="inherit"
                     >
