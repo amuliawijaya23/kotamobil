@@ -8,7 +8,7 @@ interface QueryData {
 }
 
 interface InventoryState {
-  data: [VehicleData] | null;
+  data: VehicleData[] | null;
   queryData: QueryData | null;
 }
 
@@ -21,10 +21,10 @@ export const inventorySlice = createSlice({
   name: 'inventory',
   initialState,
   reducers: {
-    setInventoryData: (state, action: PayloadAction<[VehicleData]>) => {
+    setInventoryData: (state, action: PayloadAction<VehicleData[]>) => {
       state.data = action.payload;
     },
-    setQueryData: (state, action: PayloadAction<[VehicleData]>) => {
+    setQueryData: (state, action: PayloadAction<VehicleData[]>) => {
       const queryData: QueryData | undefined = { makes: {} };
 
       for (const vehicle of action.payload) {

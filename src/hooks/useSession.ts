@@ -1,10 +1,7 @@
 import { useEffect } from 'react';
-
-import Cookies from 'js-cookie';
-
 import { useAppDispatch } from '~/redux/store';
-
 import { login, logout } from '~/redux/reducers/userSlice';
+import Cookies from 'js-cookie';
 
 const COOKIE_NAME = import.meta.env.VITE_API_COOKIE_NAME;
 const LC_USER_DATA = 'LC_USER_DATA';
@@ -19,7 +16,6 @@ const useSession = () => {
 
     return () => {
       // dispatch(logout());
-      // Cookies.remove(COOKIE_NAME);
     };
   }, [dispatch]);
 };

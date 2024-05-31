@@ -3,19 +3,18 @@ import {
   Unstable_Grid2 as Grid,
   Toolbar,
   Divider,
+  Box,
   Tooltip,
   IconButton,
   Card,
   CardHeader,
   CardContent,
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-
 import { useAppSelector } from '~/redux/store';
 import { getVehicleData } from '~/redux/reducers/vehicleSlice';
-
 import useVehicleData from '~/hooks/useVehicleData';
-
 import VehicleForm from '~/components/VehicleForm';
 import VehicleInformation from '~/components/Vehicle/VehicleInformation';
 import VehicleImages from '~/components/Vehicle/VehicleImages';
@@ -23,7 +22,7 @@ import VehicleSpecification from '~/components/Vehicle/VehicleSpecification';
 import VehicleImageStepper from '~/components/Vehicle/VehicleImageStepper';
 
 const Vehicle = () => {
-  useVehicleData();
+  const { handleOnDelete } = useVehicleData();
 
   const vehicle = useAppSelector(getVehicleData);
 
@@ -84,15 +83,26 @@ const Vehicle = () => {
             <CardHeader
               title={vehicle?.name}
               action={
-                <Tooltip title="Update">
-                  <IconButton
-                    size="medium"
-                    onClick={handleOpenForm}
-                    color="inherit"
-                  >
-                    <EditIcon />
-                  </IconButton>
-                </Tooltip>
+                <Box>
+                  <Tooltip title="Delete">
+                    <IconButton
+                      onClick={handleOnDelete}
+                      size="medium"
+                      color="inherit"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Update">
+                    <IconButton
+                      onClick={handleOpenForm}
+                      size="medium"
+                      color="inherit"
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
               }
             />
             <Divider />

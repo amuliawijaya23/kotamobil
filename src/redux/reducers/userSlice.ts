@@ -1,5 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
+import Cookies from 'js-cookie';
+
+const COOKIE_NAME = import.meta.env.VITE_API_COOKIE_NAME;
 const LC_USER_DATA = 'LC_USER_DATA';
 
 export interface UserData {
@@ -28,6 +31,7 @@ export const userSlice = createSlice({
       state.isAuthenticated = false;
       state.data = null;
       localStorage.removeItem(LC_USER_DATA);
+      Cookies.remove(COOKIE_NAME);
     },
     login: (state, action: PayloadAction<UserData>) => {
       state.isAuthenticated = true;

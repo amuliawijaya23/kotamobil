@@ -1,17 +1,19 @@
 import axios from 'axios';
 import { useEffect, useCallback, useMemo } from 'react';
-
 import { useAppDispatch, useAppSelector } from '~/redux/store';
-import { getInventory } from '~/redux/reducers/inventorySlice';
+import {
+  getInventory,
+  setInventoryData,
+} from '~/redux/reducers/inventorySlice';
 import {
   setVehicleData,
   resetVehicleData,
 } from '~/redux/reducers/vehicleSlice';
-
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 const useVehicleData = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const inventory = useAppSelector(getInventory);
 
@@ -44,6 +46,23 @@ const useVehicleData = () => {
       dispatch(resetVehicleData());
     };
   }, [id, dispatch, findAndSetVehicleData]);
+
+  const handleOnDelete = async () => {
+    if (!vehicle || !inventory || !Array.isArray(inventory)) return;
+    try {
+      const response = await axios.delete(`/api/vehicle/delete/${id}`);
+
+      if (response.status === 200) {
+        const updatedInventory = inventory.filter((item) => item._id !== id);
+        dispatch(setInventoryData(updatedInventory));
+        navigate('/inventory');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return { handleOnDelete };
 };
 
 export default useVehicleData;

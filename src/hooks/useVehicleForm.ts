@@ -40,21 +40,16 @@ import {
 
 const useVehicleForm = () => {
   const dispatch = useAppDispatch();
-
   const vehicle = useAppSelector(getVehicleData);
   const contacts = useAppSelector(getContactsData);
   const vehicleFormData = useAppSelector(getVehicleFormData);
-
   const [images, setImages] = useState<File[] | null | undefined>(null);
-
   const [vehicleImages, setVehicleImages] = useState<
     { key: string; url: string }[] | null
   >(vehicle?.images || null);
-
   const [removedImages, setRemovedImages] = useState<
     { key: string; url: string }[] | null
   >(null);
-
   const [contact, setContact] = useState<ContactData | null>(null);
 
   const initializeForm = useCallback(() => {
@@ -76,9 +71,9 @@ const useVehicleForm = () => {
       vehicle.purchasePrice &&
         dispatch(setPurchasePrice(vehicle.purchasePrice));
       vehicle.description && dispatch(setDescription(vehicle.description));
-      vehicle.specification &&
-        vehicle.specification.length > 0 &&
-        dispatch(setSpecification(vehicle.specification));
+      vehicle.specification && vehicle.specification.length > 0
+        ? dispatch(setSpecification(vehicle.specification))
+        : dispatch(setSpecification(['']));
       dispatch(setCondition(vehicle.condition));
       vehicle.images && setVehicleImages(vehicle.images);
       if (vehicle.condition === 'Used') {
@@ -178,34 +173,27 @@ const useVehicleForm = () => {
 
   const handleOnSave = async () => {
     try {
-      let success = false;
       const formData = new FormData();
-      const data: Record<string, unknown> = {};
-
-      data.name = vehicleFormData.name;
-      data.vin = vehicleFormData.vin;
-      data.make = vehicleFormData.make;
-      data.model = vehicleFormData.model;
-      data.year = vehicleFormData.year;
-      data.odometer = vehicleFormData.odometer;
-      data.price = vehicleFormData.price;
-      data.color = vehicleFormData.color;
-      data.condition = vehicleFormData.condition;
-      data.assembly = vehicleFormData.assembly;
-      data.transmission = vehicleFormData.transmission;
-      data.fuelType = vehicleFormData.fuelType;
-      data.sold = vehicleFormData.status === 'Sold' ? true : false;
-      data.dateAdded = JSON.parse(vehicleFormData.dateAdded);
-
-      vehicleFormData.description &&
-        (data.description = vehicleFormData.description);
-      vehicleFormData.marketPrice &&
-        (data.marketPrice = vehicleFormData.marketPrice);
-      vehicleFormData.purchasePrice &&
-        (data.purchasePrice = vehicleFormData.purchasePrice);
-
-      const specifications = vehicleFormData.specification.filter((s) => s);
-      specifications.length > 0 && (data.specification = specifications);
+      const data: Record<string, unknown> = {
+        name: vehicleFormData.name,
+        vin: vehicleFormData.vin,
+        make: vehicleFormData.make,
+        model: vehicleFormData.model,
+        year: vehicleFormData.year,
+        odometer: vehicleFormData.odometer,
+        price: vehicleFormData.price,
+        color: vehicleFormData.color,
+        condition: vehicleFormData.condition,
+        assembly: vehicleFormData.assembly,
+        transmission: vehicleFormData.transmission,
+        fuelType: vehicleFormData.fuelType,
+        sold: vehicleFormData.status === 'Sold',
+        dateAdded: JSON.parse(vehicleFormData.dateAdded),
+        description: vehicleFormData.description,
+        marketPrice: vehicleFormData.marketPrice,
+        purchasePrice: vehicleFormData.purchasePrice,
+        specification: vehicleFormData.specification.filter((s) => s),
+      };
 
       vehicleFormData.status === 'Sold' &&
         (data.dateSold = JSON.parse(vehicleFormData.dateSold)) &&
@@ -233,24 +221,27 @@ const useVehicleForm = () => {
         : await axios.post('/api/vehicle/add', formData);
 
       if (response.status === 200 && response.data) {
+        const action = vehicle
+          ? updateVehicleFromInventory
+          : addVehicleToInventory;
         vehicle
-          ? dispatch(updateVehicleFromInventory(response.data))
-          : dispatch(addVehicleToInventory(response.data));
+          ? dispatch(action(response.data))
+          : dispatch(action(response.data));
 
-        success = true;
         clearVehicleForm();
+        return true;
       }
-      return success;
     } catch (error) {
       console.log(error);
       if (error instanceof AxiosError) {
-        return dispatch(
+        dispatch(
           setAlert({
             message: error?.response?.data?.message,
             severity: 'error',
           }),
         );
       }
+      return false;
     }
   };
 
