@@ -7,6 +7,11 @@ import {
   Alert,
   Button,
   IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -63,53 +68,66 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
   const alert = useAppSelector(getFormAlert);
 
   const [step, setStep] = useState<number>(0);
+  const [openConfirmation, setOpenConfirmation] = useState<boolean>(false);
 
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
 
+  const showAlert = () => {
+    dispatch(
+      setAlert({
+        message: 'Missing required parameter',
+        severity: 'error',
+      }),
+    );
+  };
+
+  const isVehicleStatusValid = () => {
+    if (
+      !vehicleFormData.name ||
+      !vehicleFormData.status ||
+      !vehicleFormData.dateAdded ||
+      !vehicleFormData.price ||
+      !vehicleFormData.condition
+    ) {
+      return false;
+    }
+
+    if (
+      vehicleFormData.status === 'Sold' &&
+      (!vehicleFormData.soldPrice || !vehicleFormData.dateSold || !contact)
+    ) {
+      return false;
+    }
+
+    if (
+      vehicleFormData.condition === 'Used' &&
+      (!vehicleFormData.plateNumber || !vehicleFormData.taxDate)
+    ) {
+      return false;
+    }
+    return true;
+  };
+
+  const isVehicleDetailsValid = () => {
+    return (
+      vehicleFormData.vin ||
+      vehicleFormData.make ||
+      vehicleFormData.model ||
+      vehicleFormData.assembly ||
+      vehicleFormData.odometer ||
+      vehicleFormData.color ||
+      vehicleFormData.transmission ||
+      vehicleFormData.fuelType
+    );
+  };
+
   const handleNextStep = () => {
     switch (process[step]) {
       case VEHICLE_STATUS_AND_PRICING: {
-        if (
-          !vehicleFormData.name ||
-          !vehicleFormData.status ||
-          !vehicleFormData.dateAdded ||
-          !vehicleFormData.price ||
-          !vehicleFormData.condition
-        ) {
-          dispatch(
-            setAlert({
-              message: 'Missing required parameter',
-              severity: 'error',
-            }),
-          );
-          break;
-        }
-
-        if (
-          vehicleFormData.status === 'Sold' &&
-          (!vehicleFormData.soldPrice || !vehicleFormData.dateSold || !contact)
-        ) {
-          dispatch(
-            setAlert({
-              message: 'Missing required parameter',
-              severity: 'error',
-            }),
-          );
-          break;
-        }
-
-        if (
-          vehicleFormData.condition === 'Used' &&
-          (!vehicleFormData.plateNumber || !vehicleFormData.taxDate)
-        ) {
-          dispatch(
-            setAlert({
-              message: 'Missing required parameter',
-              severity: 'error',
-            }),
-          );
+        if (!isVehicleStatusValid()) {
+          showAlert();
           break;
         }
         setStep((prev) => prev + 1);
@@ -117,33 +135,31 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
         break;
       }
       case VEHICLE_DETAILS: {
-        if (
-          !vehicleFormData.vin ||
-          !vehicleFormData.make ||
-          !vehicleFormData.model ||
-          !vehicleFormData.assembly ||
-          !vehicleFormData.odometer ||
-          !vehicleFormData.color ||
-          !vehicleFormData.transmission ||
-          !vehicleFormData.fuelType
-        ) {
-          dispatch(
-            setAlert({
-              message: 'Missing required parameter',
-              severity: 'error',
-            }),
-          );
+        if (!isVehicleDetailsValid()) {
+          showAlert();
           break;
         }
         setStep((prev) => prev + 1);
         dispatch(resetAlert());
         break;
       }
-      case VEHICLE_IMAGES: {
+      default: {
         setStep((prev) => prev + 1);
         break;
       }
     }
+  };
+
+  const handleOpenConfirmation = () => {
+    setOpenConfirmation(true);
+  };
+
+  const handleCloseConfirmation = () => {
+    setOpenConfirmation(false);
+  };
+
+  const handleClearAlert = () => {
+    dispatch(resetAlert());
   };
 
   const handlePreviousStep = () => {
@@ -154,10 +170,6 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
     onCloseForm();
     clearVehicleForm();
     setStep(0);
-  };
-
-  const handleClearAlert = () => {
-    dispatch(resetAlert());
   };
 
   const onSave = async () => {
@@ -192,6 +204,24 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
           {alert?.message}
         </Alert>
       </Snackbar>
+      <Dialog open={openConfirmation} onClose={handleCloseConfirmation}>
+        <DialogTitle>
+          {vehicle ? 'Update Vehicle' : 'Create Vehicle'}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {vehicle
+              ? 'Are you sure you want to update this vehicle?'
+              : 'Are you sure you want to add this vehicle?'}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseConfirmation}>Cancel</Button>
+          <Button onClick={onSave} onMouseDown={handleMouseDown}>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Drawer
         anchor="right"
         open={open}
@@ -246,7 +276,7 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
             )}
             {step === process.length - 1 && (
               <Button
-                onClick={onSave}
+                onClick={handleOpenConfirmation}
                 onMouseDown={handleMouseDown}
                 variant="text"
                 color="primary"
