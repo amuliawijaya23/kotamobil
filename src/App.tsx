@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
+import { Box } from '@mui/material';
 import AuthenticatedRoute from './components/RouteProtection/AuthenticatedRoute';
 import UnauthenticatedRoute from './components/RouteProtection/UnauthenticatedRoute';
-
+import Loading from './components/Loading';
 import Layout from './pages/Layout';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -12,14 +12,26 @@ import Inventory from './pages/Inventory';
 import Vehicle from './pages/Vehicle';
 import PageNotFound from './pages/PageNotFound';
 
-import useSession from './hooks/useSession';
-import useInventoryData from './hooks/useInventoryData';
-import useContactsData from './hooks/useContactsData';
+import useApplicationData from './hooks/useApplicationData';
 
 function App() {
-  useSession();
-  useInventoryData();
-  useContactsData();
+  const { loading } = useApplicationData();
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          height: '100vh',
+          width: '100vw',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Loading />
+      </Box>
+    );
+  }
 
   return (
     <Router>

@@ -1,15 +1,9 @@
 import React, { useState } from 'react';
 import axios, { AxiosError } from 'axios';
-import Cookies from 'js-cookie';
-
 import { useNavigate } from 'react-router-dom';
-
 import { useAppDispatch } from '~/redux/store';
 import { login, logout } from '~/redux/reducers/userSlice';
-
 import { validateEmail } from '~/helpers';
-
-const COOKIE_NAME = import.meta.env.VITE_API_COOKIE_NAME;
 
 const useAuthData = () => {
   const [firstName, setFirstName] = useState<string>('');
@@ -133,13 +127,9 @@ const useAuthData = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.delete('/api/auth/logout');
-
-      if (response.status === 200) {
-        dispatch(logout());
-        Cookies.remove(COOKIE_NAME);
-        return navigate('/login', { replace: true });
-      }
+      await axios.delete('/api/auth/logout');
+      dispatch(logout());
+      return navigate('/login', { replace: true });
     } catch (error) {
       console.log(error);
     }
