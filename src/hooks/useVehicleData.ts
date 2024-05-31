@@ -1,4 +1,5 @@
-import { useEffect, useCallback } from 'react';
+import axios from 'axios';
+import { useEffect, useCallback, useMemo } from 'react';
 
 import { useAppDispatch, useAppSelector } from '~/redux/store';
 import { getInventory } from '~/redux/reducers/inventorySlice';
@@ -11,18 +12,29 @@ import { useParams } from 'react-router-dom';
 
 const useVehicleData = () => {
   const { id } = useParams();
-
   const dispatch = useAppDispatch();
-
   const inventory = useAppSelector(getInventory);
 
-  const findAndSetVehicleData = useCallback(() => {
-    const vehicle = inventory?.filter((v) => v._id === id);
+  const vehicle = useMemo(() => {
+    return inventory ? inventory.find((v) => v._id === id) : null;
+  }, [id, inventory]);
 
+  const findAndSetVehicleData = useCallback(async () => {
     if (vehicle) {
-      dispatch(setVehicleData(vehicle[0]));
+      const vehicleData = { ...vehicle };
+      try {
+        if (vehicle.images) {
+          const { data } = await axios.get(`/api/vehicle/images/${id}`);
+          if (data) {
+            vehicleData.images = data;
+          }
+        }
+        dispatch(setVehicleData(vehicleData));
+      } catch (error) {
+        console.error('Error fetching vehicle images:', error);
+      }
     }
-  }, [dispatch, id, inventory]);
+  }, [dispatch, id, vehicle]);
 
   useEffect(() => {
     if (id) {

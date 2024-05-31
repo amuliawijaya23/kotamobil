@@ -31,9 +31,9 @@ const VehicleImages = ({ onOpenImages }: VehicleImagesProps) => {
   if (isUltraUp) {
     imageListCol = 5;
   } else if (isXlUp) {
-    imageListCol = 4;
+    imageListCol = 5;
   } else if (isLgUp) {
-    imageListCol = 3;
+    imageListCol = 5;
   } else if (isSmUp) {
     imageListCol = 2;
   }
@@ -63,7 +63,7 @@ const VehicleImages = ({ onOpenImages }: VehicleImagesProps) => {
                     srcSet={`${image.url}`}
                     src={`${image.url}`}
                     style={{
-                      height: 240,
+                      height: 245,
                       border: 'solid 1px',
                       objectFit: 'cover',
                     }}

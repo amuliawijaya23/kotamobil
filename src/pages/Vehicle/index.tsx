@@ -71,9 +71,16 @@ const Vehicle = () => {
         onClose={handleCloseImages}
       />
       <Toolbar />
-      <Grid container p={2} spacing={2} display="flex" justifyContent="center">
-        <Grid xs={12} md={10} lg={9} ultra={8}>
-          <Card raised>
+      <Grid
+        container
+        p={2}
+        spacing={2}
+        display="flex"
+        justifyContent="center"
+        sx={{ mt: { lg: 5, ultra: 20 } }}
+      >
+        <Grid xs={12} sm={11} md={10} lg={9} ultra={6}>
+          <Card>
             <CardHeader
               title={vehicle?.name}
               action={
