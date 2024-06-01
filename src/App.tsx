@@ -11,11 +11,27 @@ import Contacts from './pages/Contacts';
 import Inventory from './pages/Inventory';
 import Vehicle from './pages/Vehicle';
 import PageNotFound from './pages/PageNotFound';
-
-import useApplicationData from './hooks/useApplicationData';
+import useAuthentication from './hooks/useAuthentication';
 
 function App() {
-  const { loading } = useApplicationData();
+  const {
+    loading,
+    firstName,
+    lastName,
+    email,
+    isValidEmail,
+    password,
+    confirmPassword,
+    error,
+    handleClearError,
+    handleOnChangeFirstName,
+    handleOnChangeLastName,
+    handleOnChangeEmail,
+    handleOnChangePassword,
+    handleOnChangeConfirmPassword,
+    handleLogin,
+    handleRegister,
+  } = useAuthentication();
 
   if (loading) {
     return (
@@ -40,7 +56,16 @@ function App() {
           path="/login"
           element={
             <UnauthenticatedRoute>
-              <Login />
+              <Login
+                error={error}
+                email={email}
+                isValidEmail={isValidEmail}
+                password={password}
+                onChangeEmail={handleOnChangeEmail}
+                onChangePassword={handleOnChangePassword}
+                onClearError={handleClearError}
+                onLogin={handleLogin}
+              />
             </UnauthenticatedRoute>
           }
         />
@@ -48,7 +73,22 @@ function App() {
           path="/register"
           element={
             <UnauthenticatedRoute>
-              <Register />
+              <Register
+                error={error}
+                firstName={firstName}
+                lastName={lastName}
+                email={email}
+                isValidEmail={isValidEmail}
+                password={password}
+                confirmPassword={confirmPassword}
+                onChangeFirstName={handleOnChangeFirstName}
+                onChangeLastName={handleOnChangeLastName}
+                onChangeEmail={handleOnChangeEmail}
+                onChangePassword={handleOnChangePassword}
+                onChangeConfirmPassword={handleOnChangeConfirmPassword}
+                onClearError={handleClearError}
+                onRegister={handleRegister}
+              />
             </UnauthenticatedRoute>
           }
         />

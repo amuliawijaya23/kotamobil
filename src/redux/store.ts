@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { CancelTokenSource } from 'axios';
 import {
   ThunkAction,
   configureStore,
@@ -8,8 +8,11 @@ import {
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import userReducer from './reducers/userSlice';
 import themeReducer from './reducers/themeSlice';
-import contactsReducer from './reducers/contactsSlice';
-import inventoryReducer, { setInventoryData } from './reducers/inventorySlice';
+import contactsReducer, { setContactsData } from './reducers/contactsSlice';
+import inventoryReducer, {
+  setInventoryData,
+  setQueryData,
+} from './reducers/inventorySlice';
 import vehicleReducer from './reducers/vehicleSlice';
 import formReducer from './reducers/formSlice';
 
@@ -43,14 +46,78 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
   predicate: (_action, currentState, previousState) => {
     return (
-      currentState.inventory.queryData !== previousState.inventory.queryData
+      previousState.user.isAuthenticated === false &&
+      currentState.user.isAuthenticated === true
     );
   },
   effect: async (_action, listenerApi) => {
-    const inventory = await axios.post('/api/vehicle/search', {
-      makes: listenerApi.getState().inventory.queryData?.selectedMakes,
-      models: listenerApi.getState().inventory.queryData?.selectedModels,
-    });
-    listenerApi.dispatch(setInventoryData(inventory.data));
+    try {
+      const [vehicles, contacts] = await Promise.all([
+        axios.get('/api/vehicle'),
+        axios.get('/api/contact'),
+      ]);
+
+      if (vehicles.status === 200 && vehicles.data.length > 0) {
+        listenerApi.dispatch(setInventoryData(vehicles.data));
+        listenerApi.dispatch(setQueryData(vehicles.data));
+      }
+
+      if (contacts.status === 200 && contacts.data.length > 0) {
+        listenerApi.dispatch(setContactsData(contacts.data));
+      }
+    } catch (error) {
+      console.error('Failed to fetch vehicles and contacts', error);
+    }
+  },
+});
+
+let searchRequest: CancelTokenSource;
+listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
+  predicate: (_action, currentState, previousState) => {
+    return (
+      previousState.inventory.queryData !== null &&
+      previousState.inventory.queryData !== currentState.inventory.queryData
+    );
+  },
+  effect: async (_action, listenerApi) => {
+    if (searchRequest) {
+      searchRequest.cancel('Search Cancelled');
+    }
+    try {
+      const makes = listenerApi.getState().inventory.queryData?.selectedMakes;
+      const models = listenerApi.getState().inventory.queryData?.selectedModels;
+      searchRequest = axios.CancelToken.source();
+      const inventory = await axios.post(
+        '/api/vehicle/search',
+        {
+          makes: makes,
+          models: models,
+        },
+        { cancelToken: searchRequest.token },
+      );
+      listenerApi.dispatch(setInventoryData(inventory.data));
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log('Search Cancelled');
+        return;
+      }
+      console.error('Error searching for vehicles:', error);
+    }
+  },
+});
+
+listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
+  predicate: (_action, currentState, previousState) => {
+    return (
+      previousState.user.isAuthenticated === true &&
+      currentState.user.isAuthenticated === false
+    );
+  },
+  effect: async () => {
+    try {
+      await axios.delete('/api/auth/logout');
+    } catch (error) {
+      console.error('Error occured while logging out', error);
+    }
   },
 });

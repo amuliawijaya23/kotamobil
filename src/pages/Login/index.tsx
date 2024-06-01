@@ -7,28 +7,53 @@ import {
   Typography,
   Link,
 } from '@mui/material';
-import React from 'react';
-
 import EmailInput from '~/components/Authentication/EmailInput';
 import PasswordInput from '~/components/Authentication/PasswordInput';
 import ErrorAlert from '~/components/ErrorAlert';
+import { useNavigate } from 'react-router-dom';
 
-import useAuthData from '~/hooks/useAuth';
+interface LoginProps {
+  email: string;
+  password: string;
+  error: string;
+  isValidEmail: boolean;
+  onChangeEmail: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
+  onChangePassword: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
+  onClearError: () => void;
+  onLogin: () => Promise<boolean | void>;
+}
 
-const Login = () => {
-  const {
-    email,
-    isValidEmail,
-    password,
-    error,
-    handleClearError,
-    handleOnChangeEmail,
-    handleOnChangePassword,
-    handleLogin,
-  } = useAuthData();
+const Login = ({
+  email,
+  isValidEmail,
+  password,
+  error,
+  onClearError,
+  onChangeEmail,
+  onChangePassword,
+  onLogin,
+}: LoginProps) => {
+  const navigate = useNavigate();
 
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+  };
+
+  const handleOnLogin = async (
+    event: React.FormEvent<EventTarget | HTMLFormElement>,
+  ) => {
+    event.preventDefault();
+    try {
+      if (await onLogin()) {
+        navigate('/', { replace: true });
+      }
+    } catch (error) {
+      console.error('Error occured while logging in', error);
+    }
   };
 
   return (
@@ -42,7 +67,7 @@ const Login = () => {
       <Grid xs={12} display="flex" alignItems="center" justifyContent="center">
         <Box
           component="form"
-          onSubmit={handleLogin}
+          onSubmit={handleOnLogin}
           sx={{
             width: { xs: '70%', sm: '45%', md: '35%', lg: '25%', xl: '15%' },
           }}
@@ -64,19 +89,19 @@ const Login = () => {
               <Typography variant="h4" component="h1">
                 Sign In
               </Typography>
-              <ErrorAlert error={error} onClearError={handleClearError} />
+              <ErrorAlert error={error} onClearError={onClearError} />
             </Grid>
             <Grid xs={12}>
               <EmailInput
                 value={email}
-                onChangeHandler={handleOnChangeEmail}
+                onChangeHandler={onChangeEmail}
                 isValidEmail={isValidEmail}
                 error={error}
               />
               <PasswordInput
                 value={password}
                 label="Password"
-                onChangeHandler={handleOnChangePassword}
+                onChangeHandler={onChangePassword}
                 error={error}
               />
             </Grid>

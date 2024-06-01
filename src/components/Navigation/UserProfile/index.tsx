@@ -8,21 +8,16 @@ import {
   ListItemButton,
   ListItemText,
 } from '@mui/material';
-
 import StringAvatar from '~/components/StringAvatar';
-
-import { useAppSelector } from '~/redux/store';
-import { getUserData } from '~/redux/reducers/userSlice';
-
-import useAuthData from '~/hooks/useAuth';
+import { useAppSelector, useAppDispatch } from '~/redux/store';
+import { getUserData, logout } from '~/redux/reducers/userSlice';
+import { useNavigate } from 'react-router-dom';
 
 const UserProfile = () => {
-  const { handleLogout } = useAuthData();
-
-  const [open, setOpen] = useState<HTMLButtonElement | null>(null);
-
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const user = useAppSelector(getUserData);
-
+  const [open, setOpen] = useState<HTMLButtonElement | null>(null);
   const profileId = open ? 'profile-menu' : undefined;
 
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -35,6 +30,16 @@ const UserProfile = () => {
 
   const handleProfileClose = () => {
     setOpen(null);
+  };
+
+  const handleOnLogout = () => {
+    try {
+      dispatch(logout());
+    } catch (error) {
+      console.error('Error occured while logging out:', error);
+    } finally {
+      navigate('/login', { replace: true });
+    }
   };
 
   return (
@@ -76,7 +81,7 @@ const UserProfile = () => {
               sx={{ display: 'block' }}
             >
               <ListItemButton
-                onClick={index === 0 ? () => {} : handleLogout}
+                onClick={index === 0 ? () => {} : handleOnLogout}
                 sx={{ justifyContent: 'initial', px: 5 }}
               >
                 <ListItemText primary={title} sx={{ opacity: open ? 1 : 0 }} />

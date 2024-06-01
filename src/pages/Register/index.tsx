@@ -1,5 +1,3 @@
-import React from 'react';
-
 import {
   Unstable_Grid2 as Grid,
   Box,
@@ -9,34 +7,72 @@ import {
   Typography,
   Link,
 } from '@mui/material';
-
 import NameInput from '~/components/Authentication/NameInput';
 import EmailInput from '~/components/Authentication/EmailInput';
 import PasswordInput from '~/components/Authentication/PasswordInput';
 import ErrorAlert from '~/components/ErrorAlert';
+import { useNavigate } from 'react-router-dom';
 
-import useAuthData from '~/hooks/useAuth';
+interface RegisterProps {
+  firstName: string;
+  lastName: string;
+  email: string;
+  isValidEmail: boolean;
+  password: string;
+  confirmPassword: string;
+  error: string;
+  onClearError: () => void;
+  onChangeFirstName: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
+  onChangeLastName: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
+  onChangeEmail: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
+  onChangePassword: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
+  onChangeConfirmPassword: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void;
+  onRegister: () => Promise<boolean | void>;
+}
 
-const Register = () => {
-  const {
-    firstName,
-    lastName,
-    email,
-    isValidEmail,
-    password,
-    confirmPassword,
-    error,
-    handleClearError,
-    handleOnChangeFirstName,
-    handleOnChangeLastName,
-    handleOnChangeEmail,
-    handleOnChangePassword,
-    handleOnChangeConfirmPassword,
-    handleRegister,
-  } = useAuthData();
+const Register = ({
+  firstName,
+  lastName,
+  email,
+  isValidEmail,
+  password,
+  confirmPassword,
+  error,
+  onChangeFirstName,
+  onChangeLastName,
+  onChangeEmail,
+  onChangePassword,
+  onChangeConfirmPassword,
+  onRegister,
+  onClearError,
+}: RegisterProps) => {
+  const navigate = useNavigate();
 
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+  };
+
+  const handleOnRegister = async (
+    event: React.FormEvent<EventTarget | HTMLFormElement>,
+  ) => {
+    event.preventDefault();
+    try {
+      if (await onRegister()) {
+        navigate('/login');
+      }
+    } catch (error) {
+      console.error('Error while registering user', error);
+    }
   };
 
   return (
@@ -50,7 +86,7 @@ const Register = () => {
       <Grid xs={12} display="flex" alignItems="center" justifyContent="center">
         <Box
           component="form"
-          onSubmit={handleRegister}
+          onSubmit={handleOnRegister}
           sx={{
             width: { xs: '70%', sm: '45%', md: '35%', lg: '25%', xl: '15%' },
           }}
@@ -72,37 +108,37 @@ const Register = () => {
               <Typography variant="h4" component="h1">
                 Sign Up
               </Typography>
-              <ErrorAlert error={error} onClearError={handleClearError} />
+              <ErrorAlert error={error} onClearError={onClearError} />
             </Grid>
             <Grid xs={12}>
               <NameInput
                 value={firstName}
                 label="First Name"
-                onChangeHandler={handleOnChangeFirstName}
+                onChangeHandler={onChangeFirstName}
                 error={error}
               />
               <NameInput
                 value={lastName}
                 label="Last Name"
-                onChangeHandler={handleOnChangeLastName}
+                onChangeHandler={onChangeLastName}
                 error={error}
               />
               <EmailInput
                 value={email}
                 isValidEmail={isValidEmail}
-                onChangeHandler={handleOnChangeEmail}
+                onChangeHandler={onChangeEmail}
                 error={error}
               />
               <PasswordInput
                 value={password}
                 label="Password"
-                onChangeHandler={handleOnChangePassword}
+                onChangeHandler={onChangePassword}
                 error={error}
               />
               <PasswordInput
                 value={confirmPassword}
                 label="Confirm Password"
-                onChangeHandler={handleOnChangeConfirmPassword}
+                onChangeHandler={onChangeConfirmPassword}
                 error={error}
               />
             </Grid>
