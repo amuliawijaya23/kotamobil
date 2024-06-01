@@ -42,7 +42,6 @@ const Main = styled(Box, { shouldForwardProp: (prop) => prop !== 'open' })<{
 const Inventory = () => {
   const theme = useTheme();
   const isLgUp = useMediaQuery(theme.breakpoints.up('lg'));
-  const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
   const isXsUp = useMediaQuery(theme.breakpoints.up('xs'));
   const inventory = useAppSelector(getInventory);
   const [openFilter, setOpenFilter] = useState<boolean>(false);
