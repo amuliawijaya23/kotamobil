@@ -162,6 +162,9 @@ const VehicleInformation = () => {
         <Typography variant="subtitle2" component="p">
           <b>Fuel type:</b> {vehicle?.fuelType}
         </Typography>
+        <Typography variant="subtitle2" component="p">
+          <b>Body type:</b> {vehicle?.bodyType}
+        </Typography>
       </Grid>
       {vehicle?.condition === 'Used' && (
         <Grid xs={6}>

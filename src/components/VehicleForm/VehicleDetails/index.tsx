@@ -13,7 +13,6 @@ import {
   SelectChangeEvent,
   MenuItem,
 } from '@mui/material';
-
 import { useAppSelector, useAppDispatch } from '~/redux/store';
 import {
   getVehicleFormData,
@@ -21,6 +20,7 @@ import {
   setVin,
   setMake,
   setModel,
+  setBodyType,
   setAssembly,
   setYear,
   setOdometer,
@@ -40,6 +40,10 @@ const VehicleDetails = () => {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     dispatch(setVin(event.target.value));
+  };
+
+  const handleBodyTypeChange = (event: SelectChangeEvent) => {
+    dispatch(setBodyType(event.target.value));
   };
 
   const handleMakeChange = (
@@ -103,7 +107,7 @@ const VehicleDetails = () => {
         </Typography>
         <Divider />
       </Grid>
-      <Grid xs={12} sx={{ mb: 2 }}>
+      <Grid xs={12} sm={6} sx={{ mb: 2 }}>
         <FormControl size="small" fullWidth>
           <InputLabel htmlFor="outlined-vehicle-name">
             Vehicle Identification Number
@@ -116,6 +120,34 @@ const VehicleDetails = () => {
             label="Vehicle Identification Number"
           />
           {alert?.severity === 'error' && !vehicleFormData.vin && (
+            <FormHelperText error>{alert.message}</FormHelperText>
+          )}
+        </FormControl>
+      </Grid>
+      <Grid xs={12} sm={6}>
+        <FormControl size="small" fullWidth>
+          <InputLabel id="vehicle-body-select-label">Body Type</InputLabel>
+          <Select
+            value={vehicleFormData.bodyType}
+            onChange={handleBodyTypeChange}
+            error={Boolean(
+              alert?.severity === 'error' && !vehicleFormData.bodyType,
+            )}
+            size="small"
+            labelId="vehicle-body-select-label"
+            id="vehicle-body-select"
+            label="body Type"
+          >
+            <MenuItem value="Sedan">Sedan</MenuItem>
+            <MenuItem value="SUV">SUV</MenuItem>
+            <MenuItem value="MPV">MPV</MenuItem>
+            <MenuItem value="Coupe">Coupe</MenuItem>
+            <MenuItem value="Hatchback">Hatchback</MenuItem>
+            <MenuItem value="Sport">Sport</MenuItem>
+            <MenuItem value="Convertible">Convertible</MenuItem>
+            <MenuItem value="Pickup">Pickup</MenuItem>
+          </Select>
+          {alert?.severity === 'error' && !vehicleFormData.bodyType && (
             <FormHelperText error>{alert.message}</FormHelperText>
           )}
         </FormControl>

@@ -111,13 +111,14 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
 
   const isVehicleDetailsValid = () => {
     return (
-      vehicleFormData.vin ||
-      vehicleFormData.make ||
-      vehicleFormData.model ||
-      vehicleFormData.assembly ||
-      vehicleFormData.odometer ||
-      vehicleFormData.color ||
-      vehicleFormData.transmission ||
+      vehicleFormData.vin &&
+      vehicleFormData.bodyType &&
+      vehicleFormData.make &&
+      vehicleFormData.model &&
+      vehicleFormData.assembly &&
+      vehicleFormData.odometer &&
+      vehicleFormData.color &&
+      vehicleFormData.transmission &&
       vehicleFormData.fuelType
     );
   };

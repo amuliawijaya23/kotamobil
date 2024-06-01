@@ -180,6 +180,7 @@ const useVehicleForm = () => {
       const data: Record<string, unknown> = {
         name: vehicleFormData.name,
         vin: vehicleFormData.vin,
+        bodyType: vehicleFormData.bodyType,
         make: vehicleFormData.make,
         model: vehicleFormData.model,
         year: vehicleFormData.year,

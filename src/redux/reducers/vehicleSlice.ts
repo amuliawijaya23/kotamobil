@@ -14,6 +14,7 @@ export interface VehicleData {
   condition: string;
   assembly: string;
   transmission: string;
+  bodyType: string;
   fuelType: string;
   taxDate?: Date;
   price: number;

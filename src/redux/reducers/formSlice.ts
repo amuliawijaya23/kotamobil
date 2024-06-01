@@ -16,6 +16,7 @@ export interface VehicleForm {
   vin: string;
   make: string;
   model: string;
+  bodyType: string;
   assembly: string;
   year: number | boolean;
   odometer: number | boolean;
@@ -65,6 +66,7 @@ const initialState: FormState = {
     vin: '',
     make: '',
     model: '',
+    bodyType: '',
     assembly: 'Complete-Knock-Down',
     year: false,
     odometer: false,
@@ -147,6 +149,9 @@ export const formSlice = createSlice({
     setModel: (state, action: PayloadAction<string>) => {
       state.vehicle.model = action.payload;
     },
+    setBodyType: (state, action: PayloadAction<string>) => {
+      state.vehicle.bodyType = action.payload;
+    },
     setAssembly: (state, action: PayloadAction<string>) => {
       state.vehicle.assembly = action.payload;
     },
@@ -223,6 +228,7 @@ export const {
   setVin,
   setMake,
   setModel,
+  setBodyType,
   setAssembly,
   setYear,
   setOdometer,
