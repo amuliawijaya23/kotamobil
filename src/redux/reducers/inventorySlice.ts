@@ -4,7 +4,10 @@ import { RootState } from '../store';
 import type { VehicleData } from './vehicleSlice';
 
 interface QueryData {
-  makes: Record<string, { selected: boolean; models: Record<string, boolean> }>;
+  makes: string[];
+  models: string[];
+  selectedMakes: string[];
+  selectedModels: string[];
 }
 
 interface InventoryState {
@@ -24,21 +27,6 @@ export const inventorySlice = createSlice({
     setInventoryData: (state, action: PayloadAction<VehicleData[]>) => {
       state.data = action.payload;
     },
-    setQueryData: (state, action: PayloadAction<VehicleData[]>) => {
-      const queryData: QueryData | undefined = { makes: {} };
-
-      for (const vehicle of action.payload) {
-        if (!queryData.makes[vehicle.make]) {
-          queryData.makes[vehicle.make] = { selected: true, models: {} };
-          queryData.makes[vehicle.make].models[vehicle.model] = true;
-        } else {
-          if (!queryData.makes[vehicle.make].models[vehicle.model]) {
-            queryData.makes[vehicle.make].models[vehicle.model] = true;
-          }
-        }
-      }
-      state.queryData = queryData;
-    },
     addVehicleToInventory: (state, action: PayloadAction<VehicleData>) => {
       if (state.data) {
         state.data.unshift(action.payload);
@@ -55,23 +43,88 @@ export const inventorySlice = createSlice({
         }
       }
     },
+    setQueryData: (state, action: PayloadAction<VehicleData[]>) => {
+      const queryData: QueryData = {
+        makes: [],
+        models: [],
+        selectedMakes: [],
+        selectedModels: [],
+      };
+      for (const vehicle of action.payload) {
+        if (!queryData.makes.includes(vehicle.make)) {
+          queryData.makes.push(vehicle.make);
+          queryData.selectedMakes.push(vehicle.make);
+          queryData.models.push(vehicle.model);
+          queryData.selectedModels.push(vehicle.model);
+        } else {
+          if (!queryData.models.includes(vehicle.model)) {
+            queryData.models.push(vehicle.model);
+            queryData.selectedModels.push(vehicle.model);
+          }
+        }
+      }
+      state.queryData = queryData;
+    },
     updateMakeSelections: (state, action: PayloadAction<string>) => {
       if (state.queryData) {
-        state.queryData.makes[action.payload].selected =
-          !state.queryData?.makes[action.payload].selected;
+        const make = action.payload;
+        let newSelectedMakes;
+        let newSelectedModels;
+        if (state.queryData.selectedMakes.includes(make)) {
+          newSelectedMakes = state.queryData.selectedMakes.filter(
+            (m) => m !== make,
+          );
+          newSelectedModels = state.queryData.selectedModels.filter(
+            (model) =>
+              !state.data?.find(
+                (vehicle) => vehicle.model === model && vehicle.make === make,
+              ),
+          );
+        } else {
+          newSelectedMakes = [...state.queryData.selectedMakes, make];
+          const modelsForMake =
+            state.data
+              ?.filter((item) => item.make === make)
+              .map((item) => item.model) || [];
+          newSelectedModels = [
+            ...new Set([...state.queryData.selectedModels, ...modelsForMake]),
+          ];
+        }
+        state.queryData.selectedMakes = newSelectedMakes;
+        state.queryData.selectedModels = newSelectedModels;
       }
     },
-    updateModelSelections: (
-      state,
-      action: PayloadAction<{ make: string; model: string }>,
-    ) => {
+    updateModelSelections: (state, action: PayloadAction<string>) => {
       if (state.queryData) {
-        state.queryData.makes[action.payload.make].models[
-          action.payload.model
-        ] =
-          !state.queryData.makes[action.payload.make].models[
-            action.payload.model
-          ];
+        const model = action.payload;
+        let newSelectedModels;
+        if (state.queryData.selectedModels.includes(model)) {
+          newSelectedModels = state.queryData.selectedModels.filter(
+            (m) => m !== model,
+          );
+        } else {
+          newSelectedModels = [...state.queryData.selectedModels, model];
+        }
+        state.queryData.selectedModels = newSelectedModels;
+      }
+    },
+    selectAllMakes: (state) => {
+      if (state.queryData) {
+        if (
+          state.queryData?.selectedMakes.length ===
+          state.queryData?.makes.length
+        ) {
+          state.queryData.selectedMakes = [];
+          state.queryData.selectedModels = [];
+        } else {
+          state.queryData.selectedMakes = state.queryData.makes;
+          state.queryData.selectedModels = state.queryData.models;
+        }
+      }
+    },
+    selectAllModels: (state, action: PayloadAction<string[]>) => {
+      if (state.queryData) {
+        state.queryData.selectedModels = action.payload;
       }
     },
     resetInventory: () => initialState,
@@ -85,6 +138,8 @@ export const {
   updateVehicleFromInventory,
   updateMakeSelections,
   updateModelSelections,
+  selectAllMakes,
+  selectAllModels,
   resetInventory,
 } = inventorySlice.actions;
 export const getInventory = (state: RootState) => state.inventory.data;

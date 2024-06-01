@@ -85,7 +85,6 @@ const Inventory = () => {
     if (inventory && inventory.length > 0) {
       const begin = (page - 1) * itemsPerPage;
       const end = begin + itemsPerPage;
-      console.log('Showing items from index:', begin, 'to', end);
       return inventory.slice(begin, end);
     }
     return [];
