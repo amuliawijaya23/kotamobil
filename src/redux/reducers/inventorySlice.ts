@@ -82,10 +82,7 @@ export const inventorySlice = createSlice({
           );
         } else {
           newSelectedMakes = [...state.queryData.selectedMakes, make];
-          const modelsForMake =
-            state.data
-              ?.filter((item) => item.make === make)
-              .map((item) => item.model) || [];
+          const modelsForMake = state.queryData.makesModels[make];
           newSelectedModels = [
             ...new Set([...state.queryData.selectedModels, ...modelsForMake]),
           ];

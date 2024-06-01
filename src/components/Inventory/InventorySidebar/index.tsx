@@ -13,9 +13,7 @@ import {
   Box,
   Typography,
 } from '@mui/material';
-
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
 import { useAppSelector, useAppDispatch } from '~/redux/store';
 import {
   getQueryData,
