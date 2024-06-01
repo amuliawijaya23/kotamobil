@@ -77,13 +77,15 @@ const Vehicle = () => {
   return (
     <>
       <VehicleForm open={open} onCloseForm={handleCloseForm} />
-      <VehicleImageStepper
-        open={openImages}
-        activeStep={activeStep}
-        onNext={handleNextActiveStep}
-        onPrev={handlePrevActiveStep}
-        onClose={handleCloseImages}
-      />
+      {vehicle.images && vehicle.images.length > 0 && (
+        <VehicleImageStepper
+          open={openImages}
+          activeStep={activeStep}
+          onNext={handleNextActiveStep}
+          onPrev={handlePrevActiveStep}
+          onClose={handleCloseImages}
+        />
+      )}
       <Dialog open={openConfirmation} onClose={handleCloseConfirmation}>
         <DialogTitle>{'Delete Vehicle'}</DialogTitle>
         <DialogContent>

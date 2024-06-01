@@ -40,7 +40,7 @@ const VehicleImages = ({ onOpenImages }: VehicleImagesProps) => {
 
   return (
     <>
-      {vehicle?.images ? (
+      {vehicle?.images && vehicle.images.length > 0 ? (
         <>
           <Grid xs={12}>
             <ImageList
@@ -77,7 +77,7 @@ const VehicleImages = ({ onOpenImages }: VehicleImagesProps) => {
         <Grid xs={12}>
           <Box
             sx={{
-              height: 200,
+              height: 50,
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',

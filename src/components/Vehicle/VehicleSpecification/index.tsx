@@ -29,9 +29,9 @@ const VehicleSpecification = () => {
         <>
           <Grid xs={12}>
             <List sx={{ listStyleType: 'disc' }}>
-              <Grid container p={2}>
+              <Grid container p={2} display="flex" alignItems="center">
                 {vehicle?.specification.map((spec) => (
-                  <Grid xs={6}>
+                  <Grid xs={6} sm={4} lg={3}>
                     <ListItem key={spec} sx={{ display: 'list-item' }}>
                       <ListItemText>{spec}</ListItemText>
                     </ListItem>
