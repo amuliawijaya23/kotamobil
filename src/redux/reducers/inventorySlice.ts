@@ -4,8 +4,7 @@ import { RootState } from '../store';
 import type { VehicleData } from './vehicleSlice';
 
 interface QueryData {
-  makes: string[];
-  models: string[];
+  makesModels: { [key: string]: string[] };
   selectedMakes: string[];
   selectedModels: string[];
 }
@@ -45,23 +44,24 @@ export const inventorySlice = createSlice({
     },
     setQueryData: (state, action: PayloadAction<VehicleData[]>) => {
       const queryData: QueryData = {
-        makes: [],
-        models: [],
+        makesModels: {},
         selectedMakes: [],
         selectedModels: [],
       };
       for (const vehicle of action.payload) {
-        if (!queryData.makes.includes(vehicle.make)) {
-          queryData.makes.push(vehicle.make);
+        if (!queryData.makesModels[vehicle.make]) {
+          queryData.makesModels[vehicle.make] = [];
           queryData.selectedMakes.push(vehicle.make);
-          queryData.models.push(vehicle.model);
-          queryData.selectedModels.push(vehicle.model);
-        } else {
-          if (!queryData.models.includes(vehicle.model)) {
-            queryData.models.push(vehicle.model);
-            queryData.selectedModels.push(vehicle.model);
-          }
         }
+
+        if (!queryData.makesModels[vehicle.make].includes(vehicle.model)) {
+          queryData.makesModels[vehicle.make].push(vehicle.model);
+          queryData.selectedModels.push(vehicle.model);
+        }
+
+        Object.keys(queryData.makesModels).forEach((make) => {
+          queryData.makesModels[make].sort();
+        });
       }
       state.queryData = queryData;
     },
@@ -110,21 +110,35 @@ export const inventorySlice = createSlice({
     },
     selectAllMakes: (state) => {
       if (state.queryData) {
-        if (
-          state.queryData?.selectedMakes.length ===
-          state.queryData?.makes.length
-        ) {
+        const allMakes = Object.keys(state.queryData.makesModels);
+        const allModels = allMakes.reduce<string[]>((acc, make) => {
+          return [...acc, ...state.queryData!.makesModels[make]];
+        }, []);
+
+        if (state.queryData?.selectedMakes.length === allMakes.length) {
           state.queryData.selectedMakes = [];
           state.queryData.selectedModels = [];
         } else {
-          state.queryData.selectedMakes = state.queryData.makes;
-          state.queryData.selectedModels = state.queryData.models;
+          state.queryData.selectedMakes = allMakes;
+          state.queryData.selectedModels = allModels;
         }
       }
     },
-    selectAllModels: (state, action: PayloadAction<string[]>) => {
+    selectAllModels: (state) => {
       if (state.queryData) {
-        state.queryData.selectedModels = action.payload;
+        const selectedMakesModels = state.queryData.selectedMakes.reduce<
+          string[]
+        >((acc, make) => {
+          return [...acc, ...state.queryData!.makesModels[make]];
+        }, []);
+
+        if (
+          selectedMakesModels.length === state.queryData.selectedModels.length
+        ) {
+          state.queryData.selectedModels = [];
+        } else {
+          state.queryData.selectedModels = selectedMakesModels;
+        }
       }
     },
     resetInventory: () => initialState,

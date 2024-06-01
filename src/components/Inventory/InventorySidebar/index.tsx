@@ -19,7 +19,6 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useAppSelector, useAppDispatch } from '~/redux/store';
 import {
   getQueryData,
-  getInventory,
   updateMakeSelections,
   updateModelSelections,
   selectAllMakes,
@@ -44,40 +43,31 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 
 const InventorySidebar = () => {
   const dispatch = useAppDispatch();
-  const inventory = useAppSelector(getInventory);
   const queryData = useAppSelector(getQueryData);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({
     makes: false,
     models: false,
   });
 
-  const makesWithModels = useMemo(() => {
-    const makesModelsMap: { [key: string]: string[] } = {};
-    inventory?.forEach((item) => {
-      if (!makesModelsMap[item.make]) {
-        makesModelsMap[item.make] = [];
-      }
-      if (!makesModelsMap[item.make].includes(item.model)) {
-        makesModelsMap[item.make].push(item.model);
-      }
-    });
-    Object.keys(makesModelsMap).forEach((make) => {
-      makesModelsMap[make].sort();
-    });
-    return makesModelsMap;
-  }, [inventory]);
+  const makes = useMemo(() => {
+    if (queryData) {
+      return Object.keys(queryData.makesModels);
+    }
+  }, [queryData]);
 
-  const sortedMakes = useMemo(() => {
-    return Object.keys(makesWithModels).sort();
-  }, [makesWithModels]);
-
-  const selectedMakesModels = useMemo(() => {
+  const models = useMemo(() => {
     if (queryData) {
       return queryData.selectedMakes.reduce<string[]>((acc, make) => {
-        return [...acc, ...makesWithModels[make]];
+        return [...acc, ...queryData.makesModels[make]];
       }, []);
     }
-  }, [makesWithModels, queryData]);
+  }, [queryData]);
+
+  const sortedMakes = useMemo(() => {
+    if (makes) {
+      return makes.sort();
+    }
+  }, [makes]);
 
   const handleExpandClick = (category: string) => {
     const state = { ...expanded };
@@ -98,13 +88,7 @@ const InventorySidebar = () => {
   };
 
   const handleSelectAllModelsChange = () => {
-    if (queryData && selectedMakesModels) {
-      if (selectedMakesModels.length === queryData.selectedModels.length) {
-        dispatch(selectAllModels([]));
-      } else {
-        dispatch(selectAllModels(selectedMakesModels));
-      }
-    }
+    dispatch(selectAllModels());
   };
 
   return (
@@ -131,16 +115,14 @@ const InventorySidebar = () => {
             label={<Typography variant="subtitle2">All</Typography>}
             control={
               <Checkbox
-                checked={
-                  queryData?.makes.length === queryData?.selectedMakes.length
-                }
+                checked={makes?.length === queryData?.selectedMakes.length}
                 onChange={handleSelectAllMakesChange}
               />
             }
           />
           <Box sx={{ display: 'flex', flexDirection: 'column', ml: 1 }}>
-            {makesWithModels &&
-              queryData &&
+            {queryData &&
+              sortedMakes &&
               sortedMakes.map((make) => (
                 <FormControlLabel
                   key={`${make}-checkbox`}
@@ -184,16 +166,13 @@ const InventorySidebar = () => {
             label={<Typography variant="subtitle2">All</Typography>}
             control={
               <Checkbox
-                checked={
-                  selectedMakesModels?.length ===
-                  queryData?.selectedModels.length
-                }
+                checked={models?.length === queryData?.selectedModels.length}
                 onChange={handleSelectAllModelsChange}
               />
             }
           />
-          {makesWithModels &&
-            queryData &&
+          {queryData &&
+            sortedMakes &&
             sortedMakes.map(
               (make) =>
                 queryData.selectedMakes.includes(make) && (
@@ -205,7 +184,7 @@ const InventorySidebar = () => {
                     <Box
                       sx={{ display: 'flex', flexDirection: 'column', ml: 1 }}
                     >
-                      {makesWithModels[make].map((model) => (
+                      {queryData.makesModels[make].map((model) => (
                         <FormControlLabel
                           key={`${model}-checkbox`}
                           value={model}
