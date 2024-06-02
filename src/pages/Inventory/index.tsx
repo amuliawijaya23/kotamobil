@@ -8,6 +8,7 @@ import {
   Toolbar,
   Divider,
   Pagination,
+  Typography,
 } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
@@ -41,8 +42,10 @@ const Main = styled(Box, { shouldForwardProp: (prop) => prop !== 'open' })<{
 
 const Inventory = () => {
   const theme = useTheme();
-  const isLgUp = useMediaQuery(theme.breakpoints.up('lg'));
   const isXsUp = useMediaQuery(theme.breakpoints.up('xs'));
+  const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
+  const isLgUp = useMediaQuery(theme.breakpoints.up('lg'));
+  const isUltraUp = useMediaQuery(theme.breakpoints.up('ultra'));
   const inventory = useAppSelector(getInventory);
   const [openFilter, setOpenFilter] = useState<boolean>(false);
   const [openForm, setOpenForm] = useState<boolean>(false);
@@ -68,10 +71,18 @@ const Inventory = () => {
     setOpenForm(false);
   };
 
-  const itemsPerPage = 12;
+  let itemsPerPage = 10;
+
+  if (isMdUp && !isUltraUp) {
+    itemsPerPage = 12;
+  } else if (isUltraUp) {
+    itemsPerPage = 36;
+  }
 
   const paginationCount =
-    inventory && inventory.length > 0 ? Math.ceil(inventory.length / 12) : 0;
+    inventory && inventory.length > 0
+      ? Math.ceil(inventory.length / itemsPerPage)
+      : 0;
 
   const handleChangePage = (
     _event: React.ChangeEvent<unknown>,
@@ -88,7 +99,7 @@ const Inventory = () => {
       return inventory.slice(begin, end);
     }
     return [];
-  }, [inventory, page]);
+  }, [inventory, page, itemsPerPage]);
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -124,9 +135,14 @@ const Inventory = () => {
         </Drawer>
       )}
       {isLgUp && (
-        <Main open={openFilter} sx={{ justifyContent: 'center' }}>
-          <Grid container component={Box} p={2} spacing={2} width="100%">
-            <Toolbar />
+        <Main
+          open={openFilter}
+          sx={{
+            justifyContent: 'center',
+          }}
+        >
+          <Toolbar />
+          <Grid container component={Box} p={2} spacing={2}>
             <Grid xs={12}>
               <InventoryToolbar
                 onToggleFilter={handleToggleFilter}
@@ -146,25 +162,41 @@ const Inventory = () => {
                 <VehicleCard vehicle={vehicle} />
               </Grid>
             ))}
-            <Grid xs={12} mt={2}>
-              <Divider />
-              <Toolbar
+            {visibleItems.length === 0 && (
+              <Grid
+                xs={12}
                 sx={{
+                  height: 500,
                   display: 'flex',
-                  justifyContent: 'end',
+                  justifyContent: 'center',
                   alignItems: 'center',
-                  mt: 1,
                 }}
               >
-                <Pagination
-                  count={paginationCount}
-                  size="large"
-                  onChange={handleChangePage}
-                  onMouseDown={handleMouseDown}
-                  page={page}
-                />
-              </Toolbar>
-            </Grid>
+                <Typography variant="h6" component="p" textAlign="center">
+                  Looks like we couldn't find any vehicles. Try changing your
+                  filters or add a new vehicle to your inventory
+                </Typography>
+              </Grid>
+            )}
+            {paginationCount > 1 && (
+              <Grid xs={12} mt={2}>
+                <Toolbar
+                  sx={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    mt: 2,
+                  }}
+                >
+                  <Pagination
+                    count={paginationCount}
+                    size="large"
+                    onChange={handleChangePage}
+                    onMouseDown={handleMouseDown}
+                    page={page}
+                  />
+                </Toolbar>
+              </Grid>
+            )}
           </Grid>
         </Main>
       )}
@@ -198,8 +230,23 @@ const Inventory = () => {
                 <VehicleCard vehicle={vehicle} />
               </Grid>
             ))}
+            {visibleItems.length === 0 && (
+              <Grid
+                xs={12}
+                sx={{
+                  height: 500,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Typography variant="h6" component="p" textAlign="center">
+                  Looks like we couldn't find any vehicles. Try changing your
+                  filters or add a new vehicle to your inventory
+                </Typography>
+              </Grid>
+            )}
             <Grid xs={12} mt={2}>
-              <Divider />
               <Toolbar
                 sx={{
                   display: 'flex',
