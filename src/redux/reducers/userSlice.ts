@@ -13,12 +13,10 @@ export interface UserData {
 }
 
 export interface UserState {
-  isAuthenticated: boolean;
   data: UserData | null;
 }
 
 const initialState: UserState = {
-  isAuthenticated: false,
   data: null,
 };
 
@@ -27,13 +25,11 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      state.isAuthenticated = false;
       state.data = null;
       localStorage.removeItem(LC_USER_DATA);
       Cookies.remove(COOKIE_NAME);
     },
     login: (state, action: PayloadAction<UserData>) => {
-      state.isAuthenticated = true;
       state.data = action.payload;
       localStorage.setItem(LC_USER_DATA, JSON.stringify(action.payload));
     },
@@ -41,6 +37,5 @@ export const userSlice = createSlice({
 });
 
 export const { login, logout } = userSlice.actions;
-export const getSession = (state: RootState) => state.user;
 export const getUserData = (state: RootState) => state.user.data;
 export default userSlice.reducer;

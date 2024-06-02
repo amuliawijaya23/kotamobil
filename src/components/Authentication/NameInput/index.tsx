@@ -6,7 +6,7 @@ interface NameInputProps {
   onChangeHandler: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
-  error: string;
+  error: string | undefined;
 }
 
 import {

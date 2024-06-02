@@ -12,28 +12,14 @@ import Inventory from './pages/Inventory';
 import Vehicle from './pages/Vehicle';
 import PageNotFound from './pages/PageNotFound';
 import useAuthentication from './hooks/useAuthentication';
+import { useAppSelector } from './redux/store';
+import { getAppStatus } from './redux/reducers/appSlice';
 
 function App() {
-  const {
-    loading,
-    firstName,
-    lastName,
-    email,
-    isValidEmail,
-    password,
-    confirmPassword,
-    error,
-    handleClearError,
-    handleOnChangeFirstName,
-    handleOnChangeLastName,
-    handleOnChangeEmail,
-    handleOnChangePassword,
-    handleOnChangeConfirmPassword,
-    handleLogin,
-    handleRegister,
-  } = useAuthentication();
+  const { isLoading } = useAppSelector(getAppStatus);
+  const { handleLogin, handleRegister } = useAuthentication();
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Box
         sx={{
@@ -52,48 +38,24 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route
-          path="/login"
-          element={
-            <UnauthenticatedRoute>
-              <Login
-                error={error}
-                email={email}
-                isValidEmail={isValidEmail}
-                password={password}
-                onChangeEmail={handleOnChangeEmail}
-                onChangePassword={handleOnChangePassword}
-                onClearError={handleClearError}
-                onLogin={handleLogin}
-              />
-            </UnauthenticatedRoute>
-          }
-        />
-        <Route
-          path="/register"
-          element={
-            <UnauthenticatedRoute>
-              <Register
-                error={error}
-                firstName={firstName}
-                lastName={lastName}
-                email={email}
-                isValidEmail={isValidEmail}
-                password={password}
-                confirmPassword={confirmPassword}
-                onChangeFirstName={handleOnChangeFirstName}
-                onChangeLastName={handleOnChangeLastName}
-                onChangeEmail={handleOnChangeEmail}
-                onChangePassword={handleOnChangePassword}
-                onChangeConfirmPassword={handleOnChangeConfirmPassword}
-                onClearError={handleClearError}
-                onRegister={handleRegister}
-              />
-            </UnauthenticatedRoute>
-          }
-        />
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
+          <Route
+            path="/login"
+            element={
+              <UnauthenticatedRoute>
+                <Login onLogin={handleLogin} />
+              </UnauthenticatedRoute>
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <UnauthenticatedRoute>
+                <Register onRegister={handleRegister} />
+              </UnauthenticatedRoute>
+            }
+          />
           <Route
             path="/inventory"
             element={

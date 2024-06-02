@@ -6,15 +6,15 @@ import { useAppSelector, useAppDispatch } from '~/redux/store';
 import {
   getContactFormData,
   setAlert,
-  setFirstName,
-  setLastName,
-  setMobile,
-  setEmail,
-  setAddress,
-  setInstagram,
-  setFacebook,
-  setTwitter,
-  setTiktok,
+  setContactFirstName,
+  setContactLastName,
+  setContactMobile,
+  setContactEmail,
+  setContactAddress,
+  setContactInstagram,
+  setContactFacebook,
+  setContactTwitter,
+  setContactTiktok,
   resetContactForm,
 } from '~/redux/reducers/formSlice';
 import { addContact } from '~/redux/reducers/contactsSlice';
@@ -43,61 +43,61 @@ const useContactForm = () => {
   const handleFirstNameChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    dispatch(setFirstName(event.target.value));
+    dispatch(setContactFirstName(event.target.value));
   };
 
   const handleLastNameChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    dispatch(setLastName(event.target.value));
+    dispatch(setContactLastName(event.target.value));
   };
 
   const handleEmailChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    dispatch(setEmail(event.target.value));
+    dispatch(setContactEmail(event.target.value));
     setIsValidEmail(validateEmail(event.target.value));
   };
 
   const handleCountryChange = (event: unknown, values: CountryType | null) => {
     setCountry(values);
     if (values?.phone) {
-      dispatch(setMobile(`${'+'}${values.phone}`));
+      dispatch(setContactMobile(`${'+'}${values.phone}`));
     }
   };
 
   const handleMobileChange = (input: string) => {
-    dispatch(setMobile(input));
+    dispatch(setContactMobile(input));
   };
 
   const handleAddressChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    dispatch(setAddress(event.target.value));
+    dispatch(setContactAddress(event.target.value));
   };
 
   const handleInstagramChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    dispatch(setInstagram(event.target.value));
+    dispatch(setContactInstagram(event.target.value));
   };
 
   const handleFacebookchange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    dispatch(setFacebook(event.target.value));
+    dispatch(setContactFacebook(event.target.value));
   };
 
   const handleTwitterChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    dispatch(setTwitter(event.target.value));
+    dispatch(setContactTwitter(event.target.value));
   };
 
   const handleTiktokChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    dispatch(setTiktok(event.target.value));
+    dispatch(setContactTiktok(event.target.value));
   };
 
   const handleOnSave = async () => {

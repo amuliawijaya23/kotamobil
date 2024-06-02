@@ -10,37 +10,39 @@ import {
 import EmailInput from '~/components/Authentication/EmailInput';
 import PasswordInput from '~/components/Authentication/PasswordInput';
 import ErrorAlert from '~/components/ErrorAlert';
+import { useAppSelector, useAppDispatch } from '~/redux/store';
+import {
+  getFormAlert,
+  getUserFormData,
+  setUserEmail,
+  setUserPassword,
+} from '~/redux/reducers/formSlice';
 import { useNavigate } from 'react-router-dom';
 
 interface LoginProps {
-  email: string;
-  password: string;
-  error: string;
-  isValidEmail: boolean;
-  onChangeEmail: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
-  onChangePassword: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
-  onClearError: () => void;
   onLogin: () => Promise<boolean | void>;
 }
 
-const Login = ({
-  email,
-  isValidEmail,
-  password,
-  error,
-  onClearError,
-  onChangeEmail,
-  onChangePassword,
-  onLogin,
-}: LoginProps) => {
+const Login = ({ onLogin }: LoginProps) => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const userFormData = useAppSelector(getUserFormData);
+  const alert = useAppSelector(getFormAlert);
 
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+  };
+
+  const handleOnChangeEmail = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    dispatch(setUserEmail(event.target.value));
+  };
+
+  const handleOnChangePassword = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    dispatch(setUserPassword(event.target.value));
   };
 
   const handleOnLogin = async (
@@ -72,7 +74,13 @@ const Login = ({
             width: { xs: '70%', sm: '45%', md: '35%', lg: '25%', xl: '15%' },
           }}
         >
-          <Grid container component={Paper} spacing={1} p={2}>
+          <Grid
+            container
+            component={Paper}
+            variant="outlined"
+            spacing={1}
+            p={2}
+          >
             <Grid
               xs={12}
               display="flex"
@@ -89,20 +97,20 @@ const Login = ({
               <Typography variant="h4" component="h1">
                 Sign In
               </Typography>
-              <ErrorAlert error={error} onClearError={onClearError} />
+              <ErrorAlert />
             </Grid>
             <Grid xs={12}>
               <EmailInput
-                value={email}
-                onChangeHandler={onChangeEmail}
-                isValidEmail={isValidEmail}
-                error={error}
+                value={userFormData.email}
+                onChangeHandler={handleOnChangeEmail}
+                isValidEmail={userFormData.isValidEmail}
+                error={alert?.message}
               />
               <PasswordInput
-                value={password}
+                value={userFormData.password}
                 label="Password"
-                onChangeHandler={onChangePassword}
-                error={error}
+                onChangeHandler={handleOnChangePassword}
+                error={alert?.message}
               />
             </Grid>
             <Grid xs={6}>

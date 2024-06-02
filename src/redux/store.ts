@@ -6,11 +6,13 @@ import {
   createListenerMiddleware,
 } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import appReducer, { setLoading } from './reducers/appSlice';
 import userReducer from './reducers/userSlice';
 import themeReducer from './reducers/themeSlice';
 import contactsReducer, { setContactsData } from './reducers/contactsSlice';
 import inventoryReducer, {
   setInventoryData,
+  setInventoryLoading,
   setQueryData,
 } from './reducers/inventorySlice';
 import vehicleReducer from './reducers/vehicleSlice';
@@ -20,6 +22,7 @@ const listenerMiddleware = createListenerMiddleware();
 
 export const store = configureStore({
   reducer: {
+    app: appReducer,
     user: userReducer,
     theme: themeReducer,
     contacts: contactsReducer,
@@ -46,11 +49,12 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
   predicate: (_action, currentState, previousState) => {
     return (
-      previousState.user.isAuthenticated === false &&
-      currentState.user.isAuthenticated === true
+      previousState.app.isAuthenticated === false &&
+      currentState.app.isAuthenticated === true
     );
   },
   effect: async (_action, listenerApi) => {
+    listenerApi.dispatch(setLoading(true));
     try {
       const [vehicles, contacts] = await Promise.all([
         axios.get('/api/vehicle'),
@@ -67,6 +71,8 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
       }
     } catch (error) {
       console.error('Failed to fetch vehicles and contacts', error);
+    } finally {
+      listenerApi.dispatch(setLoading(false));
     }
   },
 });
@@ -83,6 +89,7 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
     if (searchRequest) {
       searchRequest.cancel('Search Cancelled');
     }
+    listenerApi.dispatch(setInventoryLoading(true));
     try {
       const queryData = listenerApi.getState().inventory.queryData;
       const makes = queryData?.selectedMakes;
@@ -119,6 +126,8 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
         return;
       }
       console.error('Error searching for vehicles:', error);
+    } finally {
+      listenerApi.dispatch(setInventoryLoading(false));
     }
   },
 });
@@ -126,8 +135,8 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
 listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
   predicate: (_action, currentState, previousState) => {
     return (
-      previousState.user.isAuthenticated === true &&
-      currentState.user.isAuthenticated === false
+      previousState.app.isAuthenticated === true &&
+      currentState.app.isAuthenticated === false
     );
   },
   effect: async () => {

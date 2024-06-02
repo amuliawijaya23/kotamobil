@@ -11,7 +11,7 @@ interface EmailInputProps {
   onChangeHandler: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
-  error: string;
+  error: string | undefined;
 }
 
 const EmailInput = ({

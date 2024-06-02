@@ -32,17 +32,22 @@ interface QueryData {
 interface InventoryState {
   data: VehicleData[] | null;
   queryData: QueryData | null;
+  isLoading: boolean;
 }
 
 const initialState: InventoryState = {
   data: null,
   queryData: null,
+  isLoading: false,
 };
 
 export const inventorySlice = createSlice({
   name: 'inventory',
   initialState,
   reducers: {
+    setInventoryLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload;
+    },
     setInventoryData: (state, action: PayloadAction<VehicleData[]>) => {
       state.data = action.payload;
     },
@@ -356,6 +361,7 @@ export const inventorySlice = createSlice({
 });
 
 export const {
+  setInventoryLoading,
   setInventoryData,
   setQueryData,
   addVehicleToInventory,
@@ -381,4 +387,6 @@ export const {
 } = inventorySlice.actions;
 export const getInventory = (state: RootState) => state.inventory.data;
 export const getQueryData = (state: RootState) => state.inventory.queryData;
+export const getInventoryStatus = (state: RootState) =>
+  state.inventory.isLoading;
 export default inventorySlice.reducer;

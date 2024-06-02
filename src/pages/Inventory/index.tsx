@@ -10,6 +10,7 @@ import {
   Pagination,
   Typography,
 } from '@mui/material';
+import Loading from '~/components/Loading';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import InventoryToolbar from '~/components/Inventory/InventoryToolbar';
@@ -17,7 +18,10 @@ import InventorySidebar from '~/components/Inventory/InventorySidebar';
 import VehicleForm from '~/components/VehicleForm';
 import VehicleCard from '~/components/Inventory/VehicleCard';
 import { useAppSelector } from '~/redux/store';
-import { getInventory } from '~/redux/reducers/inventorySlice';
+import {
+  getInventory,
+  getInventoryStatus,
+} from '~/redux/reducers/inventorySlice';
 
 const drawerWidth = 250;
 
@@ -50,6 +54,7 @@ const Inventory = () => {
   const [openFilter, setOpenFilter] = useState<boolean>(false);
   const [openForm, setOpenForm] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
+  const isLoading = useAppSelector(getInventoryStatus);
 
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -109,7 +114,7 @@ const Inventory = () => {
           open={openFilter}
           anchor="left"
           sx={{
-            width: drawerWidth,
+            width: isLoading ? (!openFilter ? 0 : drawerWidth) : drawerWidth,
             flexShrink: 0,
             '& .MuiDrawer-paper': {
               width: drawerWidth,
@@ -134,7 +139,20 @@ const Inventory = () => {
           <InventorySidebar />
         </Drawer>
       )}
-      {isLgUp && (
+      {isLoading && (
+        <Box
+          sx={{
+            height: '100vh',
+            width: '100vw',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Loading />
+        </Box>
+      )}
+      {isLgUp && !isLoading && (
         <Main
           open={openFilter}
           sx={{
@@ -162,7 +180,7 @@ const Inventory = () => {
                 <VehicleCard vehicle={vehicle} />
               </Grid>
             ))}
-            {visibleItems.length === 0 && (
+            {visibleItems.length === 0 && !isLoading && (
               <Grid
                 xs={12}
                 sx={{
@@ -230,7 +248,7 @@ const Inventory = () => {
                 <VehicleCard vehicle={vehicle} />
               </Grid>
             ))}
-            {visibleItems.length === 0 && (
+            {visibleItems.length === 0 && !isLoading && (
               <Grid
                 xs={12}
                 sx={{

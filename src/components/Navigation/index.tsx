@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useAppDispatch } from '~/redux/store';
 import { useAppSelector } from '~/redux/store';
-import { getSession } from '~/redux/reducers/userSlice';
+import { getAppStatus } from '~/redux/reducers/appSlice';
 import { getTheme, toggleTheme } from '~/redux/reducers/themeSlice';
 
 interface AppBarProps extends MuiAppBarProps {
@@ -38,11 +38,9 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 const NavBar = () => {
-  const session = useAppSelector(getSession);
+  const { isAuthenticated } = useAppSelector(getAppStatus);
   const theme = useAppSelector(getTheme);
-
   const dispatch = useAppDispatch();
-
   const navigate = useNavigate();
 
   const handleMouseDown = (
@@ -99,7 +97,7 @@ const NavBar = () => {
             sx={{
               cursor: 'pointer',
               display: {
-                xs: session.isAuthenticated ? 'none' : 'flex',
+                xs: isAuthenticated ? 'none' : 'flex',
                 sm: 'flex',
               },
               mr: 3,
@@ -114,14 +112,14 @@ const NavBar = () => {
             color="inherit"
             sx={{
               display: {
-                xs: session.isAuthenticated ? 'flex' : 'none',
+                xs: isAuthenticated ? 'flex' : 'none',
                 sm: 'none',
               },
             }}
           >
             <HomeIcon />
           </IconButton>
-          {session.isAuthenticated && (
+          {isAuthenticated && (
             <>
               <Button
                 onClick={handleOnClickInventory}
@@ -146,8 +144,8 @@ const NavBar = () => {
           <IconButton onClick={toggleThemeMode} color="inherit" sx={{ mr: 2 }}>
             {theme === 'light' ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
-          {session.isAuthenticated && <UserProfile />}
-          {!session.isAuthenticated && (
+          {isAuthenticated && <UserProfile />}
+          {!isAuthenticated && (
             <>
               <Button
                 onClick={handleOnClickLogin}

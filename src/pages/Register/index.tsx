@@ -11,55 +11,60 @@ import NameInput from '~/components/Authentication/NameInput';
 import EmailInput from '~/components/Authentication/EmailInput';
 import PasswordInput from '~/components/Authentication/PasswordInput';
 import ErrorAlert from '~/components/ErrorAlert';
+import { useAppSelector, useAppDispatch } from '~/redux/store';
+import {
+  getFormAlert,
+  getUserFormData,
+  setUserFirstName,
+  setUserLastName,
+  setUserEmail,
+  setUserPassword,
+  setUserConfirmPassword,
+} from '~/redux/reducers/formSlice';
 import { useNavigate } from 'react-router-dom';
 
 interface RegisterProps {
-  firstName: string;
-  lastName: string;
-  email: string;
-  isValidEmail: boolean;
-  password: string;
-  confirmPassword: string;
-  error: string;
-  onClearError: () => void;
-  onChangeFirstName: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
-  onChangeLastName: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
-  onChangeEmail: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
-  onChangePassword: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
-  onChangeConfirmPassword: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
   onRegister: () => Promise<boolean | void>;
 }
 
-const Register = ({
-  firstName,
-  lastName,
-  email,
-  isValidEmail,
-  password,
-  confirmPassword,
-  error,
-  onChangeFirstName,
-  onChangeLastName,
-  onChangeEmail,
-  onChangePassword,
-  onChangeConfirmPassword,
-  onRegister,
-  onClearError,
-}: RegisterProps) => {
+const Register = ({ onRegister }: RegisterProps) => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const userFormData = useAppSelector(getUserFormData);
+  const alert = useAppSelector(getFormAlert);
 
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+  };
+
+  const handleOnChangeFirstName = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    dispatch(setUserFirstName(event.target.value));
+  };
+
+  const handleOnChangeLastName = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    dispatch(setUserLastName(event.target.value));
+  };
+
+  const handleOnChangeEmail = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    dispatch(setUserEmail(event.target.value));
+  };
+
+  const handleOnChangePassword = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    dispatch(setUserPassword(event.target.value));
+  };
+
+  const handleOnChangeConfirmPassword = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    dispatch(setUserConfirmPassword(event.target.value));
   };
 
   const handleOnRegister = async (
@@ -68,7 +73,7 @@ const Register = ({
     event.preventDefault();
     try {
       if (await onRegister()) {
-        navigate('/login');
+        navigate('/');
       }
     } catch (error) {
       console.error('Error while registering user', error);
@@ -91,7 +96,13 @@ const Register = ({
             width: { xs: '70%', sm: '45%', md: '35%', lg: '25%', xl: '15%' },
           }}
         >
-          <Grid container component={Paper} spacing={1} p={2}>
+          <Grid
+            container
+            component={Paper}
+            variant="outlined"
+            spacing={1}
+            p={2}
+          >
             <Grid
               xs={12}
               display="flex"
@@ -108,38 +119,38 @@ const Register = ({
               <Typography variant="h4" component="h1">
                 Sign Up
               </Typography>
-              <ErrorAlert error={error} onClearError={onClearError} />
+              <ErrorAlert />
             </Grid>
             <Grid xs={12}>
               <NameInput
-                value={firstName}
+                value={userFormData.firstName}
                 label="First Name"
-                onChangeHandler={onChangeFirstName}
-                error={error}
+                onChangeHandler={handleOnChangeFirstName}
+                error={alert?.message}
               />
               <NameInput
-                value={lastName}
+                value={userFormData.lastName}
                 label="Last Name"
-                onChangeHandler={onChangeLastName}
-                error={error}
+                onChangeHandler={handleOnChangeLastName}
+                error={alert?.message}
               />
               <EmailInput
-                value={email}
-                isValidEmail={isValidEmail}
-                onChangeHandler={onChangeEmail}
-                error={error}
+                value={userFormData.email}
+                isValidEmail={userFormData.isValidEmail}
+                onChangeHandler={handleOnChangeEmail}
+                error={alert?.message}
               />
               <PasswordInput
-                value={password}
+                value={userFormData.password}
                 label="Password"
-                onChangeHandler={onChangePassword}
-                error={error}
+                onChangeHandler={handleOnChangePassword}
+                error={alert?.message}
               />
               <PasswordInput
-                value={confirmPassword}
+                value={userFormData.confirmPassword}
                 label="Confirm Password"
-                onChangeHandler={onChangeConfirmPassword}
-                error={error}
+                onChangeHandler={handleOnChangeConfirmPassword}
+                error={alert?.message}
               />
             </Grid>
             <Grid xs={6}>

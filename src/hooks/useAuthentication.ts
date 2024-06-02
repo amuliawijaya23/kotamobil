@@ -1,28 +1,28 @@
 import Cookies from 'js-cookie';
-import React, { useState, useEffect, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import axios, { AxiosError } from 'axios';
-import { useAppDispatch } from '~/redux/store';
+import { useAppDispatch, useAppSelector } from '~/redux/store';
+import { setAuthenticated, setLoading } from '~/redux/reducers/appSlice';
 import { login, logout } from '~/redux/reducers/userSlice';
 import { resetContacts } from '~/redux/reducers/contactsSlice';
 import { resetInventory } from '~/redux/reducers/inventorySlice';
-import { validateEmail } from '~/helpers';
+import {
+  getUserFormData,
+  setAlert,
+  resetUserForm,
+  resetAlert,
+} from '~/redux/reducers/formSlice';
 const COOKIE_NAME = import.meta.env.VITE_API_COOKIE_NAME;
 const LC_USER_DATA = 'LC_USER_DATA';
 
 const useAuthentication = () => {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [firstName, setFirstName] = useState<string>('');
-  const [lastName, setLastName] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [isValidEmail, setIsValidEmail] = useState<boolean>(false);
-  const [password, setPassword] = useState<string>('');
-  const [confirmPassword, setConfirmPassword] = useState<string>('');
-  const [error, setError] = useState<string>('');
   const dispatch = useAppDispatch();
+  const userFormData = useAppSelector(getUserFormData);
 
   const handleLogout = useCallback(async () => {
     try {
       dispatch(logout());
+      dispatch(setAuthenticated(false));
     } catch (error) {
       console.error('Error logging out:', error);
     } finally {
@@ -32,16 +32,17 @@ const useAuthentication = () => {
   }, [dispatch]);
 
   const getUserData = useCallback(async () => {
-    setLoading(true);
+    dispatch(setLoading(true));
     const userData = localStorage.getItem(LC_USER_DATA);
     if (userData) {
       try {
         const parsedUserData = JSON.parse(userData);
         dispatch(login(parsedUserData));
+        dispatch(setAuthenticated(true));
       } catch (error) {
         console.error('Failed to get user data:', error);
       } finally {
-        setLoading(false);
+        dispatch(setLoading(false));
       }
     }
   }, [dispatch]);
@@ -54,64 +55,30 @@ const useAuthentication = () => {
     }
   }, [dispatch, getUserData, handleLogout]);
 
-  const handleClearError = () => {
-    setError('');
-  };
-
-  const handleResetAuthenticationForm = () => {
-    setFirstName('');
-    setLastName('');
-    setEmail('');
-    setIsValidEmail(false);
-    setPassword('');
-    setConfirmPassword('');
-    setError('');
-  };
-
-  const handleOnChangeFirstName = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setFirstName(event.target.value);
-  };
-
-  const handleOnChangeLastName = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setLastName(event.target.value);
-  };
-
-  const handleOnChangeEmail = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setEmail(event.target.value);
-    setIsValidEmail(validateEmail(event.target.value));
-  };
-
-  const handleOnChangePassword = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setPassword(event.target.value);
-  };
-
-  const handleOnChangeConfirmPassword = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setConfirmPassword(event.target.value);
-  };
-
   const handleRegister = async () => {
-    setLoading(true);
+    dispatch(setLoading(true));
+    const { firstName, lastName, email, password, confirmPassword } =
+      userFormData;
     try {
       if (!firstName || !email || !password || !confirmPassword) {
-        return setError('Missing parameter');
+        dispatch(
+          setAlert({ message: 'Missing parameters', severity: 'error' }),
+        );
+        return;
       }
 
-      if (!isValidEmail) {
-        return setError('Invalid email address');
+      if (!userFormData.isValidEmail) {
+        dispatch(
+          setAlert({ message: 'Invalid email address', severity: 'error' }),
+        );
+        return;
       }
 
       if (password !== confirmPassword) {
-        return setError('Passwords do not match');
+        dispatch(
+          setAlert({ message: 'Passwords do not match', severity: 'error' }),
+        );
+        return;
       }
 
       const response = await axios.post('/api/auth/register', {
@@ -126,7 +93,10 @@ const useAuthentication = () => {
       });
 
       if (response.status !== 200) {
-        return setError(response.data.message);
+        dispatch(
+          setAlert({ message: response.data.message, severity: 'error' }),
+        );
+        return;
       }
 
       dispatch(login(response.data));
@@ -134,30 +104,46 @@ const useAuthentication = () => {
     } catch (error) {
       console.error('Error occured while registering user:', error);
       if (error instanceof AxiosError) {
-        return setError(error?.response?.data?.message);
+        dispatch(
+          setAlert({
+            message: error.response?.data.message,
+            severity: 'error',
+          }),
+        );
+        return;
       }
     } finally {
-      handleResetAuthenticationForm();
-      setLoading(false);
+      dispatch(resetUserForm());
+      dispatch(resetAlert());
+      dispatch(setLoading(false));
     }
     return false;
   };
 
   const handleLogin = async () => {
-    setLoading(true);
+    dispatch(setLoading(true));
     try {
+      const { email, password } = userFormData;
       if (!email || !password) {
-        return setError('Missing parameter');
+        dispatch(
+          setAlert({ message: 'Missing parameters', severity: 'error' }),
+        );
+        return;
       }
 
-      if (!isValidEmail) {
-        return setError('Invalid email address');
+      if (!userFormData.isValidEmail) {
+        dispatch(
+          setAlert({ message: 'Invalid email address', severity: 'error' }),
+        );
+        return;
       }
 
       const response = await axios.post('/api/auth/login', { email, password });
 
       if (response.status !== 200) {
-        setError(response.data.message);
+        dispatch(
+          setAlert({ message: response.data.message, severity: 'error' }),
+        );
         return;
       }
 
@@ -169,30 +155,22 @@ const useAuthentication = () => {
     } catch (error) {
       console.error('Error occured while logging in:', error);
       if (error instanceof AxiosError) {
-        setError(error?.response?.data?.message);
+        dispatch(
+          setAlert({
+            message: error.response?.data.message,
+            severity: 'error',
+          }),
+        );
       }
     } finally {
-      handleResetAuthenticationForm();
-      setLoading(false);
+      dispatch(resetUserForm());
+      dispatch(resetAlert());
+      dispatch(setLoading(false));
     }
     return false;
   };
 
   return {
-    loading,
-    firstName,
-    lastName,
-    email,
-    isValidEmail,
-    password,
-    confirmPassword,
-    error,
-    handleClearError,
-    handleOnChangeFirstName,
-    handleOnChangeLastName,
-    handleOnChangeEmail,
-    handleOnChangePassword,
-    handleOnChangeConfirmPassword,
     handleLogin,
     handleRegister,
   };

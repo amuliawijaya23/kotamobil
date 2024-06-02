@@ -1,5 +1,15 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../store';
+import { validateEmail } from '~/helpers';
+
+export interface UserForm {
+  firstName: string;
+  lastName: string;
+  email: string;
+  isValidEmail: boolean;
+  password: string;
+  confirmPassword: string;
+}
 
 export interface VehicleForm {
   name: string;
@@ -45,12 +55,21 @@ export interface FormAlert {
 }
 
 interface FormState {
+  user: UserForm;
   vehicle: VehicleForm;
   contact: ContactForm;
   alert: FormAlert | null;
 }
 
 const initialState: FormState = {
+  user: {
+    firstName: '',
+    lastName: '',
+    email: '',
+    isValidEmail: false,
+    password: '',
+    confirmPassword: '',
+  },
   vehicle: {
     name: '',
     status: 'Available',
@@ -94,6 +113,7 @@ export const formSlice = createSlice({
   name: 'form',
   initialState,
   reducers: {
+    // reducer actions for alert
     resetAlert: (state) => {
       state.alert = initialState.alert;
     },
@@ -102,6 +122,26 @@ export const formSlice = createSlice({
       action: PayloadAction<{ message: string; severity: string }>,
     ) => {
       state.alert = action.payload;
+    },
+    // reducer actions for user form
+    resetUserForm: (state) => {
+      state.user = initialState.user;
+    },
+    setUserFirstName: (state, action: PayloadAction<string>) => {
+      state.user.firstName = action.payload;
+    },
+    setUserLastName: (state, action: PayloadAction<string>) => {
+      state.user.lastName = action.payload;
+    },
+    setUserEmail: (state, action: PayloadAction<string>) => {
+      state.user.email = action.payload;
+      state.user.isValidEmail = validateEmail(action.payload);
+    },
+    setUserPassword: (state, action: PayloadAction<string>) => {
+      state.user.password = action.payload;
+    },
+    setUserConfirmPassword: (state, action: PayloadAction<string>) => {
+      state.user.confirmPassword = action.payload;
     },
     // reducer actions for vehicle form
     resetVehicleForm: (state) => {
@@ -180,37 +220,43 @@ export const formSlice = createSlice({
     resetContactForm: (state) => {
       state.contact = initialState.contact;
     },
-    setFirstName: (state, action: PayloadAction<string>) => {
+    setContactFirstName: (state, action: PayloadAction<string>) => {
       state.contact.firstName = action.payload;
     },
-    setLastName: (state, action: PayloadAction<string>) => {
+    setContactLastName: (state, action: PayloadAction<string>) => {
       state.contact.lastName = action.payload;
     },
-    setMobile: (state, action: PayloadAction<string>) => {
+    setContactMobile: (state, action: PayloadAction<string>) => {
       state.contact.mobile = action.payload;
     },
-    setEmail: (state, action: PayloadAction<string>) => {
+    setContactEmail: (state, action: PayloadAction<string>) => {
       state.contact.email = action.payload;
     },
-    setAddress: (state, action: PayloadAction<string>) => {
+    setContactAddress: (state, action: PayloadAction<string>) => {
       state.contact.address = action.payload;
     },
-    setInstagram: (state, action: PayloadAction<string>) => {
+    setContactInstagram: (state, action: PayloadAction<string>) => {
       state.contact.instagram = action.payload;
     },
-    setFacebook: (state, action: PayloadAction<string>) => {
+    setContactFacebook: (state, action: PayloadAction<string>) => {
       state.contact.facebook = action.payload;
     },
-    setTwitter: (state, action: PayloadAction<string>) => {
+    setContactTwitter: (state, action: PayloadAction<string>) => {
       state.contact.twitter = action.payload;
     },
-    setTiktok: (state, action: PayloadAction<string>) => {
+    setContactTiktok: (state, action: PayloadAction<string>) => {
       state.contact.tiktok = action.payload;
     },
   },
 });
 
 export const {
+  resetUserForm,
+  setUserFirstName,
+  setUserLastName,
+  setUserEmail,
+  setUserPassword,
+  setUserConfirmPassword,
   resetVehicleForm,
   resetAlert,
   setAlert,
@@ -238,16 +284,17 @@ export const {
   setDescription,
   setSpecification,
   resetContactForm,
-  setFirstName,
-  setLastName,
-  setMobile,
-  setEmail,
-  setAddress,
-  setInstagram,
-  setFacebook,
-  setTwitter,
-  setTiktok,
+  setContactFirstName,
+  setContactLastName,
+  setContactMobile,
+  setContactEmail,
+  setContactAddress,
+  setContactInstagram,
+  setContactFacebook,
+  setContactTwitter,
+  setContactTiktok,
 } = formSlice.actions;
+export const getUserFormData = (state: RootState) => state.form.user;
 export const getVehicleFormData = (state: RootState) => state.form.vehicle;
 export const getContactFormData = (state: RootState) => state.form.contact;
 export const getFormAlert = (state: RootState) => state.form.alert;
