@@ -18,7 +18,7 @@ import VehicleCard from '~/components/Inventory/VehicleCard';
 import { useAppSelector } from '~/redux/store';
 import { getInventory } from '~/redux/reducers/inventorySlice';
 
-const drawerWidth = 200;
+const drawerWidth = 250;
 
 const Main = styled(Box, { shouldForwardProp: (prop) => prop !== 'open' })<{
   open?: boolean;
@@ -112,7 +112,12 @@ const Inventory = () => {
         </Drawer>
       )}
       {isXsUp && !isLgUp && (
-        <Drawer open={openFilter} anchor="left" onClose={handleCloseFilter}>
+        <Drawer
+          open={openFilter}
+          anchor="left"
+          onClose={handleCloseFilter}
+          PaperProps={{ sx: { width: drawerWidth } }}
+        >
           <Toolbar />
           <Divider />
           <InventorySidebar />

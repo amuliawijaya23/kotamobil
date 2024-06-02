@@ -1,12 +1,32 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-
 import type { VehicleData } from './vehicleSlice';
+import {
+  condition,
+  bodyType,
+  assembly,
+  fuelType,
+  transmission,
+} from '~/helpers/selectData';
 
 interface QueryData {
   makesModels: { [key: string]: string[] };
+  minPrice: number;
+  maxPrice: number;
+  minYear: number;
+  maxYear: number;
+  minOdometer: number;
+  maxOdometer: number;
   selectedMakes: string[];
   selectedModels: string[];
+  priceRange: number[];
+  yearRange: number[];
+  odometerRange: number[];
+  selectedCondition: string[];
+  selectedBodyType: string[];
+  selectedAssembly: string[];
+  selectedFuelType: string[];
+  selectedTransmission: string[];
 }
 
 interface InventoryState {
@@ -47,6 +67,20 @@ export const inventorySlice = createSlice({
         makesModels: {},
         selectedMakes: [],
         selectedModels: [],
+        minPrice: Infinity,
+        maxPrice: -Infinity,
+        minYear: Infinity,
+        maxYear: -Infinity,
+        minOdometer: Infinity,
+        maxOdometer: -Infinity,
+        priceRange: [],
+        yearRange: [],
+        odometerRange: [],
+        selectedCondition: condition,
+        selectedBodyType: bodyType,
+        selectedAssembly: assembly,
+        selectedFuelType: fuelType,
+        selectedTransmission: transmission,
       };
       for (const vehicle of action.payload) {
         if (!queryData.makesModels[vehicle.make]) {
@@ -57,6 +91,36 @@ export const inventorySlice = createSlice({
         if (!queryData.makesModels[vehicle.make].includes(vehicle.model)) {
           queryData.makesModels[vehicle.make].push(vehicle.model);
           queryData.selectedModels.push(vehicle.model);
+        }
+
+        if (vehicle.price < queryData.minPrice) {
+          queryData.minPrice = vehicle.price;
+          queryData.priceRange[0] = vehicle.price;
+        }
+
+        if (vehicle.price > queryData.maxPrice) {
+          queryData.maxPrice = vehicle.price;
+          queryData.priceRange[1] = vehicle.price;
+        }
+
+        if (vehicle.year < queryData.minYear) {
+          queryData.minYear = vehicle.year;
+          queryData.yearRange[0] = vehicle.year;
+        }
+
+        if (vehicle.year > queryData.maxYear) {
+          queryData.maxYear = vehicle.year;
+          queryData.yearRange[1] = vehicle.year;
+        }
+
+        if (vehicle.odometer < queryData.minOdometer) {
+          queryData.minOdometer = vehicle.odometer;
+          queryData.odometerRange[0] = vehicle.odometer;
+        }
+
+        if (vehicle.odometer > queryData.maxOdometer) {
+          queryData.maxOdometer = vehicle.odometer;
+          queryData.odometerRange[1] = vehicle.odometer;
         }
 
         Object.keys(queryData.makesModels).forEach((make) => {
@@ -105,6 +169,108 @@ export const inventorySlice = createSlice({
         state.queryData.selectedModels = newSelectedModels;
       }
     },
+    updatePriceRange: (state, action: PayloadAction<number[]>) => {
+      if (state.queryData) {
+        state.queryData.priceRange = action.payload;
+      }
+    },
+    updateYearRange: (state, action: PayloadAction<number[]>) => {
+      if (state.queryData) {
+        state.queryData.yearRange = action.payload;
+      }
+    },
+    updateOdometerRange: (state, action: PayloadAction<number[]>) => {
+      if (state.queryData) {
+        state.queryData.odometerRange = action.payload;
+      }
+    },
+    updateConditionSelections: (state, action: PayloadAction<string>) => {
+      if (state.queryData) {
+        const selectedCondition = action.payload;
+        let newSelectedCondition;
+        if (state.queryData.selectedCondition.includes(selectedCondition)) {
+          newSelectedCondition = state.queryData.selectedCondition.filter(
+            (c) => c !== selectedCondition,
+          );
+        } else {
+          newSelectedCondition = [
+            ...state.queryData.selectedCondition,
+            selectedCondition,
+          ];
+        }
+        state.queryData.selectedCondition = newSelectedCondition;
+      }
+    },
+    updateAssemblySelections: (state, action: PayloadAction<string>) => {
+      if (state.queryData) {
+        const selectedAssembly = action.payload;
+        let newSelectedAssembly;
+        if (state.queryData.selectedAssembly.includes(selectedAssembly)) {
+          newSelectedAssembly = state.queryData.selectedAssembly.filter(
+            (a) => a !== selectedAssembly,
+          );
+        } else {
+          newSelectedAssembly = [
+            ...state.queryData.selectedAssembly,
+            selectedAssembly,
+          ];
+        }
+        state.queryData.selectedAssembly = newSelectedAssembly;
+      }
+    },
+    updateBodyTypeSelections: (state, action: PayloadAction<string>) => {
+      if (state.queryData) {
+        const selectedBodyType = action.payload;
+        let newSelectedBodyType;
+        if (state.queryData.selectedBodyType.includes(selectedBodyType)) {
+          newSelectedBodyType = state.queryData.selectedBodyType.filter(
+            (a) => a !== selectedBodyType,
+          );
+        } else {
+          newSelectedBodyType = [
+            ...state.queryData.selectedBodyType,
+            selectedBodyType,
+          ];
+        }
+        state.queryData.selectedBodyType = newSelectedBodyType;
+      }
+    },
+    updateFuelTypeSelections: (state, action: PayloadAction<string>) => {
+      if (state.queryData) {
+        const selectedFuelType = action.payload;
+        let newSelectedFuelType;
+        if (state.queryData.selectedFuelType.includes(selectedFuelType)) {
+          newSelectedFuelType = state.queryData.selectedFuelType.filter(
+            (f) => f !== selectedFuelType,
+          );
+        } else {
+          newSelectedFuelType = [
+            ...state.queryData.selectedFuelType,
+            selectedFuelType,
+          ];
+        }
+        state.queryData.selectedFuelType = newSelectedFuelType;
+      }
+    },
+    updateTransmissionSelections: (state, action: PayloadAction<string>) => {
+      if (state.queryData) {
+        const selectedTransmission = action.payload;
+        let newSelectedTransmission;
+        if (
+          state.queryData.selectedTransmission.includes(selectedTransmission)
+        ) {
+          newSelectedTransmission = state.queryData.selectedTransmission.filter(
+            (f) => f !== selectedTransmission,
+          );
+        } else {
+          newSelectedTransmission = [
+            ...state.queryData.selectedTransmission,
+            selectedTransmission,
+          ];
+        }
+        state.queryData.selectedTransmission = newSelectedTransmission;
+      }
+    },
     selectAllMakes: (state) => {
       if (state.queryData) {
         const allMakes = Object.keys(state.queryData.makesModels);
@@ -138,6 +304,53 @@ export const inventorySlice = createSlice({
         }
       }
     },
+    selectAllCondition: (state) => {
+      if (state.queryData) {
+        if (state.queryData.selectedCondition.length === condition.length) {
+          state.queryData.selectedCondition = [];
+        } else {
+          state.queryData.selectedCondition = condition;
+        }
+      }
+    },
+    selectAllAssembly: (state) => {
+      if (state.queryData) {
+        if (state.queryData.selectedAssembly.length === assembly.length) {
+          state.queryData.selectedAssembly = [];
+        } else {
+          state.queryData.selectedAssembly = assembly;
+        }
+      }
+    },
+    selectAllBodyType: (state) => {
+      if (state.queryData) {
+        if (state.queryData.selectedBodyType.length === bodyType.length) {
+          state.queryData.selectedBodyType = [];
+        } else {
+          state.queryData.selectedBodyType = bodyType;
+        }
+      }
+    },
+    selectAllFuelType: (state) => {
+      if (state.queryData) {
+        if (state.queryData.selectedFuelType.length === fuelType.length) {
+          state.queryData.selectedFuelType = [];
+        } else {
+          state.queryData.selectedFuelType = fuelType;
+        }
+      }
+    },
+    selectAllTransmission: (state) => {
+      if (state.queryData) {
+        if (
+          state.queryData.selectedTransmission.length === transmission.length
+        ) {
+          state.queryData.selectedTransmission = [];
+        } else {
+          state.queryData.selectedTransmission = transmission;
+        }
+      }
+    },
     resetInventory: () => initialState,
   },
 });
@@ -149,8 +362,21 @@ export const {
   updateVehicleFromInventory,
   updateMakeSelections,
   updateModelSelections,
+  updatePriceRange,
+  updateYearRange,
+  updateOdometerRange,
+  updateConditionSelections,
+  updateAssemblySelections,
+  updateBodyTypeSelections,
+  updateFuelTypeSelections,
+  updateTransmissionSelections,
   selectAllMakes,
   selectAllModels,
+  selectAllCondition,
+  selectAllAssembly,
+  selectAllBodyType,
+  selectAllFuelType,
+  selectAllTransmission,
   resetInventory,
 } = inventorySlice.actions;
 export const getInventory = (state: RootState) => state.inventory.data;

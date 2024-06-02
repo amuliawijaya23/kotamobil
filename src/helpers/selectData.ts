@@ -5,6 +5,21 @@ export interface CountryType {
   suggested?: boolean;
 }
 
+export const condition = ['New', 'Used'];
+export const bodyType = [
+  'Sedan',
+  'SUV',
+  'MPV',
+  'Coupe',
+  'Hatchback',
+  'Sport',
+  'Convertible',
+  'Pickup',
+];
+export const assembly = ['Complete-Knock-Down', 'Complete-Built-Up'];
+export const fuelType = ['Petrol', 'Diesel', 'Hybrid', 'Electric'];
+export const transmission = ['Automatic', 'Manual'];
+
 export const countryCodes = [
   { code: 'AD', label: 'Andorra', phone: '376' },
   {

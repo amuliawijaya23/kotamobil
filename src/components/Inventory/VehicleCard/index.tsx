@@ -47,8 +47,9 @@ const VehicleCard = ({ vehicle }: { vehicle: VehicleData }) => {
             />
           }
           titleTypographyProps={{
-            variant: 'h6',
+            variant: 'body1',
             component: 'h4',
+            fontWeight: 'bold',
             gutterBottom: true,
           }}
           subheaderTypographyProps={{

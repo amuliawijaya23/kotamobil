@@ -36,6 +36,7 @@ import {
   setFuelType,
   setDescription,
   setSpecification,
+  setBodyType,
 } from '~/redux/reducers/formSlice';
 
 const useVehicleForm = () => {
@@ -60,6 +61,7 @@ const useVehicleForm = () => {
       dispatch(setDateAdded(JSON.stringify(vehicle.dateAdded)));
       dispatch(setPrice(vehicle.price));
       dispatch(setVin(vehicle.vin));
+      dispatch(setBodyType(vehicle.bodyType));
       dispatch(setMake(vehicle.make));
       dispatch(setModel(vehicle.model));
       dispatch(setAssembly(vehicle.assembly));

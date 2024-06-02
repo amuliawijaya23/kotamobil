@@ -84,14 +84,31 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
       searchRequest.cancel('Search Cancelled');
     }
     try {
-      const makes = listenerApi.getState().inventory.queryData?.selectedMakes;
-      const models = listenerApi.getState().inventory.queryData?.selectedModels;
+      const queryData = listenerApi.getState().inventory.queryData;
+      const makes = queryData?.selectedMakes;
+      const models = queryData?.selectedModels;
+      const priceRange = queryData?.priceRange;
+      const yearRange = queryData?.yearRange;
+      const odometerRange = queryData?.odometerRange;
+      const condition = queryData?.selectedCondition;
+      const assembly = queryData?.selectedAssembly;
+      const bodyType = queryData?.selectedBodyType;
+      const fuelType = queryData?.selectedFuelType;
+      const transmission = queryData?.selectedTransmission;
       searchRequest = axios.CancelToken.source();
       const inventory = await axios.post(
         '/api/vehicle/search',
         {
           makes: makes,
           models: models,
+          priceRange: priceRange,
+          yearRange: yearRange,
+          odometerRange: odometerRange,
+          condition: condition,
+          assembly: assembly,
+          bodyType: bodyType,
+          fuelType: fuelType,
+          transmission: transmission,
         },
         { cancelToken: searchRequest.token },
       );
