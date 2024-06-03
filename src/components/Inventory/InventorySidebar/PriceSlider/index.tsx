@@ -39,7 +39,7 @@ const PriceSlider = () => {
         <Grid container py={1} display="flex" justifyContent="center">
           <Grid xs={12} display="flex" justifyContent="center">
             <Slider
-              aria-label="Always visible"
+              getAriaLabel={() => 'price range'}
               valueLabelDisplay="off"
               value={queryData?.priceRange}
               onChange={handlePriceRangeChange}

@@ -7,8 +7,10 @@ import {
   CardContent,
   Typography,
   Unstable_Grid2 as Grid,
+  Box,
+  Chip,
 } from '@mui/material';
-
+import CircleIcon from '@mui/icons-material/Circle';
 import SpeedIcon from '@mui/icons-material/Speed';
 import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
@@ -22,7 +24,7 @@ const VehicleCard = ({ vehicle }: { vehicle: VehicleData }) => {
   const navigate = useNavigate();
 
   return (
-    <Card raised>
+    <Card raised sx={{ position: 'relative' }}>
       <CardActionArea onClick={() => navigate(`/vehicle/${vehicle._id}`)}>
         <CardMedia
           component="img"
@@ -35,16 +37,36 @@ const VehicleCard = ({ vehicle }: { vehicle: VehicleData }) => {
           sx={{ objectFit: 'cover' }}
           alt={vehicle.name}
         />
+        <Box sx={{ position: 'absolute', top: 10, left: 10 }}>
+          {vehicle.sold && (
+            <Chip
+              size="small"
+              variant="outlined"
+              label="SOLD"
+              color="secondary"
+              icon={<CircleIcon color="secondary" fontSize="small" />}
+              sx={{ pr: 1 }}
+            />
+          )}
+        </Box>
         <CardHeader
           title={vehicle.name}
           subheader={
-            <NumericFormat
-              displayType="text"
-              value={vehicle.price}
-              thousandSeparator="."
-              decimalSeparator=","
-              prefix="Rp "
-            />
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <NumericFormat
+                displayType="text"
+                value={vehicle.price}
+                thousandSeparator="."
+                decimalSeparator=","
+                prefix="Rp "
+              />
+            </Box>
           }
           titleTypographyProps={{
             variant: 'body1',
@@ -54,7 +76,7 @@ const VehicleCard = ({ vehicle }: { vehicle: VehicleData }) => {
           }}
           subheaderTypographyProps={{
             variant: 'subtitle1',
-            component: 'p',
+            component: 'div',
             gutterBottom: true,
           }}
         />

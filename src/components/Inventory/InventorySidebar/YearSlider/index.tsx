@@ -35,7 +35,7 @@ const YearSlider = () => {
         <Grid container py={2} display="flex" justifyContent="center">
           <Grid xs={12} display="flex" justifyContent="center">
             <Slider
-              aria-label="Always visible"
+              getAriaLabel={() => 'year range'}
               valueLabelDisplay="off"
               value={queryData.yearRange}
               onChange={handleYearRangeChange}
