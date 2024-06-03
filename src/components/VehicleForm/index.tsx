@@ -3,17 +3,13 @@ import {
   Drawer,
   Toolbar,
   Unstable_Grid2 as Grid,
-  Snackbar,
-  Alert,
   Button,
-  IconButton,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogContentText,
   DialogActions,
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
 import Loading from '../Loading';
 import VehicleImages from './VehicleImages';
 import VehicleStatus from './VehicleStatus';
@@ -21,12 +17,8 @@ import VehicleDetails from './VehicleDetails';
 import VehicleSpecifications from './VehicleSpecifications';
 import { useAppSelector, useAppDispatch } from '~/redux/store';
 import { getVehicleData } from '~/redux/reducers/vehicleSlice';
-import {
-  getVehicleFormData,
-  getFormAlert,
-  setAlert,
-  resetAlert,
-} from '~/redux/reducers/formSlice';
+import { getVehicleFormData } from '~/redux/reducers/vehicleFormSlice';
+import { setAlert, resetAlert } from '~/redux/reducers/appSlice';
 import useVehicleForm from '~/hooks/useVehicleForm';
 
 const VEHICLE_STATUS_AND_PRICING = 'VEHICLE_STATUS_AND_PRICING';
@@ -61,11 +53,8 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
   } = useVehicleForm();
 
   const dispatch = useAppDispatch();
-
   const vehicle = useAppSelector(getVehicleData);
   const vehicleFormData = useAppSelector(getVehicleFormData);
-  const alert = useAppSelector(getFormAlert);
-
   const [step, setStep] = useState<number>(0);
   const [openConfirmation, setOpenConfirmation] = useState<boolean>(false);
 
@@ -158,10 +147,6 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
     setOpenConfirmation(false);
   };
 
-  const handleClearAlert = () => {
-    dispatch(resetAlert());
-  };
-
   const handlePreviousStep = () => {
     setStep((prev) => prev - 1);
   };
@@ -181,23 +166,6 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
 
   return (
     <>
-      <Snackbar
-        open={Boolean(alert)}
-        autoHideDuration={6000}
-        onClose={handleClearAlert}
-        action={
-          <IconButton size="small" color="inherit" onClick={handleClearAlert}>
-            <CloseIcon />
-          </IconButton>
-        }
-      >
-        <Alert
-          onClose={handleClearAlert}
-          severity={alert?.severity === 'error' ? 'error' : 'success'}
-        >
-          {alert?.message}
-        </Alert>
-      </Snackbar>
       <Dialog open={openConfirmation} onClose={handleCloseConfirmation}>
         <DialogTitle>
           {vehicle ? 'Update Vehicle' : 'Create Vehicle'}

@@ -13,8 +13,8 @@ import {
 import { NumericFormat } from 'react-number-format';
 
 import { useAppSelector } from '~/redux/store';
-import { getFormAlert } from '~/redux/reducers/formSlice';
-import { getContactFormData } from '~/redux/reducers/formSlice';
+import { getAppAlert } from '~/redux/reducers/appSlice';
+import { getContactFormData } from '~/redux/reducers/contactFormSlice';
 
 import { countryCodes } from '~/helpers/selectData';
 
@@ -44,7 +44,7 @@ const ContactInformation = ({
   onAddressChange,
 }: ContactInformationProps) => {
   const contactFormData = useAppSelector(getContactFormData);
-  const alert = useAppSelector(getFormAlert);
+  const alert = useAppSelector(getAppAlert);
 
   return (
     <>

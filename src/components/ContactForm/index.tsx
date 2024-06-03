@@ -4,19 +4,10 @@ import {
   Unstable_Grid2 as Grid,
   Divider,
   Button,
-  Snackbar,
-  Alert,
-  IconButton,
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-
 import ContactInformation from './ContactInformation';
 import ContactSocials from './ContactSocials';
-
 import useContactForm from '~/hooks/useContactForm';
-
-import { useAppSelector, useAppDispatch } from '~/redux/store';
-import { getFormAlert, resetAlert } from '~/redux/reducers/formSlice';
 
 interface ContactFormProps {
   open: boolean;
@@ -51,15 +42,8 @@ const ContactForm = ({ open, onCloseForm }: ContactFormProps) => {
     handleOnSave,
   } = useContactForm();
 
-  const dispatch = useAppDispatch();
-  const alert = useAppSelector(getFormAlert);
-
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-  };
-
-  const handleClearAlert = () => {
-    dispatch(resetAlert());
   };
 
   const onClose = () => {
@@ -75,23 +59,6 @@ const ContactForm = ({ open, onCloseForm }: ContactFormProps) => {
 
   return (
     <>
-      <Snackbar
-        open={Boolean(alert)}
-        autoHideDuration={6000}
-        onClose={handleClearAlert}
-        action={
-          <IconButton size="small" color="inherit" onClick={handleClearAlert}>
-            <CloseIcon />
-          </IconButton>
-        }
-      >
-        <Alert
-          onClose={handleClearAlert}
-          severity={alert?.severity === 'error' ? 'error' : 'success'}
-        >
-          {alert?.message}
-        </Alert>
-      </Snackbar>
       <Modal
         open={open}
         onClose={onClose}

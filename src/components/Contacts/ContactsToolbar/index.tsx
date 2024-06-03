@@ -10,18 +10,18 @@ import {
   getSelectedContacts,
 } from '~/redux/reducers/contactsSlice';
 import {
-  setContactFirstName,
-  setContactLastName,
-  setContactAddress,
-  setContactEmail,
-  setContactMobile,
-  setContactFacebook,
-  setContactInstagram,
-  setContactTiktok,
-  setContactTwitter,
+  setFirstName,
+  setLastName,
+  setAddress,
+  setEmail,
+  setMobile,
+  setFacebook,
+  setInstagram,
+  setTiktok,
+  setTwitter,
   setUpdateId,
   setCountry,
-} from '~/redux/reducers/formSlice';
+} from '~/redux/reducers/contactFormSlice';
 import { countryCodes } from '~/helpers/selectData';
 import useContactData from '~/hooks/useContactData';
 
@@ -62,22 +62,20 @@ const ContactsToolbar = ({ numSelected, onOpenForm }: ContactsToolbar) => {
           (c) => c.phone === contactCountryPhone,
         );
         country && dispatch(setCountry(country));
-        dispatch(setContactFirstName(selectedContact.firstName));
-        dispatch(setContactMobile(contactMobile));
+        dispatch(setFirstName(selectedContact.firstName));
+        dispatch(setMobile(contactMobile));
         selectedContact.lastName &&
-          dispatch(setContactLastName(selectedContact.lastName));
-        selectedContact.email &&
-          dispatch(setContactEmail(selectedContact.email));
+          dispatch(setLastName(selectedContact.lastName));
+        selectedContact.email && dispatch(setEmail(selectedContact.email));
         selectedContact.address &&
-          dispatch(setContactAddress(selectedContact.address));
+          dispatch(setAddress(selectedContact.address));
         selectedContact.instagram &&
-          dispatch(setContactInstagram(selectedContact.instagram));
+          dispatch(setInstagram(selectedContact.instagram));
         selectedContact.facebook &&
-          dispatch(setContactFacebook(selectedContact.facebook));
+          dispatch(setFacebook(selectedContact.facebook));
         selectedContact.twitter &&
-          dispatch(setContactTwitter(selectedContact.twitter));
-        selectedContact.tiktok &&
-          dispatch(setContactTiktok(selectedContact.tiktok));
+          dispatch(setTwitter(selectedContact.twitter));
+        selectedContact.tiktok && dispatch(setTiktok(selectedContact.tiktok));
         dispatch(setUpdateId(selectedContact._id));
       } catch (error) {
         console.error('Error occured during form initialization:', error);

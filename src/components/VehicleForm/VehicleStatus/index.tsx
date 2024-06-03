@@ -27,7 +27,6 @@ import ContactForm from '~/components/ContactForm';
 import { useAppSelector, useAppDispatch } from '~/redux/store';
 import {
   getVehicleFormData,
-  getFormAlert,
   setName,
   setStatus,
   setDateAdded,
@@ -39,7 +38,8 @@ import {
   setCondition,
   setPlateNumber,
   setTaxDate,
-} from '~/redux/reducers/formSlice';
+} from '~/redux/reducers/vehicleFormSlice';
+import { getAppAlert } from '~/redux/reducers/appSlice';
 import { getContactsData } from '~/redux/reducers/contactsSlice';
 
 interface VehicleStatusProps {
@@ -51,7 +51,7 @@ const VehicleStatus = ({ contact, onBuyerChange }: VehicleStatusProps) => {
   const [openContactForm, setOpenContactForm] = useState<boolean>(false);
   const vehicleFormData = useAppSelector(getVehicleFormData);
   const contacts = useAppSelector(getContactsData);
-  const alert = useAppSelector(getFormAlert);
+  const alert = useAppSelector(getAppAlert);
 
   const dispatch = useAppDispatch();
 

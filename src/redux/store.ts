@@ -16,7 +16,9 @@ import inventoryReducer, {
   setQueryData,
 } from './reducers/inventorySlice';
 import vehicleReducer from './reducers/vehicleSlice';
-import formReducer from './reducers/formSlice';
+import authFormReducer from './reducers/authFormSlice';
+import vehicleFormReducer from './reducers/vehicleFormSlice';
+import contactFormReducer from './reducers/contactFormSlice';
 
 const listenerMiddleware = createListenerMiddleware();
 
@@ -28,7 +30,9 @@ export const store = configureStore({
     contacts: contactsReducer,
     inventory: inventoryReducer,
     vehicle: vehicleReducer,
-    form: formReducer,
+    authForm: authFormReducer,
+    vehicleForm: vehicleFormReducer,
+    contactForm: contactFormReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().prepend(listenerMiddleware.middleware),

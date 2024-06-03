@@ -4,7 +4,7 @@ import {
   getSelectedContacts,
   removeContacts,
 } from '~/redux/reducers/contactsSlice';
-import { setAlert } from '~/redux/reducers/formSlice';
+import { setAlert } from '~/redux/reducers/appSlice';
 
 const useContactData = () => {
   const dispatch = useAppDispatch();

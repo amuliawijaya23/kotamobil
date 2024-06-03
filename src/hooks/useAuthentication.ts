@@ -7,17 +7,18 @@ import { login, logout } from '~/redux/reducers/userSlice';
 import { resetContacts } from '~/redux/reducers/contactsSlice';
 import { resetInventory } from '~/redux/reducers/inventorySlice';
 import {
-  getUserFormData,
-  setAlert,
-  resetUserForm,
-  resetAlert,
-} from '~/redux/reducers/formSlice';
+  setError,
+  resetAuthForm,
+  getAuthFormData,
+  resetError,
+} from '~/redux/reducers/authFormSlice';
+
 const COOKIE_NAME = import.meta.env.VITE_API_COOKIE_NAME;
 const LC_USER_DATA = 'LC_USER_DATA';
 
 const useAuthentication = () => {
   const dispatch = useAppDispatch();
-  const userFormData = useAppSelector(getUserFormData);
+  const authFormData = useAppSelector(getAuthFormData);
 
   const handleLogout = useCallback(async () => {
     try {
@@ -55,35 +56,31 @@ const useAuthentication = () => {
   useEffect(() => {
     if (Cookies.get(COOKIE_NAME)) {
       getUserData();
-    } else {
-      handleLogout();
     }
+
+    return () => {
+      handleLogout();
+    };
   }, [dispatch, getUserData, handleLogout]);
 
   const handleRegister = async () => {
     dispatch(setLoading(true));
     const { firstName, lastName, email, password, confirmPassword } =
-      userFormData;
+      authFormData;
     try {
       if (!firstName || !email || !password || !confirmPassword) {
-        dispatch(
-          setAlert({ message: 'Missing parameters', severity: 'error' }),
-        );
-        return;
+        dispatch(setError('Missing parameters'));
+        return false;
       }
 
-      if (!userFormData.isValidEmail) {
-        dispatch(
-          setAlert({ message: 'Invalid email address', severity: 'error' }),
-        );
-        return;
+      if (!authFormData.isValidEmail) {
+        dispatch(setError('Invalid email address'));
+        return false;
       }
 
       if (password !== confirmPassword) {
-        dispatch(
-          setAlert({ message: 'Passwords do not match', severity: 'error' }),
-        );
-        return;
+        dispatch(setError('Passwords do not match'));
+        return false;
       }
 
       const response = await axios.post('/api/auth/register', {
@@ -98,29 +95,20 @@ const useAuthentication = () => {
       });
 
       if (response.status !== 200) {
-        dispatch(
-          setAlert({ message: response.data.message, severity: 'error' }),
-        );
-        return;
+        dispatch(setError(response.data.message));
+        return false;
       }
-
       dispatch(login(response.data));
       dispatch(setAuthenticated(true));
+      dispatch(resetAuthForm());
+      dispatch(resetError());
       return true;
     } catch (error) {
       console.error('Error occured while registering user:', error);
       if (error instanceof AxiosError) {
-        dispatch(
-          setAlert({
-            message: error.response?.data.message,
-            severity: 'error',
-          }),
-        );
-        return;
+        dispatch(setError(error.response?.data.message));
       }
     } finally {
-      dispatch(resetUserForm());
-      dispatch(resetAlert());
       dispatch(setLoading(false));
     }
     return false;
@@ -129,49 +117,37 @@ const useAuthentication = () => {
   const handleLogin = async () => {
     dispatch(setLoading(true));
     try {
-      const { email, password } = userFormData;
+      const { email, password } = authFormData;
       if (!email || !password) {
-        dispatch(
-          setAlert({ message: 'Missing parameters', severity: 'error' }),
-        );
-        return;
+        dispatch(setError('Missing parameters'));
+        return false;
       }
 
-      if (!userFormData.isValidEmail) {
-        dispatch(
-          setAlert({ message: 'Invalid email address', severity: 'error' }),
-        );
-        return;
+      if (!authFormData.isValidEmail) {
+        dispatch(setError('Invalid email address'));
+        return false;
       }
 
       const response = await axios.post('/api/auth/login', { email, password });
 
       if (response.status !== 200) {
-        dispatch(
-          setAlert({ message: response.data.message, severity: 'error' }),
-        );
-        return;
+        dispatch(setError(response.data.message));
+        return false;
       }
 
       const userData = { ...response.data.user };
       delete userData.password;
-
       dispatch(login(userData));
       dispatch(setAuthenticated(true));
+      dispatch(resetAuthForm());
+      dispatch(resetError());
       return true;
     } catch (error) {
       console.error('Error occured while logging in:', error);
       if (error instanceof AxiosError) {
-        dispatch(
-          setAlert({
-            message: error.response?.data.message,
-            severity: 'error',
-          }),
-        );
+        dispatch(setError(error.response?.data.message));
       }
     } finally {
-      dispatch(resetUserForm());
-      dispatch(resetAlert());
       dispatch(setLoading(false));
     }
     return false;

@@ -17,7 +17,7 @@ import { useAppSelector, useAppDispatch } from '~/redux/store';
 import {
   getVehicleFormData,
   setSpecification,
-} from '~/redux/reducers/formSlice';
+} from '~/redux/reducers/vehicleFormSlice';
 
 const VehicleSpecifications = () => {
   const vehicleFormData = useAppSelector(getVehicleFormData);

@@ -1,23 +1,19 @@
 import React from 'react';
 import { Collapse, Alert, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { useAppSelector, useAppDispatch } from '~/redux/store';
-import { getFormAlert, resetAlert } from '~/redux/reducers/formSlice';
 
-const ErrorAlert = () => {
-  const dispatch = useAppDispatch();
-  const alert = useAppSelector(getFormAlert);
+interface ErrorAlertProps {
+  error: string;
+  onClearError: () => void;
+}
 
+const ErrorAlert = ({ error, onClearError }: ErrorAlertProps) => {
   const handleMouseDownClose = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
 
-  const handleClearError = () => {
-    dispatch(resetAlert());
-  };
-
   return (
-    <Collapse in={Boolean(alert?.message)} sx={{ width: '100%', mt: 1, mb: 1 }}>
+    <Collapse in={Boolean(error)} sx={{ width: '100%', mt: 1, mb: 1 }}>
       <Alert
         severity="error"
         variant="filled"
@@ -26,14 +22,14 @@ const ErrorAlert = () => {
             aria-label="close alert"
             color="inherit"
             size="small"
-            onClick={handleClearError}
+            onClick={onClearError}
             onMouseDown={handleMouseDownClose}
           >
             <CloseIcon fontSize="inherit" />
           </IconButton>
         }
       >
-        {alert?.message}
+        {error}
       </Alert>
     </Collapse>
   );

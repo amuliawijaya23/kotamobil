@@ -11,7 +11,7 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import XIcon from '@mui/icons-material/X';
 
 import { useAppSelector } from '~/redux/store';
-import { getContactFormData } from '~/redux/reducers/formSlice';
+import { getContactFormData } from '~/redux/reducers/contactFormSlice';
 
 interface ContactSocialsProps {
   onInstagramchange: (

@@ -14,15 +14,16 @@ import PasswordInput from '~/components/Authentication/PasswordInput';
 import ErrorAlert from '~/components/ErrorAlert';
 import { useAppSelector, useAppDispatch } from '~/redux/store';
 import {
-  getFormAlert,
-  getUserFormData,
-  setUserFirstName,
-  setUserLastName,
-  setUserEmail,
-  setUserPassword,
-  setUserConfirmPassword,
-  resetUserForm,
-} from '~/redux/reducers/formSlice';
+  getAuthFormData,
+  getAuthFormError,
+  resetAuthForm,
+  setFirstName,
+  setLastName,
+  setEmail,
+  setPassword,
+  setConfirmPassword,
+  resetError,
+} from '~/redux/reducers/authFormSlice';
 import { useNavigate } from 'react-router-dom';
 
 interface RegisterProps {
@@ -32,12 +33,12 @@ interface RegisterProps {
 const Register = ({ onRegister }: RegisterProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const userFormData = useAppSelector(getUserFormData);
-  const alert = useAppSelector(getFormAlert);
+  const authFormData = useAppSelector(getAuthFormData);
+  const error = useAppSelector(getAuthFormError);
 
   useEffect(() => {
     return () => {
-      dispatch(resetUserForm());
+      dispatch(resetAuthForm());
     };
   }, [dispatch]);
 
@@ -45,34 +46,38 @@ const Register = ({ onRegister }: RegisterProps) => {
     event.preventDefault();
   };
 
+  const handleClearError = () => {
+    dispatch(resetError());
+  };
+
   const handleOnChangeFirstName = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    dispatch(setUserFirstName(event.target.value));
+    dispatch(setFirstName(event.target.value));
   };
 
   const handleOnChangeLastName = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    dispatch(setUserLastName(event.target.value));
+    dispatch(setLastName(event.target.value));
   };
 
   const handleOnChangeEmail = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    dispatch(setUserEmail(event.target.value));
+    dispatch(setEmail(event.target.value));
   };
 
   const handleOnChangePassword = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    dispatch(setUserPassword(event.target.value));
+    dispatch(setPassword(event.target.value));
   };
 
   const handleOnChangeConfirmPassword = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    dispatch(setUserConfirmPassword(event.target.value));
+    dispatch(setConfirmPassword(event.target.value));
   };
 
   const handleOnRegister = async (
@@ -127,38 +132,38 @@ const Register = ({ onRegister }: RegisterProps) => {
               <Typography variant="h4" component="h1">
                 Sign Up
               </Typography>
-              <ErrorAlert />
+              <ErrorAlert error={error} onClearError={handleClearError} />
             </Grid>
             <Grid xs={12}>
               <NameInput
-                value={userFormData.firstName}
+                value={authFormData.firstName}
                 label="First Name"
                 onChangeHandler={handleOnChangeFirstName}
-                error={alert?.message}
+                error={error}
               />
               <NameInput
-                value={userFormData.lastName}
+                value={authFormData.lastName}
                 label="Last Name"
                 onChangeHandler={handleOnChangeLastName}
-                error={alert?.message}
+                error={error}
               />
               <EmailInput
-                value={userFormData.email}
-                isValidEmail={userFormData.isValidEmail}
+                value={authFormData.email}
+                isValidEmail={authFormData.isValidEmail}
                 onChangeHandler={handleOnChangeEmail}
-                error={alert?.message}
+                error={error}
               />
               <PasswordInput
-                value={userFormData.password}
+                value={authFormData.password}
                 label="Password"
                 onChangeHandler={handleOnChangePassword}
-                error={alert?.message}
+                error={error}
               />
               <PasswordInput
-                value={userFormData.confirmPassword}
+                value={authFormData.confirmPassword}
                 label="Confirm Password"
                 onChangeHandler={handleOnChangeConfirmPassword}
-                error={alert?.message}
+                error={error}
               />
             </Grid>
             <Grid xs={6}>

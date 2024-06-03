@@ -13,12 +13,13 @@ import PasswordInput from '~/components/Authentication/PasswordInput';
 import ErrorAlert from '~/components/ErrorAlert';
 import { useAppSelector, useAppDispatch } from '~/redux/store';
 import {
-  getFormAlert,
-  getUserFormData,
-  setUserEmail,
-  setUserPassword,
-  resetUserForm,
-} from '~/redux/reducers/formSlice';
+  getAuthFormData,
+  getAuthFormError,
+  setEmail,
+  setPassword,
+  resetAuthForm,
+  resetError,
+} from '~/redux/reducers/authFormSlice';
 import { useNavigate } from 'react-router-dom';
 
 interface LoginProps {
@@ -28,12 +29,12 @@ interface LoginProps {
 const Login = ({ onLogin }: LoginProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const userFormData = useAppSelector(getUserFormData);
-  const alert = useAppSelector(getFormAlert);
+  const authFormData = useAppSelector(getAuthFormData);
+  const error = useAppSelector(getAuthFormError);
 
   useEffect(() => {
     return () => {
-      dispatch(resetUserForm());
+      dispatch(resetAuthForm());
     };
   }, [dispatch]);
 
@@ -41,16 +42,20 @@ const Login = ({ onLogin }: LoginProps) => {
     event.preventDefault();
   };
 
+  const handleClearError = () => {
+    dispatch(resetError());
+  };
+
   const handleOnChangeEmail = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    dispatch(setUserEmail(event.target.value));
+    dispatch(setEmail(event.target.value));
   };
 
   const handleOnChangePassword = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    dispatch(setUserPassword(event.target.value));
+    dispatch(setPassword(event.target.value));
   };
 
   const handleOnLogin = async (
@@ -105,20 +110,20 @@ const Login = ({ onLogin }: LoginProps) => {
               <Typography variant="h4" component="h1">
                 Sign In
               </Typography>
-              <ErrorAlert />
+              <ErrorAlert error={error} onClearError={handleClearError} />
             </Grid>
             <Grid xs={12}>
               <EmailInput
-                value={userFormData.email}
+                value={authFormData.email}
                 onChangeHandler={handleOnChangeEmail}
-                isValidEmail={userFormData.isValidEmail}
-                error={alert?.message}
+                isValidEmail={authFormData.isValidEmail}
+                error={error}
               />
               <PasswordInput
-                value={userFormData.password}
+                value={authFormData.password}
                 label="Password"
                 onChangeHandler={handleOnChangePassword}
-                error={alert?.message}
+                error={error}
               />
             </Grid>
             <Grid xs={6}>

@@ -1,8 +1,6 @@
 import type { ContactData } from '~/redux/reducers/contactsSlice';
 import axios, { AxiosError } from 'axios';
-
 import { useState, useCallback, useEffect } from 'react';
-
 import { useAppDispatch, useAppSelector } from '~/redux/store';
 import { getVehicleData } from '~/redux/reducers/vehicleSlice';
 import { getContactsData } from '~/redux/reducers/contactsSlice';
@@ -13,7 +11,6 @@ import {
 import {
   getVehicleFormData,
   resetVehicleForm,
-  setAlert,
   setName,
   setStatus,
   setDateAdded,
@@ -37,7 +34,9 @@ import {
   setDescription,
   setSpecification,
   setBodyType,
-} from '~/redux/reducers/formSlice';
+  setBuyerId,
+} from '~/redux/reducers/vehicleFormSlice';
+import { setAlert } from '~/redux/reducers/appSlice';
 
 const useVehicleForm = () => {
   const dispatch = useAppDispatch();
@@ -163,6 +162,9 @@ const useVehicleForm = () => {
 
   const handleBuyerChange = (_event: unknown, input: ContactData | null) => {
     setContact(input);
+    if (input) {
+      dispatch(setBuyerId(input._id));
+    }
   };
 
   const clearVehicleForm = () => {
@@ -204,7 +206,7 @@ const useVehicleForm = () => {
       vehicleFormData.status === 'Sold' &&
         (data.dateSold = JSON.parse(vehicleFormData.dateSold)) &&
         (data.soldPrice = vehicleFormData.soldPrice) &&
-        (data.buyerId = contact?._id);
+        (data.buyerId = vehicleFormData.buyerId);
 
       vehicleFormData.condition === 'Used' &&
         (data.plateNumber = vehicleFormData.plateNumber) &&
