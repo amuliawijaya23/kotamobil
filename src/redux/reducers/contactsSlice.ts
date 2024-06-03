@@ -16,7 +16,7 @@ export interface ContactData {
 }
 
 interface ContactsState {
-  data: [ContactData] | null;
+  data: ContactData[] | null;
   selectedContacts: string[];
 }
 
@@ -29,7 +29,7 @@ export const contactsSlice = createSlice({
   name: 'contacts',
   initialState,
   reducers: {
-    setContactsData: (state, action: PayloadAction<[ContactData]>) => {
+    setContactsData: (state, action: PayloadAction<ContactData[]>) => {
       state.data = action.payload;
     },
     addContact: (state, action: PayloadAction<ContactData>) => {
@@ -44,6 +44,16 @@ export const contactsSlice = createSlice({
         if (index !== -1) {
           state.data[index] = action.payload;
         }
+      }
+    },
+    removeContacts: (state, action: PayloadAction<string[]>) => {
+      if (state.data) {
+        state.data = state.data.filter(
+          (contact) => !action.payload.includes(contact._id),
+        );
+        state.selectedContacts = state.selectedContacts.filter(
+          (id) => !action.payload.includes(id),
+        );
       }
     },
     setSelectedContacts: (state, action: PayloadAction<string>) => {
@@ -80,6 +90,7 @@ export const {
   setSelectAllContacts,
   updateContact,
   addContact,
+  removeContacts,
   resetContacts,
 } = contactsSlice.actions;
 export const getContactsData = (state: RootState) => state.contacts.data;

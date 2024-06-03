@@ -23,6 +23,7 @@ import {
   setCountry,
 } from '~/redux/reducers/formSlice';
 import { countryCodes } from '~/helpers/selectData';
+import useContactData from '~/hooks/useContactData';
 
 interface ContactsToolbar {
   numSelected: number;
@@ -33,6 +34,8 @@ const ContactsToolbar = ({ numSelected, onOpenForm }: ContactsToolbar) => {
   const dispatch = useAppDispatch();
   const contacts = useAppSelector(getContactsData);
   const selectedContacts = useAppSelector(getSelectedContacts);
+
+  const { handleOnDeleteContacts } = useContactData();
 
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -131,7 +134,10 @@ const ContactsToolbar = ({ numSelected, onOpenForm }: ContactsToolbar) => {
             </Tooltip>
           )}
           <Tooltip title="Delete">
-            <IconButton>
+            <IconButton
+              onClick={handleOnDeleteContacts}
+              onMouseDown={handleMouseDown}
+            >
               <DeleteIcon />
             </IconButton>
           </Tooltip>
