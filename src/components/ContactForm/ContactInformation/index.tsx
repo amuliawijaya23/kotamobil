@@ -19,8 +19,6 @@ import { getContactFormData } from '~/redux/reducers/formSlice';
 import { countryCodes } from '~/helpers/selectData';
 
 interface ContactInformationProps {
-  isValidEmail: boolean;
-  country: CountryType | null;
   onFirstNameChange: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
@@ -38,8 +36,6 @@ interface ContactInformationProps {
 }
 
 const ContactInformation = ({
-  isValidEmail,
-  country,
   onFirstNameChange,
   onLastNameChange,
   onEmailChange,
@@ -106,14 +102,14 @@ const ContactInformation = ({
             value={contactFormData.email}
             onChange={onEmailChange}
             error={Boolean(
-              !isValidEmail &&
+              !contactFormData.isValidEmail &&
                 contactFormData.email &&
                 contactFormData?.email?.length > 0,
             )}
             type="email"
-            label="Last Name"
+            label="Email"
           />
-          {!isValidEmail && contactFormData.email && (
+          {!contactFormData.isValidEmail && contactFormData.email && (
             <FormHelperText>Invalid email address</FormHelperText>
           )}
         </FormControl>
@@ -133,7 +129,7 @@ const ContactInformation = ({
         <Autocomplete
           id="country-select"
           options={countryCodes}
-          value={country}
+          value={contactFormData.country}
           onChange={onCountryChange}
           autoHighlight
           componentsProps={{ popper: { style: { width: ' fit-content' } } }}
@@ -198,7 +194,12 @@ const ContactInformation = ({
           customInput={TextField}
           size="small"
           label="Mobile"
-          prefix="+"
+          placeholder={
+            contactFormData.country ? `+${contactFormData.country.phone} ` : ''
+          }
+          prefix={
+            contactFormData.country ? `+${contactFormData.country.phone} ` : ''
+          }
         />
       </Grid>
     </>

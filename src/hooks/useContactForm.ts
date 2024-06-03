@@ -1,13 +1,12 @@
 import axios, { AxiosError } from 'axios';
-import type { CountryType } from '~/helpers/selectData';
-import { useState } from 'react';
-
+import { useCallback } from 'react';
 import { useAppSelector, useAppDispatch } from '~/redux/store';
 import {
   getContactFormData,
   setAlert,
   setContactFirstName,
   setContactLastName,
+  setCountry,
   setContactMobile,
   setContactEmail,
   setContactAddress,
@@ -17,28 +16,17 @@ import {
   setContactTiktok,
   resetContactForm,
 } from '~/redux/reducers/formSlice';
-import { addContact } from '~/redux/reducers/contactsSlice';
-import { validateEmail } from '~/helpers';
-
-const initialCountry = {
-  label: 'Indonesia',
-  code: 'ID',
-  phone: '62',
-};
+import { addContact, updateContact } from '~/redux/reducers/contactsSlice';
+import type { CountryType } from '~/helpers/selectData';
 
 const useContactForm = () => {
-  const [isValidEmail, setIsValidEmail] = useState(false);
-  const [country, setCountry] = useState<CountryType | null>(initialCountry);
-
   const dispatch = useAppDispatch();
-
   const contactFormData = useAppSelector(getContactFormData);
+  // const [country, setCountry] = useState<CountryType | null>(null);
 
-  const handleResetForm = () => {
+  const handleResetForm = useCallback(() => {
     dispatch(resetContactForm());
-    setIsValidEmail(false);
-    setCountry(initialCountry);
-  };
+  }, [dispatch]);
 
   const handleFirstNameChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -56,14 +44,10 @@ const useContactForm = () => {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     dispatch(setContactEmail(event.target.value));
-    setIsValidEmail(validateEmail(event.target.value));
   };
 
-  const handleCountryChange = (event: unknown, values: CountryType | null) => {
-    setCountry(values);
-    if (values?.phone) {
-      dispatch(setContactMobile(`${'+'}${values.phone}`));
-    }
+  const handleCountryChange = (_event: unknown, values: CountryType | null) => {
+    dispatch(setCountry(values));
   };
 
   const handleMobileChange = (input: string) => {
@@ -100,33 +84,49 @@ const useContactForm = () => {
     dispatch(setContactTiktok(event.target.value));
   };
 
+  const validateForm = (): string | null => {
+    if (!contactFormData.firstName || contactFormData.mobile.length < 10) {
+      return 'Missing required parameter';
+    }
+
+    if (contactFormData.email && !contactFormData.isValidEmail) {
+      return 'Invalid email address';
+    }
+    return null;
+  };
+
   const handleOnSave = async () => {
     try {
-      let success = false;
-      const formData = { ...contactFormData };
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { updateId, country, isValidEmail, ...data } = contactFormData;
+      const formData = { ...data };
 
-      if (!formData.firstName || formData.mobile.length > 10) {
-        return dispatch(
-          setAlert({
-            message: 'Missing required parameters',
-            severity: 'error',
-          }),
-        );
+      const validationError = validateForm();
+      if (validationError) {
+        dispatch(setAlert({ message: validationError, severity: 'error' }));
+        return false;
       }
 
-      if (formData.email && !isValidEmail) {
-        return dispatch(
-          setAlert({ message: 'Invalid email address', severity: 'error' }),
-        );
-      }
-
-      const response = await axios.post('/api/contact/add', formData);
+      const response = updateId
+        ? await axios.post(`/api/contact/update/${updateId}`, formData)
+        : await axios.post('/api/contact/add', formData);
 
       if (response.status == 200 && response.data) {
-        dispatch(addContact(response.data));
-        success = true;
-        return success;
+        const action = updateId ? updateContact : addContact;
+        dispatch(action(response.data));
+        const message = updateId ? 'Contact updated!' : 'New contact created!';
+        dispatch(setAlert({ message: message, severity: 'success' }));
+        handleResetForm();
+        return true;
       }
+
+      dispatch(
+        setAlert({
+          message: 'Failed to save contact, please try again',
+          severity: 'error',
+        }),
+      );
+      return false;
     } catch (error) {
       console.error('Error occured while saving contact:', error);
       if (error instanceof AxiosError) {
@@ -138,11 +138,10 @@ const useContactForm = () => {
         );
       }
     }
+    return false;
   };
 
   return {
-    isValidEmail,
-    country,
     handleResetForm,
     handleFirstNameChange,
     handleLastNameChange,

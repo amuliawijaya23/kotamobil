@@ -16,7 +16,7 @@ import ContactSocials from './ContactSocials';
 import useContactForm from '~/hooks/useContactForm';
 
 import { useAppSelector, useAppDispatch } from '~/redux/store';
-import { getFormAlert, resetAlert, setAlert } from '~/redux/reducers/formSlice';
+import { getFormAlert, resetAlert } from '~/redux/reducers/formSlice';
 
 interface ContactFormProps {
   open: boolean;
@@ -37,8 +37,6 @@ const style = {
 
 const ContactForm = ({ open, onCloseForm }: ContactFormProps) => {
   const {
-    isValidEmail,
-    country,
     handleResetForm,
     handleFirstNameChange,
     handleLastNameChange,
@@ -54,7 +52,6 @@ const ContactForm = ({ open, onCloseForm }: ContactFormProps) => {
   } = useContactForm();
 
   const dispatch = useAppDispatch();
-
   const alert = useAppSelector(getFormAlert);
 
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -71,13 +68,9 @@ const ContactForm = ({ open, onCloseForm }: ContactFormProps) => {
   };
 
   const onSave = async () => {
-    await handleOnSave();
-    // if (await handleOnSave()) {
-    //   dispatch(
-    //     setAlert({ message: 'New Contact Created!', severity: 'success' }),
-    //   );
-    //   onClose();
-    // }
+    if (await handleOnSave()) {
+      onClose();
+    }
   };
 
   return (
@@ -108,8 +101,6 @@ const ContactForm = ({ open, onCloseForm }: ContactFormProps) => {
         <Box component="form" sx={style}>
           <Grid container p={1} spacing={2}>
             <ContactInformation
-              isValidEmail={isValidEmail}
-              country={country}
               onFirstNameChange={handleFirstNameChange}
               onLastNameChange={handleLastNameChange}
               onEmailChange={handleEmailChange}

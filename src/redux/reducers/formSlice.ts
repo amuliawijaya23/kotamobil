@@ -1,3 +1,4 @@
+import type { CountryType } from '~/helpers/selectData';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 import { validateEmail } from '~/helpers';
@@ -40,13 +41,16 @@ export interface VehicleForm {
 export interface ContactForm {
   firstName: string;
   lastName?: string;
+  country: CountryType | null;
   mobile: string;
   email?: string;
+  isValidEmail: boolean;
   address?: string;
   instagram?: string;
   facebook?: string;
   tiktok?: string;
   twitter?: string;
+  updateId: string;
 }
 
 export interface FormAlert {
@@ -98,13 +102,16 @@ const initialState: FormState = {
   contact: {
     firstName: '',
     lastName: '',
-    mobile: '62',
+    country: null,
+    mobile: '',
     email: '',
+    isValidEmail: false,
     address: '',
     instagram: '',
     facebook: '',
     tiktok: '',
     twitter: '',
+    updateId: '',
   },
   alert: null,
 };
@@ -220,17 +227,24 @@ export const formSlice = createSlice({
     resetContactForm: (state) => {
       state.contact = initialState.contact;
     },
+    setUpdateId: (state, action: PayloadAction<string>) => {
+      state.contact.updateId = action.payload;
+    },
     setContactFirstName: (state, action: PayloadAction<string>) => {
       state.contact.firstName = action.payload;
     },
     setContactLastName: (state, action: PayloadAction<string>) => {
       state.contact.lastName = action.payload;
     },
+    setCountry: (state, action: PayloadAction<CountryType | null>) => {
+      state.contact.country = action.payload;
+    },
     setContactMobile: (state, action: PayloadAction<string>) => {
       state.contact.mobile = action.payload;
     },
     setContactEmail: (state, action: PayloadAction<string>) => {
       state.contact.email = action.payload;
+      state.contact.isValidEmail = validateEmail(action.payload);
     },
     setContactAddress: (state, action: PayloadAction<string>) => {
       state.contact.address = action.payload;
@@ -284,8 +298,10 @@ export const {
   setDescription,
   setSpecification,
   resetContactForm,
+  setUpdateId,
   setContactFirstName,
   setContactLastName,
+  setCountry,
   setContactMobile,
   setContactEmail,
   setContactAddress,

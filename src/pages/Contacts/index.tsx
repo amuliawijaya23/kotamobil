@@ -21,16 +21,21 @@ import ContactsToolbar from '~/components/Contacts/ContactsToolbar';
 import ContactsHeader from '~/components/Contacts/ContactsHeader';
 import ContactForm from '~/components/ContactForm';
 
-import { useAppSelector } from '~/redux/store';
-import { getContactsData } from '~/redux/reducers/contactsSlice';
+import { useAppSelector, useAppDispatch } from '~/redux/store';
+import {
+  getContactsData,
+  getSelectedContacts,
+  setSelectedContacts,
+  setSelectAllContacts,
+} from '~/redux/reducers/contactsSlice';
 
 import { getComparator, stableSort } from '~/helpers';
 
 const Contacts = () => {
+  const dispatch = useAppDispatch();
   const contacts = useAppSelector(getContactsData);
-
+  const selectedContacts = useAppSelector(getSelectedContacts);
   const [order, setOrder] = useState<Order>('asc');
-  const [selected, setSelected] = useState<readonly string[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [openForm, setOpenForm] = useState(false);
@@ -49,35 +54,6 @@ const Contacts = () => {
     setOrder(isAsc ? 'desc' : 'asc');
   };
 
-  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      const newSelected = (contacts && contacts.map((n) => n._id)) || [];
-      setSelected(newSelected);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
-    event.preventDefault();
-    const selectedIndex = selected.indexOf(id);
-    let newSelected: readonly string[] = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
-    setSelected(newSelected);
-  };
-
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -89,7 +65,21 @@ const Contacts = () => {
     setPage(0);
   };
 
-  const isSelected = (id: string) => selected.indexOf(id) !== -1;
+  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      const newSelected = (contacts && contacts.map((n) => n._id)) || [];
+      dispatch(setSelectAllContacts(newSelected));
+      return;
+    }
+    dispatch(setSelectAllContacts([]));
+  };
+
+  const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
+    event.preventDefault();
+    dispatch(setSelectedContacts(id));
+  };
+
+  const isSelected = (id: string) => selectedContacts.indexOf(id) !== -1;
 
   const emptyRows =
     page > 0
@@ -113,12 +103,12 @@ const Contacts = () => {
         <Paper sx={{ width: '100%', mb: 2 }}>
           <ContactsToolbar
             onOpenForm={handleOpenForm}
-            numSelected={selected.length}
+            numSelected={selectedContacts.length}
           />
           <TableContainer>
             <Table sx={{ minWidth: 750, height: '100%' }} size="medium">
               <ContactsHeader
-                numSelected={selected.length}
+                numSelected={selectedContacts.length}
                 order={order}
                 onRequestSort={handleRequestSort}
                 onSelectAllClick={handleSelectAllClick}
