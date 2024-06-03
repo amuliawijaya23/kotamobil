@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
   Unstable_Grid2 as Grid,
   Box,
@@ -20,6 +21,7 @@ import {
   setUserEmail,
   setUserPassword,
   setUserConfirmPassword,
+  resetUserForm,
 } from '~/redux/reducers/formSlice';
 import { useNavigate } from 'react-router-dom';
 
@@ -32,6 +34,12 @@ const Register = ({ onRegister }: RegisterProps) => {
   const navigate = useNavigate();
   const userFormData = useAppSelector(getUserFormData);
   const alert = useAppSelector(getFormAlert);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetUserForm());
+    };
+  }, [dispatch]);
 
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();

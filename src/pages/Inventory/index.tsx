@@ -10,7 +10,6 @@ import {
   Pagination,
   Typography,
 } from '@mui/material';
-import Loading from '~/components/Loading';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import InventoryToolbar from '~/components/Inventory/InventoryToolbar';
@@ -22,6 +21,7 @@ import {
   getInventory,
   getInventoryStatus,
 } from '~/redux/reducers/inventorySlice';
+import Loading from '~/components/Loading';
 
 const drawerWidth = 250;
 
@@ -114,7 +114,7 @@ const Inventory = () => {
           open={openFilter}
           anchor="left"
           sx={{
-            width: isLoading ? (!openFilter ? 0 : drawerWidth) : drawerWidth,
+            width: drawerWidth,
             flexShrink: 0,
             '& .MuiDrawer-paper': {
               width: drawerWidth,
@@ -139,20 +139,7 @@ const Inventory = () => {
           <InventorySidebar />
         </Drawer>
       )}
-      {isLoading && (
-        <Box
-          sx={{
-            height: '100vh',
-            width: '100vw',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <Loading />
-        </Box>
-      )}
-      {isLgUp && !isLoading && (
+      {isLgUp && (
         <Main
           open={openFilter}
           sx={{
@@ -168,23 +155,37 @@ const Inventory = () => {
               />
               <Divider />
             </Grid>
-            {visibleItems.map((vehicle: VehicleData, index: number) => (
-              <Grid
-                key={`${vehicle.name}-card-${index}`}
-                xs={12}
-                sm={4}
-                lg={3}
-                xl={2}
-                ultra={1}
+            {isLoading && (
+              <Box
+                sx={{
+                  minHeight: '75vh',
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
               >
-                <VehicleCard vehicle={vehicle} />
-              </Grid>
-            ))}
-            {visibleItems.length === 0 && !isLoading && (
+                <Loading />
+              </Box>
+            )}
+            {!isLoading &&
+              visibleItems.map((vehicle: VehicleData, index: number) => (
+                <Grid
+                  key={`${vehicle.name}-card-${index}`}
+                  xs={12}
+                  sm={4}
+                  lg={3}
+                  xl={2}
+                  ultra={1}
+                >
+                  <VehicleCard vehicle={vehicle} />
+                </Grid>
+              ))}
+            {!isLoading && visibleItems.length === 0 && (
               <Grid
                 xs={12}
                 sx={{
-                  height: 500,
+                  minHeight: '75vh',
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
@@ -196,7 +197,7 @@ const Inventory = () => {
                 </Typography>
               </Grid>
             )}
-            {paginationCount > 1 && (
+            {!isLoading && paginationCount > 1 && (
               <Grid xs={12} mt={2}>
                 <Toolbar
                   sx={{
@@ -243,16 +244,35 @@ const Inventory = () => {
               />
               <Divider />
             </Grid>
-            {visibleItems.map((vehicle: VehicleData, index: number) => (
-              <Grid key={`${vehicle.name}-card-${index}`} xs={12} sm={6} md={4}>
-                <VehicleCard vehicle={vehicle} />
-              </Grid>
-            ))}
+            {isLoading && (
+              <Box
+                sx={{
+                  width: '100%',
+                  height: '75vh',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Loading />
+              </Box>
+            )}
+            {!isLoading &&
+              visibleItems.map((vehicle: VehicleData, index: number) => (
+                <Grid
+                  key={`${vehicle.name}-card-${index}`}
+                  xs={12}
+                  sm={6}
+                  md={4}
+                >
+                  <VehicleCard vehicle={vehicle} />
+                </Grid>
+              ))}
             {visibleItems.length === 0 && !isLoading && (
               <Grid
                 xs={12}
                 sx={{
-                  height: 500,
+                  height: '75vh',
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
@@ -264,24 +284,26 @@ const Inventory = () => {
                 </Typography>
               </Grid>
             )}
-            <Grid xs={12} mt={2}>
-              <Toolbar
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  mt: 1,
-                }}
-              >
-                <Pagination
-                  count={paginationCount}
-                  size="large"
-                  onChange={handleChangePage}
-                  onMouseDown={handleMouseDown}
-                  page={page}
-                />
-              </Toolbar>
-            </Grid>
+            {!isLoading && paginationCount > 1 && (
+              <Grid xs={12} mt={2}>
+                <Toolbar
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    mt: 1,
+                  }}
+                >
+                  <Pagination
+                    count={paginationCount}
+                    size="large"
+                    onChange={handleChangePage}
+                    onMouseDown={handleMouseDown}
+                    page={page}
+                  />
+                </Toolbar>
+              </Grid>
+            )}
           </Grid>
         </Box>
       )}

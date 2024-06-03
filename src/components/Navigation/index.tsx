@@ -37,7 +37,11 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-const NavBar = () => {
+interface NavBarProps {
+  onLogout: () => Promise<boolean>;
+}
+
+const NavBar = ({ onLogout }: NavBarProps) => {
   const { isAuthenticated } = useAppSelector(getAppStatus);
   const theme = useAppSelector(getTheme);
   const dispatch = useAppDispatch();
@@ -144,7 +148,7 @@ const NavBar = () => {
           <IconButton onClick={toggleThemeMode} color="inherit" sx={{ mr: 2 }}>
             {theme === 'light' ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
-          {isAuthenticated && <UserProfile />}
+          {isAuthenticated && <UserProfile onLogout={onLogout} />}
           {!isAuthenticated && (
             <>
               <Button

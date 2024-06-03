@@ -1,10 +1,20 @@
-import { Box, Toolbar, Typography, IconButton, Tooltip } from '@mui/material';
-
+import {
+  Box,
+  Toolbar,
+  Typography,
+  IconButton,
+  Tooltip,
+  TextField,
+  Unstable_Grid2 as Grid,
+} from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import AddIcon from '@mui/icons-material/Add';
-
-import { useAppSelector } from '~/redux/store';
-import { getInventory } from '~/redux/reducers/inventorySlice';
+import { useAppSelector, useAppDispatch } from '~/redux/store';
+import {
+  getInventory,
+  getQueryData,
+  setSearch,
+} from '~/redux/reducers/inventorySlice';
 
 interface InventoryToolbarProps {
   onToggleFilter: () => void;
@@ -15,10 +25,18 @@ const InventoryToolbar = ({
   onToggleFilter,
   onToggleForm,
 }: InventoryToolbarProps) => {
+  const dispatch = useAppDispatch();
   const inventory = useAppSelector(getInventory);
+  const queryData = useAppSelector(getQueryData);
 
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+  };
+
+  const handleOnChangeSearch = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    dispatch(setSearch(event.target.value));
   };
 
   return (
@@ -26,27 +44,49 @@ const InventoryToolbar = ({
       component={Box}
       sx={{
         display: 'flex',
-        justifyContent: 'space-between',
         alignItems: 'center',
       }}
     >
-      <Box>
-        <Typography>{`${inventory ? inventory?.length : 0} Vehicle${
-          inventory && inventory?.length > 1 ? 's' : ''
-        }`}</Typography>
-      </Box>
-      <Box>
-        <Tooltip title="Filter">
-          <IconButton onClick={onToggleFilter} onMouseDown={handleMouseDown}>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Add listing">
-          <IconButton onClick={onToggleForm} onMouseDown={handleMouseDown}>
-            <AddIcon />
-          </IconButton>
-        </Tooltip>
-      </Box>
+      <Grid container sx={{ width: '100%' }}>
+        <Grid xs={3} sm={2} lg={1} display="flex" alignItems="center">
+          <Typography>{`${inventory ? inventory?.length : 0} Vehicle${
+            inventory && inventory?.length > 1 ? 's' : ''
+          }`}</Typography>
+        </Grid>
+        <Grid xs={6} sm={8} lg={10} display="flex" alignItems="center">
+          <TextField
+            fullWidth
+            size="small"
+            placeholder="Search..."
+            value={queryData?.search}
+            onChange={handleOnChangeSearch}
+          />
+        </Grid>
+        <Grid
+          xs={3}
+          sm={2}
+          lg={1}
+          display="flex"
+          justifyContent="end"
+          alignItems="center"
+        >
+          <Box>
+            <Tooltip title="Filter">
+              <IconButton
+                onClick={onToggleFilter}
+                onMouseDown={handleMouseDown}
+              >
+                <FilterListIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Add listing">
+              <IconButton onClick={onToggleForm} onMouseDown={handleMouseDown}>
+                <AddIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        </Grid>
+      </Grid>
     </Toolbar>
   );
 };

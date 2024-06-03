@@ -11,6 +11,7 @@ import {
 
 interface QueryData {
   makesModels: { [key: string]: string[] };
+  search: string;
   minPrice: number;
   maxPrice: number;
   minYear: number;
@@ -70,6 +71,7 @@ export const inventorySlice = createSlice({
     setQueryData: (state, action: PayloadAction<VehicleData[]>) => {
       const queryData: QueryData = {
         makesModels: {},
+        search: '',
         selectedMakes: [],
         selectedModels: [],
         minPrice: Infinity,
@@ -133,6 +135,11 @@ export const inventorySlice = createSlice({
         });
       }
       state.queryData = queryData;
+    },
+    setSearch: (state, action: PayloadAction<string>) => {
+      if (state.queryData) {
+        state.queryData.search = action.payload;
+      }
     },
     updateMakeSelections: (state, action: PayloadAction<string>) => {
       if (state.queryData) {
@@ -366,6 +373,7 @@ export const {
   setQueryData,
   addVehicleToInventory,
   updateVehicleFromInventory,
+  setSearch,
   updateMakeSelections,
   updateModelSelections,
   updatePriceRange,

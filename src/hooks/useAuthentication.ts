@@ -21,14 +21,19 @@ const useAuthentication = () => {
 
   const handleLogout = useCallback(async () => {
     try {
-      dispatch(logout());
-      dispatch(setAuthenticated(false));
+      const response = await axios.delete('/api/auth/logout');
+      if (response.status === 200) {
+        dispatch(setAuthenticated(false));
+        dispatch(logout());
+        dispatch(resetInventory());
+        dispatch(resetContacts());
+        return true;
+      }
     } catch (error) {
       console.error('Error logging out:', error);
-    } finally {
-      dispatch(resetInventory());
-      dispatch(resetContacts());
+      return false;
     }
+    return false;
   }, [dispatch]);
 
   const getUserData = useCallback(async () => {
@@ -100,6 +105,7 @@ const useAuthentication = () => {
       }
 
       dispatch(login(response.data));
+      dispatch(setAuthenticated(true));
       return true;
     } catch (error) {
       console.error('Error occured while registering user:', error);
@@ -151,6 +157,7 @@ const useAuthentication = () => {
       delete userData.password;
 
       dispatch(login(userData));
+      dispatch(setAuthenticated(true));
       return true;
     } catch (error) {
       console.error('Error occured while logging in:', error);
@@ -173,6 +180,7 @@ const useAuthentication = () => {
   return {
     handleLogin,
     handleRegister,
+    handleLogout,
   };
 };
 

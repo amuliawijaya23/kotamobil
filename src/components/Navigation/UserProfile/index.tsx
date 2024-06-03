@@ -9,13 +9,16 @@ import {
   ListItemText,
 } from '@mui/material';
 import StringAvatar from '~/components/StringAvatar';
-import { useAppSelector, useAppDispatch } from '~/redux/store';
-import { getUserData, logout } from '~/redux/reducers/userSlice';
+import { useAppSelector } from '~/redux/store';
+import { getUserData } from '~/redux/reducers/userSlice';
 import { useNavigate } from 'react-router-dom';
 
-const UserProfile = () => {
+interface UserProfileProps {
+  onLogout: () => Promise<boolean>;
+}
+
+const UserProfile = ({ onLogout }: UserProfileProps) => {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const user = useAppSelector(getUserData);
   const [open, setOpen] = useState<HTMLButtonElement | null>(null);
   const profileId = open ? 'profile-menu' : undefined;
@@ -32,13 +35,13 @@ const UserProfile = () => {
     setOpen(null);
   };
 
-  const handleOnLogout = () => {
+  const handleOnLogout = async () => {
     try {
-      dispatch(logout());
+      if (await onLogout()) {
+        navigate('/login', { replace: true });
+      }
     } catch (error) {
       console.error('Error occured while logging out:', error);
-    } finally {
-      navigate('/login', { replace: true });
     }
   };
 

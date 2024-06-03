@@ -86,12 +86,13 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
     );
   },
   effect: async (_action, listenerApi) => {
+    listenerApi.dispatch(setInventoryLoading(true));
     if (searchRequest) {
       searchRequest.cancel('Search Cancelled');
     }
-    listenerApi.dispatch(setInventoryLoading(true));
     try {
       const queryData = listenerApi.getState().inventory.queryData;
+      const search = queryData?.search;
       const makes = queryData?.selectedMakes;
       const models = queryData?.selectedModels;
       const priceRange = queryData?.priceRange;
@@ -106,6 +107,7 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
       const inventory = await axios.post(
         '/api/vehicle/search',
         {
+          search: search,
           makes: makes,
           models: models,
           priceRange: priceRange,
@@ -128,22 +130,6 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
       console.error('Error searching for vehicles:', error);
     } finally {
       listenerApi.dispatch(setInventoryLoading(false));
-    }
-  },
-});
-
-listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
-  predicate: (_action, currentState, previousState) => {
-    return (
-      previousState.app.isAuthenticated === true &&
-      currentState.app.isAuthenticated === false
-    );
-  },
-  effect: async () => {
-    try {
-      await axios.delete('/api/auth/logout');
-    } catch (error) {
-      console.error('Error occured while logging out', error);
     }
   },
 });
