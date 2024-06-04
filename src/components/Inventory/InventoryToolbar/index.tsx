@@ -56,6 +56,7 @@ const InventoryToolbar = ({
               inventory && inventory?.length > 1 ? 's' : ''
             }`}</Typography>
           </Grid>
+          <Grid></Grid>
           <Grid
             xs={6}
             sm={8}

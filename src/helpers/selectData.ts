@@ -5,6 +5,7 @@ export interface CountryType {
   suggested?: boolean;
 }
 
+export const status = ['Available', 'Sold'];
 export const condition = ['New', 'Used'];
 export const bodyType = [
   'Sedan',

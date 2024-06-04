@@ -2,6 +2,7 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 import type { VehicleData } from './vehicleSlice';
 import {
+  status,
   condition,
   bodyType,
   assembly,
@@ -18,11 +19,12 @@ interface QueryData {
   maxYear: number;
   minOdometer: number;
   maxOdometer: number;
-  selectedMakes: string[];
-  selectedModels: string[];
   priceRange: number[];
   yearRange: number[];
   odometerRange: number[];
+  selectedStatus: string[];
+  selectedMakes: string[];
+  selectedModels: string[];
   selectedCondition: string[];
   selectedBodyType: string[];
   selectedAssembly: string[];
@@ -81,6 +83,7 @@ export const inventorySlice = createSlice({
         maxYear: -Infinity,
         minOdometer: Infinity,
         maxOdometer: -Infinity,
+        selectedStatus: ['Available', 'Sold'],
         priceRange: [],
         yearRange: [],
         odometerRange: [],
@@ -140,6 +143,23 @@ export const inventorySlice = createSlice({
     setSearch: (state, action: PayloadAction<string>) => {
       if (state.queryData) {
         state.queryData.search = action.payload;
+      }
+    },
+    updateStatusSelections: (state, action: PayloadAction<string>) => {
+      if (state.queryData) {
+        const selectedStatus = action.payload;
+        let newSelectedStatus;
+        if (state.queryData.selectedStatus.includes(selectedStatus)) {
+          newSelectedStatus = state.queryData.selectedStatus.filter(
+            (c) => c !== selectedStatus,
+          );
+        } else {
+          newSelectedStatus = [
+            ...state.queryData.selectedStatus,
+            selectedStatus,
+          ];
+        }
+        state.queryData.selectedStatus = newSelectedStatus;
       }
     },
     updateMakeSelections: (state, action: PayloadAction<string>) => {
@@ -284,6 +304,15 @@ export const inventorySlice = createSlice({
         state.queryData.selectedTransmission = newSelectedTransmission;
       }
     },
+    selectAllStatus: (state) => {
+      if (state.queryData) {
+        if (state.queryData.selectedStatus.length === status.length) {
+          state.queryData.selectedStatus = [];
+        } else {
+          state.queryData.selectedStatus = status;
+        }
+      }
+    },
     selectAllMakes: (state) => {
       if (state.queryData) {
         const allMakes = Object.keys(state.queryData.makesModels);
@@ -375,16 +404,18 @@ export const {
   addVehicleToInventory,
   updateVehicleFromInventory,
   setSearch,
-  updateMakeSelections,
-  updateModelSelections,
   updatePriceRange,
   updateYearRange,
   updateOdometerRange,
+  updateStatusSelections,
+  updateMakeSelections,
+  updateModelSelections,
   updateConditionSelections,
   updateAssemblySelections,
   updateBodyTypeSelections,
   updateFuelTypeSelections,
   updateTransmissionSelections,
+  selectAllStatus,
   selectAllMakes,
   selectAllModels,
   selectAllCondition,

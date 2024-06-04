@@ -118,6 +118,7 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
     try {
       const queryData = listenerApi.getState().inventory.queryData;
       const search = queryData?.search;
+      const status = queryData?.selectedStatus;
       const makes = queryData?.selectedMakes;
       const models = queryData?.selectedModels;
       const priceRange = queryData?.priceRange;
@@ -133,6 +134,7 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
         '/api/vehicle/search',
         {
           search: search,
+          status: status,
           makes: makes,
           models: models,
           priceRange: priceRange,

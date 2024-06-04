@@ -5,6 +5,7 @@ import { getQueryData } from '~/redux/reducers/inventorySlice';
 import PriceSlider from './PriceSlider';
 import YearSlider from './YearSlider';
 import OdometerSlider from './OdometerSlider';
+import StatusSelection from './StatusSelection';
 import MakeSelection from './MakeSelection';
 import ModelSelection from './ModelSelection';
 import ConditionSelection from './ConditionSelection';
@@ -44,6 +45,7 @@ const InventorySidebar = () => {
       <Divider />
       <OdometerSlider />
       <Divider />
+      <StatusSelection />
       <MakeSelection makes={makes} sortedMakes={sortedMakes} />
       <ModelSelection models={models} sortedMakes={sortedMakes} />
       <ConditionSelection />
