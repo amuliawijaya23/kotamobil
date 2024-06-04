@@ -70,6 +70,7 @@ const ContactForm = ({ open, onCloseForm }: ContactFormProps) => {
   };
 
   const onSave = async () => {
+    handleOnCloseConfirmation();
     if (await handleOnSave()) {
       onClose();
     }

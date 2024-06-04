@@ -23,20 +23,9 @@ const useVehicleData = () => {
 
   const findAndSetVehicleData = useCallback(async () => {
     if (vehicle) {
-      const vehicleData = { ...vehicle };
-      try {
-        if (vehicle.images) {
-          const { data } = await axios.get(`/api/vehicle/images/${id}`);
-          if (data) {
-            vehicleData.images = data;
-          }
-        }
-        dispatch(setVehicleData(vehicleData));
-      } catch (error) {
-        console.error('Error fetching vehicle images:', error);
-      }
+      dispatch(setVehicleData(vehicle));
     }
-  }, [dispatch, id, vehicle]);
+  }, [dispatch, vehicle]);
 
   useEffect(() => {
     if (id) {

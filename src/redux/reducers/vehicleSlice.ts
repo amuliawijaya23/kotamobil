@@ -21,7 +21,7 @@ export interface VehicleData {
   ownerId: string;
   buyerId?: string;
   dateAdded: Date;
-  images?: [{ key: string; url: string }];
+  images?: { key: string; url: string }[];
   plateNumber?: string;
   specification?: [string];
   description?: string;
@@ -47,10 +47,19 @@ export const vehicleSlice = createSlice({
     setVehicleData: (state, action: PayloadAction<VehicleData>) => {
       state.data = action.payload;
     },
+    setVehicleImages: (
+      state,
+      action: PayloadAction<{ key: string; url: string }[]>,
+    ) => {
+      if (state.data) {
+        state.data.images = action.payload;
+      }
+    },
     resetVehicleData: () => initialState,
   },
 });
 
-export const { setVehicleData, resetVehicleData } = vehicleSlice.actions;
+export const { setVehicleData, setVehicleImages, resetVehicleData } =
+  vehicleSlice.actions;
 export const getVehicleData = (state: RootState) => state.vehicle.data;
 export default vehicleSlice.reducer;

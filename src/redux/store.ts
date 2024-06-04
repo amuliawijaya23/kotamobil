@@ -15,7 +15,7 @@ import inventoryReducer, {
   setInventoryLoading,
   setQueryData,
 } from './reducers/inventorySlice';
-import vehicleReducer from './reducers/vehicleSlice';
+import vehicleReducer, { setVehicleImages } from './reducers/vehicleSlice';
 import authFormReducer from './reducers/authFormSlice';
 import vehicleFormReducer from './reducers/vehicleFormSlice';
 import contactFormReducer from './reducers/contactFormSlice';
@@ -77,6 +77,27 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
       console.error('Failed to fetch vehicles and contacts', error);
     } finally {
       listenerApi.dispatch(setLoading(false));
+    }
+  },
+});
+
+listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
+  predicate: (_action, currentState, previousState) => {
+    return (
+      previousState.vehicle.data === null &&
+      previousState.vehicle.data !== currentState.vehicle.data
+    );
+  },
+  effect: async (_action, listenerApi) => {
+    const id = listenerApi.getState().vehicle.data?._id;
+    try {
+      const { data } = await axios.get(`/api/vehicle/images/${id}`);
+      if (data && data.length > 0) {
+        listenerApi.dispatch(setVehicleImages(data));
+      }
+      return;
+    } catch (error) {
+      console.error('Error fetching vehicle images:', error);
     }
   },
 });

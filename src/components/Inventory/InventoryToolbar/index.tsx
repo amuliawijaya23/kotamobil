@@ -56,9 +56,15 @@ const InventoryToolbar = ({
               inventory && inventory?.length > 1 ? 's' : ''
             }`}</Typography>
           </Grid>
-          <Grid xs={6} sm={8} lg={10} display="flex" alignItems="center">
+          <Grid
+            xs={6}
+            sm={8}
+            lg={10}
+            display="flex"
+            alignItems="center"
+            justifyContent="end"
+          >
             <TextField
-              fullWidth
               size="small"
               placeholder="Search..."
               value={queryData?.search}

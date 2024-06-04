@@ -139,11 +139,11 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
     }
   };
 
-  const handleOpenConfirmation = () => {
+  const handleOnOpenConfirmation = () => {
     setOpenConfirmation(true);
   };
 
-  const handleCloseConfirmation = () => {
+  const handleOnCloseConfirmation = () => {
     setOpenConfirmation(false);
   };
 
@@ -158,6 +158,7 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
   };
 
   const onSave = async () => {
+    handleOnCloseConfirmation();
     if (await handleOnSave()) {
       onCloseForm();
       setStep(0);
@@ -166,7 +167,7 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
 
   return (
     <>
-      <Dialog open={openConfirmation} onClose={handleCloseConfirmation}>
+      <Dialog open={openConfirmation} onClose={handleOnCloseConfirmation}>
         <DialogTitle>
           {vehicle ? 'Update Vehicle' : 'Create Vehicle'}
         </DialogTitle>
@@ -178,7 +179,7 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseConfirmation}>Cancel</Button>
+          <Button onClick={handleOnCloseConfirmation}>Cancel</Button>
           <Button onClick={onSave} onMouseDown={handleMouseDown}>
             Confirm
           </Button>
@@ -242,7 +243,7 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
               )}
               {step === process.length - 1 && (
                 <Button
-                  onClick={handleOpenConfirmation}
+                  onClick={handleOnOpenConfirmation}
                   onMouseDown={handleMouseDown}
                   variant="text"
                   color="primary"

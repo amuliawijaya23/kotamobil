@@ -64,7 +64,8 @@ export const inventorySlice = createSlice({
         );
 
         if (index !== -1) {
-          state.data[index] = action.payload;
+          state.data.splice(index, 1);
+          state.data.unshift(action.payload);
         }
       }
     },

@@ -84,11 +84,10 @@ const useVehicleForm = () => {
           dispatch(setTaxDate(JSON.stringify(vehicle.taxDate)));
       }
       if (vehicle.sold) {
-        vehicle.dateSold &&
-          dispatch(setDateSold(JSON.stringify(vehicle.dateSold)));
         vehicle.soldPrice && dispatch(setSoldPrice(vehicle.soldPrice));
-        vehicle.buyerId &&
-          setContact(contacts?.find((c) => c._id === vehicle.buyerId) || null);
+        vehicle.buyerId && dispatch(setBuyerId(vehicle.buyerId));
+        setContact(contacts?.find((c) => c._id === vehicle.buyerId) || null);
+        dispatch(setDateSold(JSON.stringify(vehicle.dateSold)));
       }
     }
 
