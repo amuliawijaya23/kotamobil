@@ -81,7 +81,7 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
   },
 });
 
-let searchRequest: CancelTokenSource;
+let vehicleSearchRequest: CancelTokenSource;
 listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
   predicate: (_action, currentState, previousState) => {
     return (
@@ -91,8 +91,8 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
   },
   effect: async (_action, listenerApi) => {
     listenerApi.dispatch(setInventoryLoading(true));
-    if (searchRequest) {
-      searchRequest.cancel('Search Cancelled');
+    if (vehicleSearchRequest) {
+      vehicleSearchRequest.cancel('Search Cancelled');
     }
     try {
       const queryData = listenerApi.getState().inventory.queryData;
@@ -107,7 +107,7 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
       const bodyType = queryData?.selectedBodyType;
       const fuelType = queryData?.selectedFuelType;
       const transmission = queryData?.selectedTransmission;
-      searchRequest = axios.CancelToken.source();
+      vehicleSearchRequest = axios.CancelToken.source();
       const inventory = await axios.post(
         '/api/vehicle/search',
         {
@@ -123,7 +123,7 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
           fuelType: fuelType,
           transmission: transmission,
         },
-        { cancelToken: searchRequest.token },
+        { cancelToken: vehicleSearchRequest.token },
       );
       listenerApi.dispatch(setInventoryData(inventory.data));
     } catch (error) {
@@ -134,6 +134,34 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
       console.error('Error searching for vehicles:', error);
     } finally {
       listenerApi.dispatch(setInventoryLoading(false));
+    }
+  },
+});
+
+let contactSearchRequest: CancelTokenSource;
+listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
+  predicate: (_action, currentState, previousState) => {
+    return previousState.contacts.search !== currentState.contacts.search;
+  },
+  effect: async (_action, listenerApi) => {
+    if (contactSearchRequest) {
+      contactSearchRequest.cancel('Search cancelled');
+    }
+    try {
+      const search = listenerApi.getState().contacts.search;
+      contactSearchRequest = axios.CancelToken.source();
+      const contacts = await axios.post(
+        '/api/contact/search',
+        { search },
+        { cancelToken: contactSearchRequest.token },
+      );
+      listenerApi.dispatch(setContactsData(contacts.data));
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log('Search Cancelled');
+        return;
+      }
+      console.error('Error searching for contacts:', error);
     }
   },
 });

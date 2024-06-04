@@ -19,11 +19,13 @@ export interface ContactData {
 interface ContactsState {
   data: ContactData[] | null;
   selectedContacts: string[];
+  search: string;
 }
 
 const initialState: ContactsState = {
   data: null,
   selectedContacts: [],
+  search: '',
 };
 
 export const contactsSlice = createSlice({
@@ -81,6 +83,9 @@ export const contactsSlice = createSlice({
     setSelectAllContacts: (state, action: PayloadAction<string[]>) => {
       state.selectedContacts = action.payload;
     },
+    setSearch: (state, action: PayloadAction<string>) => {
+      state.search = action.payload;
+    },
     resetContacts: () => initialState,
   },
 });
@@ -92,9 +97,11 @@ export const {
   updateContact,
   addContact,
   removeContacts,
+  setSearch,
   resetContacts,
 } = contactsSlice.actions;
 export const getContactsData = (state: RootState) => state.contacts.data;
 export const getSelectedContacts = (state: RootState) =>
   state.contacts.selectedContacts;
+export const getContactsSearch = (state: RootState) => state.contacts.search;
 export default contactsSlice.reducer;

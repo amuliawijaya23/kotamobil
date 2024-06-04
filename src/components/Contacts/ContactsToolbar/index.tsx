@@ -10,8 +10,11 @@ import {
   DialogContent,
   DialogContentText,
   Button,
+  TextField,
+  InputAdornment,
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
+import SearchIcon from '@mui/icons-material/Search';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
@@ -19,6 +22,8 @@ import { useAppSelector, useAppDispatch } from '~/redux/store';
 import {
   getContactsData,
   getSelectedContacts,
+  getContactsSearch,
+  setSearch,
 } from '~/redux/reducers/contactsSlice';
 import {
   setFirstName,
@@ -46,6 +51,7 @@ const ContactsToolbar = ({ numSelected, onOpenForm }: ContactsToolbar) => {
   const dispatch = useAppDispatch();
   const contacts = useAppSelector(getContactsData);
   const selectedContacts = useAppSelector(getSelectedContacts);
+  const search = useAppSelector(getContactsSearch);
   const [openConfirmation, setOpenConfirmation] = useState<boolean>(false);
 
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -61,6 +67,12 @@ const ContactsToolbar = ({ numSelected, onOpenForm }: ContactsToolbar) => {
     }
     return;
   }, [contacts, selectedContacts]);
+
+  const handleOnChangeSearch = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    dispatch(setSearch(event.target.value));
+  };
 
   const handleOnCloseConfirmation = () => {
     setOpenConfirmation(false);
@@ -181,11 +193,26 @@ const ContactsToolbar = ({ numSelected, onOpenForm }: ContactsToolbar) => {
             </Tooltip>
           </>
         ) : (
-          <Tooltip title="Add Contact">
-            <IconButton onClick={onOpenForm} onMouseDown={handleMouseDown}>
-              <AddIcon />
-            </IconButton>
-          </Tooltip>
+          <>
+            <TextField
+              size="small"
+              placeholder="Search..."
+              value={search}
+              onChange={handleOnChangeSearch}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <Tooltip title="Add Contact">
+              <IconButton onClick={onOpenForm} onMouseDown={handleMouseDown}>
+                <AddIcon />
+              </IconButton>
+            </Tooltip>
+          </>
         )}
       </Toolbar>
     </>
