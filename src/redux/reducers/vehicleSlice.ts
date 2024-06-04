@@ -34,16 +34,21 @@ export interface VehicleData {
 
 interface VehicleState {
   data: VehicleData | null;
+  isLoading: boolean;
 }
 
 const initialState: VehicleState = {
   data: null,
+  isLoading: false,
 };
 
 export const vehicleSlice = createSlice({
   name: 'vehicle',
   initialState,
   reducers: {
+    setVehicleLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload;
+    },
     setVehicleData: (state, action: PayloadAction<VehicleData>) => {
       state.data = action.payload;
     },
@@ -59,7 +64,12 @@ export const vehicleSlice = createSlice({
   },
 });
 
-export const { setVehicleData, setVehicleImages, resetVehicleData } =
-  vehicleSlice.actions;
+export const {
+  setVehicleLoading,
+  setVehicleData,
+  setVehicleImages,
+  resetVehicleData,
+} = vehicleSlice.actions;
 export const getVehicleData = (state: RootState) => state.vehicle.data;
+export const getVehicleStatus = (state: RootState) => state.vehicle.isLoading;
 export default vehicleSlice.reducer;

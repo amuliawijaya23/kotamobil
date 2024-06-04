@@ -38,7 +38,6 @@ const useAuthentication = () => {
   }, [dispatch]);
 
   const getUserData = useCallback(async () => {
-    dispatch(setLoading(true));
     const userData = localStorage.getItem(LC_USER_DATA);
     if (userData) {
       try {
@@ -47,8 +46,6 @@ const useAuthentication = () => {
         dispatch(setAuthenticated(true));
       } catch (error) {
         console.error('Failed to get user data:', error);
-      } finally {
-        dispatch(setLoading(false));
       }
     }
   }, [dispatch]);

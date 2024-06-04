@@ -13,6 +13,18 @@ import { getVehicleData } from '~/redux/reducers/vehicleSlice';
 const VehicleSpecification = () => {
   const vehicle = useAppSelector(getVehicleData);
 
+  // split vehicle specifications into arrays of 3
+  const specifications = (() => {
+    const specArrays = [];
+    if (vehicle?.specification && vehicle.specification?.length > 0) {
+      for (let i = 0; i < vehicle?.specification?.length; i += 3) {
+        const chunkArray = vehicle.specification.slice(i, i + 3);
+        specArrays.push(chunkArray);
+      }
+    }
+    return specArrays;
+  })();
+
   return (
     <>
       <Grid xs={12}>
@@ -26,21 +38,25 @@ const VehicleSpecification = () => {
         </Typography>
       </Grid>
       {vehicle?.specification && vehicle?.specification.length > 0 ? (
-        <>
-          <Grid xs={12}>
-            <List sx={{ listStyleType: 'disc' }}>
-              <Grid container p={2} display="flex" alignItems="center">
-                {vehicle?.specification.map((spec) => (
-                  <Grid xs={6} sm={4} lg={3}>
-                    <ListItem key={spec} sx={{ display: 'list-item' }}>
+        <Grid xs={12}>
+          <List sx={{ listStyleType: 'disc' }} disablePadding>
+            <Grid container p={2} display="flex" alignItems="center">
+              {specifications.map((specArray, index) => (
+                <Grid key={`spec-array-${index}`} xs={6} sm={4} lg={3}>
+                  {specArray.map((spec) => (
+                    <ListItem
+                      key={`vehicle-spec-${spec}`}
+                      sx={{ display: 'list-item' }}
+                      disablePadding
+                    >
                       <ListItemText>{spec}</ListItemText>
                     </ListItem>
-                  </Grid>
-                ))}
-              </Grid>
-            </List>
-          </Grid>
-        </>
+                  ))}
+                </Grid>
+              ))}
+            </Grid>
+          </List>
+        </Grid>
       ) : (
         <Grid xs={12}>
           <Box

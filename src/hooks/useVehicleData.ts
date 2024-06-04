@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useEffect, useCallback, useMemo } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '~/redux/store';
 import {
   getInventory,
@@ -17,15 +17,17 @@ const useVehicleData = () => {
   const dispatch = useAppDispatch();
   const inventory = useAppSelector(getInventory);
 
-  const vehicle = useMemo(() => {
-    return inventory ? inventory.find((v) => v._id === id) : null;
-  }, [id, inventory]);
-
   const findAndSetVehicleData = useCallback(async () => {
-    if (vehicle) {
-      dispatch(setVehicleData(vehicle));
+    try {
+      const vehicle = inventory?.find((v) => v._id === id);
+
+      if (vehicle) {
+        dispatch(setVehicleData(vehicle));
+      }
+    } catch (error) {
+      console.error('Error getting vehicle data:', error);
     }
-  }, [dispatch, vehicle]);
+  }, [dispatch, inventory, id]);
 
   useEffect(() => {
     if (id) {
@@ -37,7 +39,7 @@ const useVehicleData = () => {
   }, [id, dispatch, findAndSetVehicleData]);
 
   const handleOnDelete = async () => {
-    if (!vehicle || !inventory || !Array.isArray(inventory)) return;
+    if (!inventory || !Array.isArray(inventory)) return;
     try {
       const response = await axios.delete(`/api/vehicle/delete/${id}`);
 

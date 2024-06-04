@@ -19,8 +19,12 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { useAppSelector } from '~/redux/store';
-import { getVehicleData } from '~/redux/reducers/vehicleSlice';
+import {
+  getVehicleData,
+  getVehicleStatus,
+} from '~/redux/reducers/vehicleSlice';
 import useVehicleData from '~/hooks/useVehicleData';
+import Loading from '~/components/Loading';
 import VehicleForm from '~/components/VehicleForm';
 import VehicleInformation from '~/components/Vehicle/VehicleInformation';
 import VehicleImages from '~/components/Vehicle/VehicleImages';
@@ -30,9 +34,8 @@ import PageNotFound from '../PageNotFound';
 
 const Vehicle = () => {
   const { handleOnDelete } = useVehicleData();
-
   const vehicle = useAppSelector(getVehicleData);
-
+  const isLoading = useAppSelector(getVehicleStatus);
   const [open, setOpen] = useState<boolean>(false);
   const [openImages, setOpenImages] = useState<boolean>(false);
   const [openConfirmation, setOpenConfirmation] = useState<boolean>(false);
@@ -71,14 +74,30 @@ const Vehicle = () => {
     setActiveStep((prev) => prev - 1);
   };
 
-  if (!vehicle) {
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          width: '100vw',
+          height: '100vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Loading />
+      </Box>
+    );
+  }
+
+  if (!vehicle && !isLoading) {
     return <PageNotFound />;
   }
 
   return (
     <>
       <VehicleForm open={open} onCloseForm={handleCloseForm} />
-      {vehicle.images && vehicle.images.length > 0 && (
+      {vehicle?.images && vehicle.images.length > 0 && (
         <VehicleImageStepper
           open={openImages}
           activeStep={activeStep}

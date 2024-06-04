@@ -15,7 +15,10 @@ import inventoryReducer, {
   setInventoryLoading,
   setQueryData,
 } from './reducers/inventorySlice';
-import vehicleReducer, { setVehicleImages } from './reducers/vehicleSlice';
+import vehicleReducer, {
+  setVehicleImages,
+  setVehicleLoading,
+} from './reducers/vehicleSlice';
 import authFormReducer from './reducers/authFormSlice';
 import vehicleFormReducer from './reducers/vehicleFormSlice';
 import contactFormReducer from './reducers/contactFormSlice';
@@ -90,6 +93,7 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
   },
   effect: async (_action, listenerApi) => {
     const id = listenerApi.getState().vehicle.data?._id;
+    listenerApi.dispatch(setVehicleLoading(true));
     try {
       const { data } = await axios.get(`/api/vehicle/images/${id}`);
       if (data && data.length > 0) {
@@ -98,6 +102,8 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
       return;
     } catch (error) {
       console.error('Error fetching vehicle images:', error);
+    } finally {
+      listenerApi.dispatch(setVehicleLoading(false));
     }
   },
 });
