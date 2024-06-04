@@ -12,6 +12,7 @@ export interface ContactData {
   facebook?: string;
   instagram?: string;
   twitter?: string;
+  linkedIn?: string;
   tiktok?: string;
 }
 

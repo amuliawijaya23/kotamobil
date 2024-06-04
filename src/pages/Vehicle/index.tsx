@@ -26,6 +26,7 @@ import VehicleInformation from '~/components/Vehicle/VehicleInformation';
 import VehicleImages from '~/components/Vehicle/VehicleImages';
 import VehicleSpecification from '~/components/Vehicle/VehicleSpecification';
 import VehicleImageStepper from '~/components/Vehicle/VehicleImageStepper';
+import PageNotFound from '../PageNotFound';
 
 const Vehicle = () => {
   const { handleOnDelete } = useVehicleData();
@@ -71,7 +72,7 @@ const Vehicle = () => {
   };
 
   if (!vehicle) {
-    return <>No DATA</>;
+    return <PageNotFound />;
   }
 
   return (

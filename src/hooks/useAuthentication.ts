@@ -56,11 +56,9 @@ const useAuthentication = () => {
   useEffect(() => {
     if (Cookies.get(COOKIE_NAME)) {
       getUserData();
-    }
-
-    return () => {
+    } else {
       handleLogout();
-    };
+    }
   }, [dispatch, getUserData, handleLogout]);
 
   const handleRegister = async () => {

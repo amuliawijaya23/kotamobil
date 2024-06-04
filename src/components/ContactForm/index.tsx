@@ -38,7 +38,7 @@ const ContactForm = ({ open, onCloseForm }: ContactFormProps) => {
     handleInstagramChange,
     handleFacebookchange,
     handleTwitterChange,
-    handleTiktokChange,
+    handleLinkedInChange,
     handleOnSave,
   } = useContactForm();
 
@@ -82,7 +82,7 @@ const ContactForm = ({ open, onCloseForm }: ContactFormProps) => {
               onInstagramchange={handleInstagramChange}
               onFaceBookChange={handleFacebookchange}
               onTwitterChange={handleTwitterChange}
-              onTiktokChange={handleTiktokChange}
+              onLinkedInChange={handleLinkedInChange}
             />
           </Grid>
           <Grid xs={12} mt={2} display="flex" justifyContent="end">

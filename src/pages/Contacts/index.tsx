@@ -16,7 +16,7 @@ import {
 import InstagramIcon from '@mui/icons-material/Instagram';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import XIcon from '@mui/icons-material/X';
-
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import ContactsToolbar from '~/components/Contacts/ContactsToolbar';
 import ContactsHeader from '~/components/Contacts/ContactsHeader';
 import ContactForm from '~/components/ContactForm';
@@ -161,21 +161,30 @@ const Contacts = () => {
                           <IconButton
                             size="small"
                             disabled={!contact.instagram}
+                            onClick={(e) => e.stopPropagation()}
                           >
                             <InstagramIcon sx={{ height: 25, width: 20 }} />
                           </IconButton>
-                          <IconButton size="small" disabled={!contact.facebook}>
+                          <IconButton
+                            size="small"
+                            disabled={!contact.facebook}
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <FacebookIcon sx={{ height: 25, width: 20 }} />
                           </IconButton>
-                          <IconButton size="small" disabled={!contact.twitter}>
+                          <IconButton
+                            size="small"
+                            disabled={!contact.twitter}
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <XIcon sx={{ height: 25, width: 20 }} />
                           </IconButton>
-                          <IconButton size="small" disabled={!contact.tiktok}>
-                            <img
-                              sizes="small"
-                              style={{ height: 20, width: 20, opacity: 0.3 }}
-                              src="./src/assets/tik-tok.png"
-                            />
+                          <IconButton
+                            size="small"
+                            disabled={!contact.linkedIn}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <LinkedInIcon />
                           </IconButton>
                         </TableCell>
                       </TableRow>

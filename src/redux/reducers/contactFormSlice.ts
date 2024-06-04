@@ -13,7 +13,7 @@ export interface ContactForm {
   address?: string;
   instagram?: string;
   facebook?: string;
-  tiktok?: string;
+  linkedIn?: string;
   twitter?: string;
   updateId: string;
 }
@@ -33,7 +33,7 @@ const initialState: VehicleFormState = {
     address: '',
     instagram: '',
     facebook: '',
-    tiktok: '',
+    linkedIn: '',
     twitter: '',
     updateId: '',
   },
@@ -77,8 +77,8 @@ export const contactFormSlice = createSlice({
     setTwitter: (state, action: PayloadAction<string>) => {
       state.form.twitter = action.payload;
     },
-    setTiktok: (state, action: PayloadAction<string>) => {
-      state.form.tiktok = action.payload;
+    setLinkedIn: (state, action: PayloadAction<string>) => {
+      state.form.linkedIn = action.payload;
     },
   },
 });
@@ -95,7 +95,7 @@ export const {
   setInstagram,
   setFacebook,
   setTwitter,
-  setTiktok,
+  setLinkedIn,
 } = contactFormSlice.actions;
 export const getContactFormData = (state: RootState) => state.contactForm.form;
 export default contactFormSlice.reducer;

@@ -13,7 +13,7 @@ import {
   setInstagram,
   setFacebook,
   setTwitter,
-  setTiktok,
+  setLinkedIn,
 } from '~/redux/reducers/contactFormSlice';
 import { setAlert } from '~/redux/reducers/appSlice';
 import { addContact, updateContact } from '~/redux/reducers/contactsSlice';
@@ -78,10 +78,10 @@ const useContactForm = () => {
     dispatch(setTwitter(event.target.value));
   };
 
-  const handleTiktokChange = (
+  const handleLinkedInChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    dispatch(setTiktok(event.target.value));
+    dispatch(setLinkedIn(event.target.value));
   };
 
   const validateForm = (): string | null => {
@@ -152,7 +152,7 @@ const useContactForm = () => {
     handleInstagramChange,
     handleFacebookchange,
     handleTwitterChange,
-    handleTiktokChange,
+    handleLinkedInChange,
     handleOnSave,
   };
 };

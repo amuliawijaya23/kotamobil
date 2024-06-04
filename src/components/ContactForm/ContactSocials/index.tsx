@@ -5,7 +5,7 @@ import {
   InputAdornment,
   OutlinedInput,
 } from '@mui/material';
-
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import XIcon from '@mui/icons-material/X';
@@ -23,7 +23,7 @@ interface ContactSocialsProps {
   onTwitterChange: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
-  onTiktokChange: (
+  onLinkedInChange: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
 }
@@ -32,7 +32,7 @@ const ContactSocials = ({
   onInstagramchange,
   onFaceBookChange,
   onTwitterChange,
-  onTiktokChange,
+  onLinkedInChange,
 }: ContactSocialsProps) => {
   const contactFormData = useAppSelector(getContactFormData);
 
@@ -102,14 +102,11 @@ const ContactSocials = ({
             id="outlined-adornment-instagram"
             type="text"
             placeholder="TikTok"
-            onChange={onTiktokChange}
-            value={contactFormData.tiktok}
+            onChange={onLinkedInChange}
+            value={contactFormData.linkedIn}
             startAdornment={
               <InputAdornment position="start">
-                <img
-                  src="./src/assets/tik-tok.png"
-                  style={{ width: 20, height: 20, opacity: 0.5 }}
-                />
+                <LinkedInIcon />
               </InputAdornment>
             }
           />

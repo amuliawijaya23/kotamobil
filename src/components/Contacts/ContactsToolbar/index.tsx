@@ -1,5 +1,16 @@
-import { useMemo } from 'react';
-import { Toolbar, Typography, IconButton, Tooltip } from '@mui/material';
+import { useMemo, useState } from 'react';
+import {
+  Toolbar,
+  Typography,
+  IconButton,
+  Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  Button,
+} from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -17,7 +28,7 @@ import {
   setMobile,
   setFacebook,
   setInstagram,
-  setTiktok,
+  setLinkedIn,
   setTwitter,
   setUpdateId,
   setCountry,
@@ -31,11 +42,11 @@ interface ContactsToolbar {
 }
 
 const ContactsToolbar = ({ numSelected, onOpenForm }: ContactsToolbar) => {
+  const { handleOnDeleteContacts } = useContactData();
   const dispatch = useAppDispatch();
   const contacts = useAppSelector(getContactsData);
   const selectedContacts = useAppSelector(getSelectedContacts);
-
-  const { handleOnDeleteContacts } = useContactData();
+  const [openConfirmation, setOpenConfirmation] = useState<boolean>(false);
 
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -50,6 +61,19 @@ const ContactsToolbar = ({ numSelected, onOpenForm }: ContactsToolbar) => {
     }
     return;
   }, [contacts, selectedContacts]);
+
+  const handleOnCloseConfirmation = () => {
+    setOpenConfirmation(false);
+  };
+
+  const handleOnOpenConfirmation = () => {
+    setOpenConfirmation(true);
+  };
+
+  const onDelete = () => {
+    handleOnDeleteContacts();
+    handleOnCloseConfirmation();
+  };
 
   const handleOnUpdate = () => {
     if (selectedContact) {
@@ -75,7 +99,8 @@ const ContactsToolbar = ({ numSelected, onOpenForm }: ContactsToolbar) => {
           dispatch(setFacebook(selectedContact.facebook));
         selectedContact.twitter &&
           dispatch(setTwitter(selectedContact.twitter));
-        selectedContact.tiktok && dispatch(setTiktok(selectedContact.tiktok));
+        selectedContact.linkedIn &&
+          dispatch(setLinkedIn(selectedContact.linkedIn));
         dispatch(setUpdateId(selectedContact._id));
       } catch (error) {
         console.error('Error occured during form initialization:', error);
@@ -86,68 +111,84 @@ const ContactsToolbar = ({ numSelected, onOpenForm }: ContactsToolbar) => {
   };
 
   return (
-    <Toolbar
-      sx={{
-        pl: { sm: 2 },
-        pr: { xs: 2 },
-        ...(numSelected > 0 && {
-          bgcolor: (theme) =>
-            alpha(
-              theme.palette.primary.main,
-              theme.palette.action.activatedOpacity,
-            ),
-        }),
-      }}
-    >
-      {numSelected > 0 ? (
-        <Typography
-          sx={{ flex: '1 1 100%' }}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography
-          sx={{ flex: '1 1 100%' }}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          Contacts
-        </Typography>
-      )}
+    <>
+      <Dialog open={openConfirmation} onClose={handleOnCloseConfirmation}>
+        <DialogTitle>Delete Contacts</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to remove contacts?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleOnCloseConfirmation}>Cancel</Button>
+          <Button onClick={onDelete} onMouseDown={handleMouseDown}>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Toolbar
+        sx={{
+          pl: { sm: 2 },
+          pr: { xs: 2 },
+          ...(numSelected > 0 && {
+            bgcolor: (theme) =>
+              alpha(
+                theme.palette.primary.main,
+                theme.palette.action.activatedOpacity,
+              ),
+          }),
+        }}
+      >
+        {numSelected > 0 ? (
+          <Typography
+            sx={{ flex: '1 1 100%' }}
+            color="inherit"
+            variant="subtitle1"
+            component="div"
+          >
+            {numSelected} selected
+          </Typography>
+        ) : (
+          <Typography
+            sx={{ flex: '1 1 100%' }}
+            variant="h6"
+            id="tableTitle"
+            component="div"
+          >
+            Contacts
+          </Typography>
+        )}
 
-      {numSelected > 0 ? (
-        <>
-          {numSelected === 1 && (
-            <Tooltip title="Update">
+        {numSelected > 0 ? (
+          <>
+            {numSelected === 1 && (
+              <Tooltip title="Update">
+                <IconButton
+                  onClick={handleOnUpdate}
+                  onMouseDown={handleMouseDown}
+                >
+                  <EditIcon />
+                </IconButton>
+              </Tooltip>
+            )}
+            <Tooltip title="Delete">
               <IconButton
-                onClick={handleOnUpdate}
+                onClick={handleOnOpenConfirmation}
                 onMouseDown={handleMouseDown}
               >
-                <EditIcon />
+                <DeleteIcon />
               </IconButton>
             </Tooltip>
-          )}
-          <Tooltip title="Delete">
-            <IconButton
-              onClick={handleOnDeleteContacts}
-              onMouseDown={handleMouseDown}
-            >
-              <DeleteIcon />
+          </>
+        ) : (
+          <Tooltip title="Add Contact">
+            <IconButton onClick={onOpenForm} onMouseDown={handleMouseDown}>
+              <AddIcon />
             </IconButton>
           </Tooltip>
-        </>
-      ) : (
-        <Tooltip title="Add Contact">
-          <IconButton onClick={onOpenForm} onMouseDown={handleMouseDown}>
-            <AddIcon />
-          </IconButton>
-        </Tooltip>
-      )}
-    </Toolbar>
+        )}
+      </Toolbar>
+    </>
   );
 };
 
