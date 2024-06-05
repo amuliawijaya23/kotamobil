@@ -7,8 +7,9 @@ import Layout from './pages/Layout';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Contacts from './pages/Contacts';
+import Dashboard from './pages/Dashboard';
 import Inventory from './pages/Inventory';
+import Contacts from './pages/Contacts';
 import Vehicle from './pages/Vehicle';
 import PageNotFound from './pages/PageNotFound';
 import useAuthentication from './hooks/useAuthentication';
@@ -54,6 +55,14 @@ function App() {
               <UnauthenticatedRoute>
                 <Register onRegister={handleRegister} />
               </UnauthenticatedRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <AuthenticatedRoute>
+                <Dashboard />
+              </AuthenticatedRoute>
             }
           />
           <Route

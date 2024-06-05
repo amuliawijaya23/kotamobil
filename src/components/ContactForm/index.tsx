@@ -14,8 +14,9 @@ import {
 import ContactInformation from './ContactInformation';
 import ContactSocials from './ContactSocials';
 import useContactForm from '~/hooks/useContactForm';
-import { useAppSelector } from '~/redux/store';
+import { useAppSelector, useAppDispatch } from '~/redux/store';
 import { getContactFormData } from '~/redux/reducers/contactFormSlice';
+import { setAlert } from '~/redux/reducers/appSlice';
 
 interface ContactFormProps {
   open: boolean;
@@ -49,6 +50,7 @@ const ContactForm = ({ open, onCloseForm }: ContactFormProps) => {
     handleLinkedInChange,
     handleOnSave,
   } = useContactForm();
+  const dispatch = useAppDispatch();
   const contactFormData = useAppSelector(getContactFormData);
   const [openConfirmation, setOpenConfirmation] = useState<boolean>(false);
 
@@ -69,6 +71,18 @@ const ContactForm = ({ open, onCloseForm }: ContactFormProps) => {
     onCloseForm();
   };
 
+  const handleOnValidate = () => {
+    if (
+      !contactFormData.firstName ||
+      !contactFormData.country ||
+      contactFormData.mobile.length < 10
+    ) {
+      dispatch(setAlert({ message: 'Missing parameters', severity: 'error' }));
+      return;
+    }
+    handleOnOpenConfirmation();
+  };
+
   const onSave = async () => {
     handleOnCloseConfirmation();
     if (await handleOnSave()) {
@@ -79,7 +93,9 @@ const ContactForm = ({ open, onCloseForm }: ContactFormProps) => {
   return (
     <>
       <Dialog open={openConfirmation} onClose={handleOnCloseConfirmation}>
-        <DialogTitle>Delete Contacts</DialogTitle>
+        <DialogTitle>
+          {contactFormData.updateId ? 'Update Contact' : 'Create Contact'}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
             {contactFormData.updateId
@@ -88,8 +104,10 @@ const ContactForm = ({ open, onCloseForm }: ContactFormProps) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleOnCloseConfirmation}>Cancel</Button>
-          <Button onClick={onSave} onMouseDown={handleMouseDown}>
+          <Button onClick={handleOnCloseConfirmation} color="error">
+            Cancel
+          </Button>
+          <Button onClick={onSave} onMouseDown={handleMouseDown} color="info">
             Confirm
           </Button>
         </DialogActions>
@@ -130,9 +148,10 @@ const ContactForm = ({ open, onCloseForm }: ContactFormProps) => {
               Cancel
             </Button>
             <Button
-              onClick={handleOnOpenConfirmation}
+              onClick={handleOnValidate}
               onMouseDown={handleMouseDown}
               sx={{ width: 50 }}
+              color="success"
             >
               Save
             </Button>

@@ -179,8 +179,10 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleOnCloseConfirmation}>Cancel</Button>
-          <Button onClick={onSave} onMouseDown={handleMouseDown}>
+          <Button onClick={handleOnCloseConfirmation} color="error">
+            Cancel
+          </Button>
+          <Button onClick={onSave} onMouseDown={handleMouseDown} color="info">
             Confirm
           </Button>
         </DialogActions>
@@ -220,7 +222,7 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
                   onClick={handlePreviousStep}
                   onMouseDown={handleMouseDown}
                   variant="text"
-                  color="primary"
+                  color="info"
                   sx={{ width: 50 }}
                 >
                   Back
@@ -231,7 +233,7 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
                   onClick={handleNextStep}
                   onMouseDown={handleMouseDown}
                   variant="text"
-                  color="primary"
+                  color="info"
                   sx={{ width: 50 }}
                 >
                   {process[step] == VEHICLE_IMAGES &&
@@ -246,7 +248,7 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
                   onClick={handleOnOpenConfirmation}
                   onMouseDown={handleMouseDown}
                   variant="text"
-                  color="primary"
+                  color="success"
                   sx={{ width: 50 }}
                 >
                   Save

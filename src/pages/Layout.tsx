@@ -39,7 +39,7 @@ const Layout = ({ onLogout }: LayoutProps) => {
         <Box component={'header'}>
           <NavBar onLogout={onLogout} />
         </Box>
-        <Box component="main" sx={{ width: '100vw', minHeight: '100vh' }}>
+        <Box component="main">
           <Outlet />
         </Box>
       </Box>

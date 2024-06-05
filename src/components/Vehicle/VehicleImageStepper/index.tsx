@@ -26,7 +26,7 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: { xs: 400, sm: 600, md: 800, lg: 900, xl: 1000, ultra: 1500 },
+  width: { xs: 400, sm: 500, md: 700, xl: 1000, ultra: 1500 },
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
@@ -54,10 +54,9 @@ const VehicleImageStepper = ({
                 srcSet={vehicle?.images[activeStep].url}
                 sx={{
                   height: {
-                    xs: 400,
-                    sm: 480,
-                    md: 640,
-                    lg: 720,
+                    xs: 320,
+                    sm: 400,
+                    md: 560,
                     xl: 800,
                     ultra: 1200,
                   },

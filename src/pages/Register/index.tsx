@@ -11,7 +11,7 @@ import {
 import NameInput from '~/components/Authentication/NameInput';
 import EmailInput from '~/components/Authentication/EmailInput';
 import PasswordInput from '~/components/Authentication/PasswordInput';
-import ErrorAlert from '~/components/ErrorAlert';
+import ErrorAlert from '~/components/Authentication/ErrorAlert';
 import { useAppSelector, useAppDispatch } from '~/redux/store';
 import {
   getAuthFormData,

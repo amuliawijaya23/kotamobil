@@ -9,9 +9,9 @@ import {
   TableContainer,
   TablePagination,
   TableRow,
-  Paper,
   Checkbox,
   IconButton,
+  Typography,
 } from '@mui/material';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import FacebookIcon from '@mui/icons-material/Facebook';
@@ -99,109 +99,125 @@ const Contacts = () => {
     <>
       <Toolbar />
       <ContactForm open={openForm} onCloseForm={handleCloseForm} />
-      <Box sx={{ width: '100%', height: '100vh' }}>
-        <Paper sx={{ width: '100%', mb: 2 }}>
-          <ContactsToolbar
-            onOpenForm={handleOpenForm}
-            numSelected={selectedContacts.length}
-          />
-          <TableContainer>
-            <Table sx={{ minWidth: 750, height: '100%' }} size="medium">
-              <ContactsHeader
-                numSelected={selectedContacts.length}
-                order={order}
-                onRequestSort={handleRequestSort}
-                onSelectAllClick={handleSelectAllClick}
-              />
-              <TableBody>
-                {visibleRows &&
-                  visibleRows.map((contact, index) => {
-                    const isItemSelected = isSelected(contact._id);
-                    const labelId = `enhanced-table-checkbox-${index}`;
+      <Box sx={{ width: '100%' }}>
+        <ContactsToolbar
+          onOpenForm={handleOpenForm}
+          numSelected={selectedContacts.length}
+        />
+        <TableContainer>
+          <Table sx={{ minWidth: 750 }} size="medium">
+            <ContactsHeader
+              numSelected={selectedContacts.length}
+              order={order}
+              onRequestSort={handleRequestSort}
+              onSelectAllClick={handleSelectAllClick}
+            />
+            <TableBody>
+              {visibleRows &&
+                visibleRows.map((contact, index) => {
+                  const isItemSelected = isSelected(contact._id);
+                  const labelId = `enhanced-table-checkbox-${index}`;
 
-                    return (
-                      <TableRow
-                        hover
-                        onClick={(event) => handleClick(event, contact._id)}
-                        role="checkbox"
-                        aria-checked={isItemSelected}
-                        tabIndex={-1}
-                        key={contact._id}
-                        selected={isItemSelected}
-                        sx={{ cursor: 'pointer' }}
+                  return (
+                    <TableRow
+                      hover
+                      onClick={(event) => handleClick(event, contact._id)}
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      key={contact._id}
+                      selected={isItemSelected}
+                      sx={{ cursor: 'pointer' }}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          color="primary"
+                          checked={isItemSelected}
+                          inputProps={{
+                            'aria-labelledby': labelId,
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell
+                        component="th"
+                        id={labelId}
+                        scope="row"
+                        padding="none"
                       >
-                        <TableCell padding="checkbox">
-                          <Checkbox
-                            color="primary"
-                            checked={isItemSelected}
-                            inputProps={{
-                              'aria-labelledby': labelId,
-                            }}
-                          />
-                        </TableCell>
-                        <TableCell
-                          component="th"
-                          id={labelId}
-                          scope="row"
-                          padding="none"
+                        {contact.firstName}
+                      </TableCell>
+                      <TableCell align="left">
+                        {contact.lastName ? contact.lastName : '-'}
+                      </TableCell>
+                      <TableCell align="left">{contact.mobile}</TableCell>
+                      <TableCell align="left">
+                        {contact.email ? contact.email : '-'}
+                      </TableCell>
+                      <TableCell align="left">
+                        {contact.address ? contact.address : '-'}
+                      </TableCell>
+                      <TableCell align="right">
+                        <IconButton
+                          size="small"
+                          disabled={!contact.instagram}
+                          onClick={(e) => e.stopPropagation()}
                         >
-                          {contact.firstName}
-                        </TableCell>
-                        <TableCell align="left">
-                          {contact.lastName ? contact.lastName : '-'}
-                        </TableCell>
-                        <TableCell align="left">{contact.mobile}</TableCell>
-                        <TableCell align="left">
-                          {contact.email ? contact.email : '-'}
-                        </TableCell>
-                        <TableCell align="left">
-                          {contact.address ? contact.address : '-'}
-                        </TableCell>
-                        <TableCell align="right">
-                          <IconButton
-                            size="small"
-                            disabled={!contact.instagram}
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <InstagramIcon sx={{ height: 25, width: 20 }} />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            disabled={!contact.facebook}
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <FacebookIcon sx={{ height: 25, width: 20 }} />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            disabled={!contact.twitter}
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <XIcon sx={{ height: 25, width: 20 }} />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            disabled={!contact.linkedIn}
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <LinkedInIcon />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                {emptyRows > 0 && (
-                  <TableRow
-                    style={{
-                      height: 53 * emptyRows,
-                    }}
-                  >
-                    <TableCell colSpan={6} />
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                          <InstagramIcon sx={{ height: 25, width: 20 }} />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          disabled={!contact.facebook}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <FacebookIcon sx={{ height: 25, width: 20 }} />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          disabled={!contact.twitter}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <XIcon sx={{ height: 25, width: 20 }} />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          disabled={!contact.linkedIn}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <LinkedInIcon />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              {emptyRows > 0 && (
+                <TableRow
+                  style={{
+                    height: 53 * emptyRows,
+                  }}
+                >
+                  <TableCell colSpan={6} />
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        {contacts?.length === 0 && (
+          <Box
+            sx={{
+              width: '100%',
+              minHeight: '75vh',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              p: 2,
+            }}
+          >
+            <Typography variant="h6" component="p" textAlign="center">
+              No contact found. Try changing your search or add a new contact
+            </Typography>
+          </Box>
+        )}
+        {contacts && contacts.length > 10 && (
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
@@ -211,7 +227,7 @@ const Contacts = () => {
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
-        </Paper>
+        )}
       </Box>
     </>
   );

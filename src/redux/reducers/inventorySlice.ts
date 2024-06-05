@@ -10,7 +10,7 @@ import {
   transmission,
 } from '~/helpers/selectData';
 
-interface QueryData {
+export interface QueryData {
   makesModels: { [key: string]: string[] };
   search: string;
   minPrice: number;
@@ -71,74 +71,8 @@ export const inventorySlice = createSlice({
         }
       }
     },
-    setQueryData: (state, action: PayloadAction<VehicleData[]>) => {
-      const queryData: QueryData = {
-        makesModels: {},
-        search: '',
-        selectedMakes: [],
-        selectedModels: [],
-        minPrice: Infinity,
-        maxPrice: -Infinity,
-        minYear: Infinity,
-        maxYear: -Infinity,
-        minOdometer: Infinity,
-        maxOdometer: -Infinity,
-        selectedStatus: ['Available', 'Sold'],
-        priceRange: [],
-        yearRange: [],
-        odometerRange: [],
-        selectedCondition: condition,
-        selectedBodyType: bodyType,
-        selectedAssembly: assembly,
-        selectedFuelType: fuelType,
-        selectedTransmission: transmission,
-      };
-      for (const vehicle of action.payload) {
-        if (!queryData.makesModels[vehicle.make]) {
-          queryData.makesModels[vehicle.make] = [];
-          queryData.selectedMakes.push(vehicle.make);
-        }
-
-        if (!queryData.makesModels[vehicle.make].includes(vehicle.model)) {
-          queryData.makesModels[vehicle.make].push(vehicle.model);
-          queryData.selectedModels.push(vehicle.model);
-        }
-
-        if (vehicle.price < queryData.minPrice) {
-          queryData.minPrice = vehicle.price;
-          queryData.priceRange[0] = vehicle.price;
-        }
-
-        if (vehicle.price > queryData.maxPrice) {
-          queryData.maxPrice = vehicle.price;
-          queryData.priceRange[1] = vehicle.price;
-        }
-
-        if (vehicle.year < queryData.minYear) {
-          queryData.minYear = vehicle.year;
-          queryData.yearRange[0] = vehicle.year;
-        }
-
-        if (vehicle.year > queryData.maxYear) {
-          queryData.maxYear = vehicle.year;
-          queryData.yearRange[1] = vehicle.year;
-        }
-
-        if (vehicle.odometer < queryData.minOdometer) {
-          queryData.minOdometer = vehicle.odometer;
-          queryData.odometerRange[0] = vehicle.odometer;
-        }
-
-        if (vehicle.odometer > queryData.maxOdometer) {
-          queryData.maxOdometer = vehicle.odometer;
-          queryData.odometerRange[1] = vehicle.odometer;
-        }
-
-        Object.keys(queryData.makesModels).forEach((make) => {
-          queryData.makesModels[make].sort();
-        });
-      }
-      state.queryData = queryData;
+    setQueryData: (state, action: PayloadAction<QueryData>) => {
+      state.queryData = action.payload;
     },
     setSearch: (state, action: PayloadAction<string>) => {
       if (state.queryData) {

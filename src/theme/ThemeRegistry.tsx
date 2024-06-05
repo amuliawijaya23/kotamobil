@@ -27,10 +27,10 @@ const typographyOptions = {
 
 const paletteOptions = {
   primary: {
-    light: '#1976d2',
-    main: '#1565c0',
-    dark: '#0d47a1',
-    contrastText: '#fff',
+    light: '#dae7fe',
+    main: '#C3D9FF',
+    dark: '#c1d8fe',
+    contrastText: '#757575',
   },
   secondary: {
     light: '#c62828',

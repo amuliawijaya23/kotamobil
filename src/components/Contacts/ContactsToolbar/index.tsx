@@ -132,8 +132,14 @@ const ContactsToolbar = ({ numSelected, onOpenForm }: ContactsToolbar) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleOnCloseConfirmation}>Cancel</Button>
-          <Button onClick={onDelete} onMouseDown={handleMouseDown}>
+          <Button onClick={handleOnCloseConfirmation} color="error">
+            Cancel
+          </Button>
+          <Button
+            onClick={onDelete}
+            onMouseDown={handleMouseDown}
+            color="success"
+          >
             Confirm
           </Button>
         </DialogActions>

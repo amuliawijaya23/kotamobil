@@ -1,6 +1,6 @@
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import { styled } from '@mui/material/styles';
-import { Box, Toolbar, Button, IconButton, Typography } from '@mui/material';
+import { Box, Toolbar, Button, IconButton } from '@mui/material';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import HomeIcon from '@mui/icons-material/Home';
@@ -57,6 +57,10 @@ const NavBar = ({ onLogout }: NavBarProps) => {
     navigate('/');
   };
 
+  const handleOnClickDashboard = () => {
+    navigate('/dashboard');
+  };
+
   const handleOnClickInventory = () => {
     navigate('/inventory');
   };
@@ -92,23 +96,20 @@ const NavBar = ({ onLogout }: NavBarProps) => {
             alignItems: 'center',
           }}
         >
-          <Typography
-            onClick={handleOnClickHome}
-            onMouseDown={handleMouseDown}
-            variant="h6"
-            noWrap
-            component={'h1'}
+          <Box
             sx={{
-              cursor: 'pointer',
-              display: {
-                xs: isAuthenticated ? 'none' : 'flex',
-                sm: 'flex',
-              },
-              mr: 3,
+              display: { xs: isAuthenticated ? 'none' : 'flex', sm: 'flex' },
+              justifyContent: 'center',
+              alignItems: 'center',
             }}
           >
-            GudangMobil
-          </Typography>
+            <img
+              onClick={handleOnClickHome}
+              onMouseDown={handleMouseDown}
+              src="/src/assets/gudangmobil.png"
+              style={{ height: 50, marginRight: 10, cursor: 'pointer' }}
+            />
+          </Box>
           <IconButton
             onClick={handleOnClickHome}
             onMouseDown={handleMouseDown}
@@ -125,6 +126,14 @@ const NavBar = ({ onLogout }: NavBarProps) => {
           </IconButton>
           {isAuthenticated && (
             <>
+              <Button
+                onClick={handleOnClickDashboard}
+                onMouseDown={handleMouseDown}
+                color="inherit"
+                variant="text"
+              >
+                Dashboard
+              </Button>
               <Button
                 onClick={handleOnClickInventory}
                 onMouseDown={handleMouseDown}
