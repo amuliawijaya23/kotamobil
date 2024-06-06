@@ -40,9 +40,9 @@ const SalesByModelChart = () => {
             color="info"
             variant="outlined"
             onClick={handleOnChangeCurrentData}
-            sx={{ minWidth: 75 }}
+            sx={{ minWidth: 125 }}
           >
-            {currentData ? 'Current' : 'Past'}
+            {currentData ? 'See Past Data' : 'See Current Data'}
           </Button>
         }
       />

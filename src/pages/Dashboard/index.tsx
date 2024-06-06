@@ -1,4 +1,13 @@
-import { Unstable_Grid2 as Grid, Toolbar, Box } from '@mui/material';
+import {
+  Unstable_Grid2 as Grid,
+  Toolbar,
+  Box,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+} from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import { useAppSelector, useAppDispatch } from '~/redux/store';
 import SalesByModelChart from '~/components/Dashboard/SalesByModelChart';
@@ -12,12 +21,15 @@ import {
   setEndDate,
   getStartDate,
   getEndDate,
+  setPastRange,
+  getPastRange,
 } from '~/redux/reducers/dashboardSlice';
 
 const Dashboard = () => {
   const dispatch = useAppDispatch();
   const startDate = useAppSelector(getStartDate);
   const endDate = useAppSelector(getEndDate);
+  const pastRange = useAppSelector(getPastRange);
 
   const handleOnChangeStartDate = (input: Date | null) => {
     dispatch(setStartDate(JSON.stringify(input)));
@@ -25,6 +37,10 @@ const Dashboard = () => {
 
   const handleOnChangeEndDate = (input: Date | null) => {
     dispatch(setEndDate(JSON.stringify(input)));
+  };
+
+  const handleOnChangePastRange = (event: SelectChangeEvent) => {
+    dispatch(setPastRange(Number(event.target.value)));
   };
 
   return (
@@ -54,6 +70,22 @@ const Dashboard = () => {
                 slotProps={{ textField: { size: 'small' } }}
                 sx={{ mx: 1 }}
               />
+              <FormControl size="small">
+                <InputLabel id="past-range-select-label">Past Range</InputLabel>
+                <Select
+                  labelId="past-range-select-label"
+                  value={pastRange.toString()}
+                  label="Past Range"
+                  onChange={handleOnChangePastRange}
+                  sx={{ minWidth: 100 }}
+                >
+                  <MenuItem value={1}>1 year</MenuItem>
+                  <MenuItem value={2}>2 years</MenuItem>
+                  <MenuItem value={3}>3 years</MenuItem>
+                  <MenuItem value={4}>4 years</MenuItem>
+                  <MenuItem value={5}>5 years</MenuItem>
+                </Select>
+              </FormControl>
             </Toolbar>
           </Grid>
           <Grid

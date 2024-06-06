@@ -1,4 +1,4 @@
-import axios, { CancelTokenSource } from 'axios';
+import axios, { CancelToken, CancelTokenSource } from 'axios';
 import { createListenerMiddleware } from '@reduxjs/toolkit';
 import {
   startOfYear,
@@ -36,6 +36,7 @@ import {
   setPastTotalProfit,
   setSalesByModel,
   setPastSalesByModel,
+  setDashboardLoading,
 } from './reducers/dashboardSlice';
 import {
   status,
@@ -124,8 +125,13 @@ const transformVehicleData = (vehicles: VehicleData[]): QueryData => {
   return queryData;
 };
 
-const fetchAllSalesData = async (startDate: Date, endDate: Date) => {
-  return axios.post('/api/vehicle/sales', { startDate, endDate });
+const fetchAllSalesData = async (
+  startDate: Date,
+  endDate: Date,
+  cancelToken?: CancelToken,
+) => {
+  const config = cancelToken ? { cancelToken } : {};
+  return axios.post('/api/vehicle/sales', { startDate, endDate }, config);
 };
 
 const calculateSalesByModel = (sales: VehicleData[]) => {
@@ -151,7 +157,9 @@ const fetchMonthlySalesData = async (
   monthsOfInterval: Date[],
   startDate: Date,
   endDate: Date,
+  cancelToken?: CancelToken,
 ) => {
+  const config = cancelToken ? { cancelToken } : {};
   const responses = await Promise.all(
     monthsOfInterval.map((month, index) => {
       const startOfMonth = index === 0 ? new Date(startDate) : month;
@@ -159,10 +167,14 @@ const fetchMonthlySalesData = async (
         index === monthsOfInterval.length - 1
           ? new Date(endDate)
           : endOfMonth(new Date(month));
-      return axios.post('/api/vehicle/sales', {
-        startDate: startOfMonth,
-        endDate: endOfMonthDate,
-      });
+      return axios.post(
+        '/api/vehicle/sales',
+        {
+          startDate: startOfMonth,
+          endDate: endOfMonthDate,
+        },
+        config,
+      );
     }),
   );
   return responses.map((response) => response.data);
@@ -253,21 +265,102 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
       listenerApi.dispatch(setQueryData(queryData));
       listenerApi.dispatch(setContactsData(contacts));
       listenerApi.dispatch(setTotalSales(totalSales));
-      listenerApi.dispatch(setSalesByModel(salesByModel));
-      listenerApi.dispatch(setPastSalesByModel(pastSalesByModel));
       listenerApi.dispatch(setPastTotalSales(pastTotalSales));
       listenerApi.dispatch(setTotalProfit(totalProfit));
       listenerApi.dispatch(setPastTotalProfit(pastTotalProfit));
+      listenerApi.dispatch(setSalesByModel(salesByModel));
+      listenerApi.dispatch(setPastSalesByModel(pastSalesByModel));
+      listenerApi.dispatch(setSalesPerMonth(numOfSalesPerMonth));
+      listenerApi.dispatch(setPastSalesPerMonth(numOfPastSalesPerMonth));
+      listenerApi.dispatch(setProfitPerMonth(profitPerMonth));
+      listenerApi.dispatch(setPastProfitPerMonth(pastProfitPerMonth));
       listenerApi.dispatch(setSales(sales));
       listenerApi.dispatch(setPastSales(pastSales));
-      listenerApi.dispatch(setSalesPerMonth(numOfSalesPerMonth));
-      listenerApi.dispatch(setProfitPerMonth(profitPerMonth));
-      listenerApi.dispatch(setPastSalesPerMonth(numOfPastSalesPerMonth));
-      listenerApi.dispatch(setPastProfitPerMonth(pastProfitPerMonth));
     } catch (error) {
       console.error('Failed to fetch vehicles and contacts', error);
     } finally {
       listenerApi.dispatch(setLoading(false));
+    }
+  },
+});
+
+let dashboardSearchRequest: CancelTokenSource;
+listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
+  predicate: (_action, currentState, previousState) => {
+    return (
+      (previousState.dashboard.startDate !== null &&
+        previousState.dashboard.startDate !==
+          currentState.dashboard.startDate) ||
+      (previousState.dashboard.endDate !== null &&
+        previousState.dashboard.endDate !== currentState.dashboard.endDate) ||
+      previousState.dashboard.pastRange !== currentState.dashboard.pastRange
+    );
+  },
+  effect: async (_action, listenerApi) => {
+    listenerApi.dispatch(setDashboardLoading(true));
+    if (dashboardSearchRequest) {
+      dashboardSearchRequest.cancel('Search Cancelled');
+    }
+    dashboardSearchRequest = axios.CancelToken.source();
+    const start = JSON.parse(
+      listenerApi.getState().dashboard.startDate || '{}',
+    );
+    const end = JSON.parse(listenerApi.getState().dashboard.endDate || '{}');
+    const pastRange = listenerApi.getState().dashboard.pastRange;
+    const pastStart = subYears(start, pastRange);
+    const pastEnd = subYears(end, pastRange);
+    try {
+      const [salesResponse, pastSalesResponse] = await Promise.all([
+        fetchAllSalesData(start, end, dashboardSearchRequest.token),
+        fetchAllSalesData(pastStart, pastEnd, dashboardSearchRequest.token),
+      ]);
+
+      const sales = salesResponse.data;
+      const pastSales = pastSalesResponse.data;
+      const salesByModel = calculateSalesByModel(sales);
+      const pastSalesByModel = calculateSalesByModel(pastSales);
+
+      const salesPerMonth = await fetchMonthlySalesData(
+        eachMonthOfInterval({ start, end }),
+        start,
+        end,
+        dashboardSearchRequest.token,
+      );
+
+      const pastSalesPerMonth = await fetchMonthlySalesData(
+        eachMonthOfInterval({ start: pastStart, end: pastEnd }),
+        pastStart,
+        pastEnd,
+        dashboardSearchRequest.token,
+      );
+
+      const { numOfSalesPerMonth, profitPerMonth } =
+        calculateSalesMetrics(salesPerMonth);
+      const {
+        numOfSalesPerMonth: numOfPastSalesPerMonth,
+        profitPerMonth: pastProfitPerMonth,
+      } = calculateSalesMetrics(pastSalesPerMonth);
+      const totalSales = calculateTotalSales(numOfSalesPerMonth);
+      const pastTotalSales = calculateTotalSales(numOfPastSalesPerMonth);
+      const totalProfit = calculateTotalProfit(profitPerMonth);
+      const pastTotalProfit = calculateTotalProfit(pastProfitPerMonth);
+
+      listenerApi.dispatch(setTotalSales(totalSales));
+      listenerApi.dispatch(setPastTotalSales(pastTotalSales));
+      listenerApi.dispatch(setTotalProfit(totalProfit));
+      listenerApi.dispatch(setPastTotalProfit(pastTotalProfit));
+      listenerApi.dispatch(setSalesByModel(salesByModel));
+      listenerApi.dispatch(setPastSalesByModel(pastSalesByModel));
+      listenerApi.dispatch(setSalesPerMonth(numOfSalesPerMonth));
+      listenerApi.dispatch(setPastSalesPerMonth(numOfPastSalesPerMonth));
+      listenerApi.dispatch(setProfitPerMonth(profitPerMonth));
+      listenerApi.dispatch(setPastProfitPerMonth(pastProfitPerMonth));
+      listenerApi.dispatch(setSales(sales));
+      listenerApi.dispatch(setPastSales(pastSales));
+    } catch (error) {
+      console.error(error);
+    } finally {
+      listenerApi.dispatch(setDashboardLoading(false));
     }
   },
 });

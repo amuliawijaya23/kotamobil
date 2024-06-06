@@ -15,9 +15,11 @@ interface DashboardState {
   salesPerMonth: number[] | null;
   pastProfitPerMonth: number[] | null;
   profitPerMonth: number[] | null;
+  monthsOfInterval: string | null;
   startDate: string | null;
   endDate: string | null;
-  monthsOfInterval: string | null;
+  pastRange: number;
+  isLoading: boolean;
 }
 
 const initialState: DashboardState = {
@@ -35,7 +37,9 @@ const initialState: DashboardState = {
   profitPerMonth: null,
   startDate: null,
   endDate: null,
+  pastRange: 1,
   monthsOfInterval: null,
+  isLoading: false,
 };
 
 export const dashboardSlice = createSlice({
@@ -43,11 +47,17 @@ export const dashboardSlice = createSlice({
   initialState,
   reducers: {
     resetDashboard: () => initialState,
+    setDashboardLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload;
+    },
     setStartDate: (state, action: PayloadAction<string>) => {
       state.startDate = action.payload;
     },
     setEndDate: (state, action: PayloadAction<string>) => {
       state.endDate = action.payload;
+    },
+    setPastRange: (state, action: PayloadAction<number>) => {
+      state.pastRange = action.payload;
     },
     setMonthsOfInterval: (state, action: PayloadAction<string>) => {
       state.monthsOfInterval = action.payload;
@@ -99,8 +109,10 @@ export const dashboardSlice = createSlice({
 
 export const {
   resetDashboard,
+  setDashboardLoading,
   setStartDate,
   setEndDate,
+  setPastRange,
   setMonthsOfInterval,
   setSalesByModel,
   setPastSalesByModel,
@@ -115,8 +127,11 @@ export const {
   setPastProfitPerMonth,
   setProfitPerMonth,
 } = dashboardSlice.actions;
+export const getDashboardStatus = (state: RootState) =>
+  state.dashboard.isLoading;
 export const getStartDate = (state: RootState) => state.dashboard.startDate;
 export const getEndDate = (state: RootState) => state.dashboard.endDate;
+export const getPastRange = (state: RootState) => state.dashboard.pastRange;
 export const getMonthsOfInterval = (state: RootState) =>
   state.dashboard.monthsOfInterval;
 export const getSalesByModel = (state: RootState) =>

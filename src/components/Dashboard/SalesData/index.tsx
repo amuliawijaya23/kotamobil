@@ -21,8 +21,10 @@ import { useAppSelector } from '~/redux/store';
 import { getSales, getPastSales } from '~/redux/reducers/dashboardSlice';
 import { stableSort, getComparator } from '~/helpers';
 import { NumericFormat } from 'react-number-format';
+import { format } from 'date-fns/format';
 
 const headCells = [
+  { id: 'dateSold', label: 'Date Sold' },
   { id: 'name', label: 'Name' },
   { id: 'make', label: 'Make' },
   { id: 'model', label: 'Model' },
@@ -33,14 +35,14 @@ const headCells = [
 const SalesData = () => {
   const salesData = useAppSelector(getSales);
   const pastSalesData = useAppSelector(getPastSales);
-  const [orderBy, setOrderBy] = useState<string>('name');
+  const [orderBy, setOrderBy] = useState<string>('dateSold');
   const [order, setOrder] = useState<'asc' | 'desc'>('desc');
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(5);
   const [currentData, setCurrentData] = useState<boolean>(true);
 
   const handleRequestSort = (
-    event: React.MouseEvent<unknown>,
+    _event: React.MouseEvent<unknown>,
     property: string,
   ) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -48,7 +50,7 @@ const SalesData = () => {
     setOrderBy(property);
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
@@ -107,20 +109,20 @@ const SalesData = () => {
             color="info"
             variant="outlined"
             onClick={handleOnChangeCurrentData}
-            sx={{ minWidth: 75 }}
+            sx={{ minWidth: 125 }}
           >
-            {currentData ? 'Current' : 'Past'}
+            {currentData ? 'See Past Data' : 'See Current Data'}
           </Button>
         </Toolbar>
         <TableContainer>
-          <Table stickyHeader sx={{ minWidth: 750 }}>
+          <Table sx={{ minWidth: 750 }}>
             <TableHead>
               <TableRow>
                 {headCells.map((cell, index) => (
                   <TableCell
                     key={`${cell.id}-head-cell`}
-                    align="left"
-                    padding={index === 0 ? 'none' : 'normal'}
+                    align={index === headCells.length - 1 ? 'right' : 'left'}
+                    padding={'normal'}
                     sortDirection={orderBy === cell.id ? order : false}
                   >
                     <TableSortLabel
@@ -149,18 +151,15 @@ const SalesData = () => {
                   tabIndex={-1}
                   sx={{ cursor: 'pointer' }}
                 >
-                  <TableCell
-                    component="th"
-                    id={row.name}
-                    scope="row"
-                    padding="none"
-                  >
-                    {row.name}
+                  <TableCell component="th" scope="row">
+                    {row.dateSold &&
+                      format(new Date(row.dateSold), 'dd MMM yyyy')}
                   </TableCell>
+                  <TableCell align="left">{row.name}</TableCell>
                   <TableCell align="left">{row.make}</TableCell>
                   <TableCell align="left">{row.model}</TableCell>
                   <TableCell align="left">{row.year}</TableCell>
-                  <TableCell align="left">
+                  <TableCell align="right">
                     <NumericFormat
                       displayType="text"
                       value={row.soldPrice}
