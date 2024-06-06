@@ -4,7 +4,6 @@ import {
   Box,
   Paper,
   Button,
-  Avatar,
   Typography,
   Link,
 } from '@mui/material';
@@ -124,12 +123,12 @@ const Register = ({ onRegister }: RegisterProps) => {
               alignItems="center"
               mt={1}
             >
-              <Avatar
-                src=""
+              <img
+                src="/src/assets/gudangmobil.png"
                 alt="logo"
-                sx={{ width: 100, height: 100, mb: 1 }}
+                style={{ width: 200, height: 80 }}
               />
-              <Typography variant="h4" component="h1">
+              <Typography variant="h4" component="h1" sx={{ mt: 2 }}>
                 Sign Up
               </Typography>
               <ErrorAlert error={error} onClearError={handleClearError} />

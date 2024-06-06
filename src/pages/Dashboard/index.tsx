@@ -1,8 +1,12 @@
 import { Unstable_Grid2 as Grid, Toolbar, Box } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import { useAppSelector, useAppDispatch } from '~/redux/store';
+import SalesByModelChart from '~/components/Dashboard/SalesByModelChart';
 import ProfitChart from '~/components/Dashboard/ProfitChart';
 import SalesChart from '~/components/Dashboard/SalesChart';
+import SalesMetrics from '~/components/Dashboard/SalesMetrics';
+import SalesData from '~/components/Dashboard/SalesData';
+import ProfitMetrics from '~/components/Dashboard/ProfitMetrics';
 import {
   setStartDate,
   setEndDate,
@@ -52,11 +56,32 @@ const Dashboard = () => {
               />
             </Toolbar>
           </Grid>
-          <Grid xs={12} md={6}>
+          <Grid
+            xs={12}
+            sm={6}
+            md={4}
+            sx={{ display: { xs: 'none', md: 'block' } }}
+          >
+            <SalesMetrics />
+            <ProfitMetrics />
+          </Grid>
+          <Grid xs={12} sm={6} sx={{ display: { xs: 'block', md: 'none' } }}>
+            <SalesMetrics />
+          </Grid>
+          <Grid xs={12} sm={6} sx={{ display: { xs: 'block', md: 'none' } }}>
+            <ProfitMetrics />
+          </Grid>
+          <Grid xs={12} md={8}>
+            <ProfitChart />
+          </Grid>
+          <Grid xs={12} md={6} lg={4}>
+            <SalesByModelChart />
+          </Grid>
+          <Grid xs={12} md={6} lg={8}>
             <SalesChart />
           </Grid>
-          <Grid xs={12} md={6}>
-            <ProfitChart />
+          <Grid xs={12}>
+            <SalesData />
           </Grid>
         </Grid>
       </Box>

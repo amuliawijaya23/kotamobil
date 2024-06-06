@@ -30,6 +30,12 @@ import {
   setProfitPerMonth,
   setSales,
   setSalesPerMonth,
+  setTotalSales,
+  setPastTotalSales,
+  setTotalProfit,
+  setPastTotalProfit,
+  setSalesByModel,
+  setPastSalesByModel,
 } from './reducers/dashboardSlice';
 import {
   status,
@@ -122,6 +128,25 @@ const fetchAllSalesData = async (startDate: Date, endDate: Date) => {
   return axios.post('/api/vehicle/sales', { startDate, endDate });
 };
 
+const calculateSalesByModel = (sales: VehicleData[]) => {
+  const salesByModel = sales.reduce<{ [key: string]: number }>(
+    (acc, sale: VehicleData) => {
+      const model = sale.model;
+      if (!acc[model]) {
+        acc[model] = 0;
+      }
+      acc[model]++;
+      return acc;
+    },
+    {},
+  );
+
+  return Object.keys(salesByModel).map((model) => ({
+    model,
+    sale: salesByModel[model],
+  }));
+};
+
 const fetchMonthlySalesData = async (
   monthsOfInterval: Date[],
   startDate: Date,
@@ -160,6 +185,14 @@ const calculateSalesMetrics = (salesPerMonth: VehicleData[][]) => {
   return { numOfSalesPerMonth, profitPerMonth };
 };
 
+const calculateTotalSales = (numOfSalesPerMonth: number[]) => {
+  return numOfSalesPerMonth.reduce((acc, a) => acc + a);
+};
+
+const calculateTotalProfit = (profitPerMonth: number[]) => {
+  return profitPerMonth.reduce((acc: number, a: number) => acc + a);
+};
+
 listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
   predicate: (_action, currentState, previousState) =>
     !previousState.app.isAuthenticated && currentState.app.isAuthenticated,
@@ -186,6 +219,8 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
       const queryData = transformVehicleData(vehicles);
       const sales = salesResponse.data;
       const pastSales = pastSalesResponse.data;
+      const salesByModel = calculateSalesByModel(sales);
+      const pastSalesByModel = calculateSalesByModel(pastSales);
 
       const monthsOfInterval = eachMonthOfInterval({ start, end });
       const pastMonthsOfInterval = eachMonthOfInterval({
@@ -200,10 +235,16 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
 
       const { numOfSalesPerMonth, profitPerMonth } =
         calculateSalesMetrics(salesPerMonth);
+
       const {
         numOfSalesPerMonth: numOfPastSalesPerMonth,
         profitPerMonth: pastProfitPerMonth,
       } = calculateSalesMetrics(pastSalesPerMonth);
+
+      const totalSales = calculateTotalSales(numOfSalesPerMonth);
+      const pastTotalSales = calculateTotalSales(numOfPastSalesPerMonth);
+      const totalProfit = calculateTotalProfit(profitPerMonth);
+      const pastTotalProfit = calculateTotalProfit(pastProfitPerMonth);
 
       listenerApi.dispatch(
         setMonthsOfInterval(JSON.stringify(monthsOfInterval)),
@@ -211,6 +252,12 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
       listenerApi.dispatch(setInventoryData(vehicles));
       listenerApi.dispatch(setQueryData(queryData));
       listenerApi.dispatch(setContactsData(contacts));
+      listenerApi.dispatch(setTotalSales(totalSales));
+      listenerApi.dispatch(setSalesByModel(salesByModel));
+      listenerApi.dispatch(setPastSalesByModel(pastSalesByModel));
+      listenerApi.dispatch(setPastTotalSales(pastTotalSales));
+      listenerApi.dispatch(setTotalProfit(totalProfit));
+      listenerApi.dispatch(setPastTotalProfit(pastTotalProfit));
       listenerApi.dispatch(setSales(sales));
       listenerApi.dispatch(setPastSales(pastSales));
       listenerApi.dispatch(setSalesPerMonth(numOfSalesPerMonth));

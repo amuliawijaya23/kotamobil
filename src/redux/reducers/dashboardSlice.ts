@@ -3,6 +3,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 
 interface DashboardState {
+  salesByModel: { model: string; sale: number }[] | null;
+  pastSalesByModel: { model: string; sale: number }[] | null;
+  totalSales: number | null;
+  pastTotalSales: number | null;
+  totalProfit: number | null;
+  pastTotalProfit: number | null;
   pastSales: VehicleData[] | null;
   sales: VehicleData[] | null;
   pastSalesPerMonth: number[] | null;
@@ -15,6 +21,12 @@ interface DashboardState {
 }
 
 const initialState: DashboardState = {
+  salesByModel: null,
+  pastSalesByModel: null,
+  totalSales: null,
+  pastTotalSales: null,
+  totalProfit: null,
+  pastTotalProfit: null,
   pastSales: null,
   sales: null,
   pastSalesPerMonth: null,
@@ -39,6 +51,30 @@ export const dashboardSlice = createSlice({
     },
     setMonthsOfInterval: (state, action: PayloadAction<string>) => {
       state.monthsOfInterval = action.payload;
+    },
+    setSalesByModel: (
+      state,
+      action: PayloadAction<{ model: string; sale: number }[]>,
+    ) => {
+      state.salesByModel = action.payload;
+    },
+    setPastSalesByModel: (
+      state,
+      action: PayloadAction<{ model: string; sale: number }[]>,
+    ) => {
+      state.pastSalesByModel = action.payload;
+    },
+    setTotalSales: (state, action: PayloadAction<number>) => {
+      state.totalSales = action.payload;
+    },
+    setPastTotalSales: (state, action: PayloadAction<number>) => {
+      state.pastTotalSales = action.payload;
+    },
+    setTotalProfit: (state, action: PayloadAction<number>) => {
+      state.totalProfit = action.payload;
+    },
+    setPastTotalProfit: (state, action: PayloadAction<number>) => {
+      state.pastTotalProfit = action.payload;
     },
     setPastSales: (state, action: PayloadAction<VehicleData[]>) => {
       state.pastSales = action.payload;
@@ -66,6 +102,12 @@ export const {
   setStartDate,
   setEndDate,
   setMonthsOfInterval,
+  setSalesByModel,
+  setPastSalesByModel,
+  setTotalSales,
+  setPastTotalSales,
+  setTotalProfit,
+  setPastTotalProfit,
   setPastSales,
   setSales,
   setPastSalesPerMonth,
@@ -77,8 +119,18 @@ export const getStartDate = (state: RootState) => state.dashboard.startDate;
 export const getEndDate = (state: RootState) => state.dashboard.endDate;
 export const getMonthsOfInterval = (state: RootState) =>
   state.dashboard.monthsOfInterval;
-export const getSalesData = (state: RootState) => state.dashboard.sales;
-export const getPastSalesData = (state: RootState) => state.dashboard.pastSales;
+export const getSalesByModel = (state: RootState) =>
+  state.dashboard.salesByModel;
+export const getPastSalesByModel = (state: RootState) =>
+  state.dashboard.pastSalesByModel;
+export const getTotalSales = (state: RootState) => state.dashboard.totalSales;
+export const getPastTotalSales = (state: RootState) =>
+  state.dashboard.pastTotalSales;
+export const getTotalProfit = (state: RootState) => state.dashboard.totalProfit;
+export const getPastTotalProfit = (state: RootState) =>
+  state.dashboard.pastTotalProfit;
+export const getSales = (state: RootState) => state.dashboard.sales;
+export const getPastSales = (state: RootState) => state.dashboard.pastSales;
 export const getSalesPerMonth = (state: RootState) =>
   state.dashboard.salesPerMonth;
 export const getPastSalesPerMonth = (state: RootState) =>

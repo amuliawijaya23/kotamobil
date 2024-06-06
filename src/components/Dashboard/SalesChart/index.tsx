@@ -1,10 +1,13 @@
-import { Paper, Typography } from '@mui/material';
+import { useMemo } from 'react';
+import { Card, CardHeader, CardContent } from '@mui/material';
 import { useAppSelector } from '~/redux/store';
-import { BarChart } from '@mui/x-charts';
+import { BarChart, BarSeriesType } from '@mui/x-charts';
 import {
   getMonthsOfInterval,
   getSalesPerMonth,
   getPastSalesPerMonth,
+  getTotalSales,
+  getPastTotalSales,
 } from '~/redux/reducers/dashboardSlice';
 import { format } from 'date-fns';
 
@@ -12,31 +15,44 @@ const SalesChart = () => {
   const monthsOfIntervals = useAppSelector(getMonthsOfInterval);
   const salesPerMonth = useAppSelector(getSalesPerMonth);
   const pastSalesPerMonth = useAppSelector(getPastSalesPerMonth);
+  const totalSales = useAppSelector(getTotalSales);
+  const pastTotalSales = useAppSelector(getPastTotalSales);
+
+  const series = useMemo(() => {
+    if (totalSales === 0 && pastTotalSales === 0) {
+      return [];
+    }
+    return [
+      {
+        type: 'bar',
+        stack: 'total',
+        label: 'Current',
+        data: salesPerMonth,
+      },
+      {
+        type: 'bar',
+        stack: 'total',
+        label: 'Past',
+        data: pastSalesPerMonth,
+      },
+    ] as BarSeriesType[];
+  }, [totalSales, pastTotalSales, salesPerMonth, pastSalesPerMonth]);
 
   return (
-    <>
-      <Paper sx={{ height: 300, p: 2 }}>
-        <Typography variant="h6" textAlign="center" sx={{ mt: 1, mb: 1 }}>
-          Sales
-        </Typography>
+    <Card>
+      <CardHeader
+        title="Monthly Sales"
+        titleTypographyProps={{
+          variant: 'body1',
+          textAlign: 'center',
+          fontWeight: 'bold',
+        }}
+      />
+      <CardContent sx={{ height: 300 }}>
         {salesPerMonth && pastSalesPerMonth && (
           <BarChart
-            sx={{ mb: 3 }}
             margin={{ left: 20, right: 0 }}
-            series={[
-              {
-                type: 'bar',
-                stack: 'total',
-                label: 'Current',
-                data: salesPerMonth,
-              },
-              {
-                type: 'bar',
-                stack: 'total',
-                label: 'Past',
-                data: pastSalesPerMonth,
-              },
-            ]}
+            series={series}
             xAxis={[
               {
                 id: 'months',
@@ -52,8 +68,8 @@ const SalesChart = () => {
             ]}
           />
         )}
-      </Paper>
-    </>
+      </CardContent>
+    </Card>
   );
 };
 
