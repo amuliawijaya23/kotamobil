@@ -183,6 +183,7 @@ const VehicleStatus = ({ contact, onBuyerChange }: VehicleStatusProps) => {
               FormHelperTextProps: { error: true },
             },
           }}
+          maxDate={new Date()}
         />
       </Grid>
       {vehicleFormData.status === 'Sold' && (
@@ -210,6 +211,7 @@ const VehicleStatus = ({ contact, onBuyerChange }: VehicleStatusProps) => {
                 FormHelperTextProps: { error: true },
               },
             }}
+            maxDate={new Date()}
           />
         </Grid>
       )}

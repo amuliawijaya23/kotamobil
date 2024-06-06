@@ -65,6 +65,7 @@ const Dashboard = () => {
                 label="Start Date"
                 slotProps={{ textField: { size: 'small' } }}
                 sx={{ mx: 1 }}
+                maxDate={(endDate && JSON.parse(endDate)) || new Date()}
               />
               <DatePicker
                 onChange={handleOnChangeEndDate}
@@ -72,6 +73,8 @@ const Dashboard = () => {
                 label="End Date"
                 slotProps={{ textField: { size: 'small' } }}
                 sx={{ mx: 1 }}
+                minDate={startDate && JSON.parse(startDate)}
+                maxDate={new Date()}
               />
               <FormControl size="small">
                 <InputLabel id="past-range-select-label">Past Range</InputLabel>
