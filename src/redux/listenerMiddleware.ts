@@ -315,20 +315,26 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
         fetchAllSalesData(pastStart, pastEnd, dashboardSearchRequest.token),
       ]);
 
+      const monthsOfInterval = eachMonthOfInterval({ start, end });
+      const pastMonthsOfInterval = eachMonthOfInterval({
+        start: pastStart,
+        end: pastEnd,
+      });
+
       const sales = salesResponse.data;
       const pastSales = pastSalesResponse.data;
       const salesByModel = calculateSalesByModel(sales);
       const pastSalesByModel = calculateSalesByModel(pastSales);
 
       const salesPerMonth = await fetchMonthlySalesData(
-        eachMonthOfInterval({ start, end }),
+        monthsOfInterval,
         start,
         end,
         dashboardSearchRequest.token,
       );
 
       const pastSalesPerMonth = await fetchMonthlySalesData(
-        eachMonthOfInterval({ start: pastStart, end: pastEnd }),
+        pastMonthsOfInterval,
         pastStart,
         pastEnd,
         dashboardSearchRequest.token,
@@ -345,6 +351,9 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
       const totalProfit = calculateTotalProfit(profitPerMonth);
       const pastTotalProfit = calculateTotalProfit(pastProfitPerMonth);
 
+      listenerApi.dispatch(
+        setMonthsOfInterval(JSON.stringify(monthsOfInterval)),
+      );
       listenerApi.dispatch(setTotalSales(totalSales));
       listenerApi.dispatch(setPastTotalSales(pastTotalSales));
       listenerApi.dispatch(setTotalProfit(totalProfit));

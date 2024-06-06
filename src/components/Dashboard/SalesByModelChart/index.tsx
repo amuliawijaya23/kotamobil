@@ -87,6 +87,7 @@ const SalesByModelChart = () => {
             </Typography>
           ) : (
             <PieChart
+              margin={{ top: 10, bottom: 10, left: 10, right: 150 }}
               series={[
                 {
                   data: pastSalesByModel.map((sale, index) => ({
@@ -102,6 +103,22 @@ const SalesByModelChart = () => {
                   },
                 },
               ]}
+              slotProps={{
+                legend: {
+                  labelStyle: {
+                    fontSize: 11,
+                  },
+                  direction: 'column',
+                  position: {
+                    vertical: 'middle',
+                    horizontal: 'right',
+                  },
+                  itemMarkWidth: 5,
+                  itemMarkHeight: 5,
+                  markGap: 5,
+                  itemGap: 5,
+                },
+              }}
             />
           ))}
       </CardContent>

@@ -146,6 +146,7 @@ const SalesData = () => {
             <TableBody>
               {visibleRows.map((row, index) => (
                 <TableRow
+                  hover
                   key={`dashboard-sales-row-${index}`}
                   role="link"
                   tabIndex={-1}
