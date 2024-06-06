@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import { useAppSelector, useAppDispatch } from '~/redux/store';
+import Loading from '~/components/Loading';
 import SalesByModelChart from '~/components/Dashboard/SalesByModelChart';
 import ProfitChart from '~/components/Dashboard/ProfitChart';
 import SalesChart from '~/components/Dashboard/SalesChart';
@@ -17,6 +18,7 @@ import SalesMetrics from '~/components/Dashboard/SalesMetrics';
 import SalesData from '~/components/Dashboard/SalesData';
 import ProfitMetrics from '~/components/Dashboard/ProfitMetrics';
 import {
+  getDashboardStatus,
   setStartDate,
   setEndDate,
   getStartDate,
@@ -27,6 +29,7 @@ import {
 
 const Dashboard = () => {
   const dispatch = useAppDispatch();
+  const isLoading = useAppSelector(getDashboardStatus);
   const startDate = useAppSelector(getStartDate);
   const endDate = useAppSelector(getEndDate);
   const pastRange = useAppSelector(getPastRange);
@@ -88,33 +91,58 @@ const Dashboard = () => {
               </FormControl>
             </Toolbar>
           </Grid>
-          <Grid
-            xs={12}
-            sm={6}
-            md={4}
-            sx={{ display: { xs: 'none', md: 'block' } }}
-          >
-            <SalesMetrics />
-            <ProfitMetrics />
-          </Grid>
-          <Grid xs={12} sm={6} sx={{ display: { xs: 'block', md: 'none' } }}>
-            <SalesMetrics />
-          </Grid>
-          <Grid xs={12} sm={6} sx={{ display: { xs: 'block', md: 'none' } }}>
-            <ProfitMetrics />
-          </Grid>
-          <Grid xs={12} md={8}>
-            <ProfitChart />
-          </Grid>
-          <Grid xs={12} md={6} lg={4}>
-            <SalesByModelChart />
-          </Grid>
-          <Grid xs={12} md={6} lg={8}>
-            <SalesChart />
-          </Grid>
-          <Grid xs={12}>
-            <SalesData />
-          </Grid>
+          {isLoading && (
+            <Box
+              sx={{
+                minHeight: '75vh',
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Loading />
+            </Box>
+          )}
+          {!isLoading && (
+            <>
+              <Grid
+                xs={12}
+                sm={6}
+                md={4}
+                sx={{ display: { xs: 'none', md: 'block' } }}
+              >
+                <SalesMetrics />
+                <ProfitMetrics />
+              </Grid>
+              <Grid
+                xs={12}
+                sm={6}
+                sx={{ display: { xs: 'block', md: 'none' } }}
+              >
+                <SalesMetrics />
+              </Grid>
+              <Grid
+                xs={12}
+                sm={6}
+                sx={{ display: { xs: 'block', md: 'none' } }}
+              >
+                <ProfitMetrics />
+              </Grid>
+              <Grid xs={12} md={8}>
+                <ProfitChart />
+              </Grid>
+              <Grid xs={12} md={6} lg={4}>
+                <SalesByModelChart />
+              </Grid>
+              <Grid xs={12} md={6} lg={8}>
+                <SalesChart />
+              </Grid>
+              <Grid xs={12}>
+                <SalesData />
+              </Grid>
+            </>
+          )}
         </Grid>
       </Box>
     </>
