@@ -19,7 +19,7 @@ const SalesChart = () => {
   const pastTotalSales = useAppSelector(getPastTotalSales);
 
   const series = useMemo(() => {
-    if (totalSales === 0 && pastTotalSales === 0) {
+    if (!totalSales && !pastTotalSales) {
       return [];
     }
     return [
@@ -44,30 +44,27 @@ const SalesChart = () => {
         title="Monthly Sales"
         titleTypographyProps={{
           variant: 'body1',
-          textAlign: 'center',
           fontWeight: 'bold',
         }}
       />
       <CardContent sx={{ height: 300 }}>
-        {salesPerMonth && pastSalesPerMonth && (
-          <BarChart
-            margin={{ left: 20, right: 0 }}
-            series={series}
-            xAxis={[
-              {
-                id: 'months',
-                data: JSON.parse(monthsOfIntervals as string) as Date[],
-                scaleType: 'band',
-                valueFormatter: (value) => format(new Date(value), 'MMM'),
-              },
-            ]}
-            yAxis={[
-              {
-                id: 'sales',
-              },
-            ]}
-          />
-        )}
+        <BarChart
+          margin={{ left: 20, right: 0 }}
+          series={series}
+          xAxis={[
+            {
+              id: 'months',
+              data: JSON.parse(monthsOfIntervals as string) as Date[],
+              scaleType: 'band',
+              valueFormatter: (value) => format(new Date(value), 'MMM'),
+            },
+          ]}
+          yAxis={[
+            {
+              id: 'sales',
+            },
+          ]}
+        />
       </CardContent>
     </Card>
   );

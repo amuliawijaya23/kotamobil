@@ -17,7 +17,7 @@ import {
 } from '~/redux/reducers/contactFormSlice';
 import { setAlert } from '~/redux/reducers/appSlice';
 import { addContact, updateContact } from '~/redux/reducers/contactsSlice';
-import type { CountryType } from '~/helpers/selectData';
+import type { CountryType } from '~/helpers/AutocompleteAndSelectData';
 
 const useContactForm = () => {
   const dispatch = useAppDispatch();

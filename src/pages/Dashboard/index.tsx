@@ -48,56 +48,66 @@ const Dashboard = () => {
 
   return (
     <>
+      <Toolbar />
+      <Toolbar sx={{ mt: 2 }}>
+        <Grid container spacing={1}>
+          <Grid xs={4}>
+            <DatePicker
+              onChange={handleOnChangeStartDate}
+              value={startDate && JSON.parse(startDate)}
+              label="Start Date"
+              slotProps={{ textField: { size: 'small' } }}
+              maxDate={(endDate && JSON.parse(endDate)) || new Date()}
+            />
+          </Grid>
+          <Grid xs={4}>
+            <DatePicker
+              onChange={handleOnChangeEndDate}
+              value={endDate && JSON.parse(endDate)}
+              label="End Date"
+              slotProps={{ textField: { size: 'small' } }}
+              minDate={startDate && JSON.parse(startDate)}
+              maxDate={new Date()}
+            />
+          </Grid>
+          <Grid xs={4}>
+            <FormControl size="small">
+              <InputLabel id="past-range-select-label">Past Range</InputLabel>
+              <Select
+                labelId="past-range-select-label"
+                value={pastRange.toString()}
+                label="Past Range"
+                onChange={handleOnChangePastRange}
+                sx={{ minWidth: 90 }}
+              >
+                <MenuItem value={1}>1 year</MenuItem>
+                <MenuItem value={2}>2 years</MenuItem>
+                <MenuItem value={3}>3 years</MenuItem>
+                <MenuItem value={4}>4 years</MenuItem>
+                <MenuItem value={5}>5 years</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+        </Grid>
+      </Toolbar>
       <Box
         sx={{
-          minHeight: '100vh',
-          minWidth: '100vw',
-          overflow: 'auto',
+          width: '100vw',
+          display: 'flex',
+          justifyContent: 'center',
         }}
       >
-        <Toolbar />
-        <Grid container p={2} spacing={2}>
-          <Grid xs={12}>
-            <Toolbar sx={{ p: 2, mb: 2 }}>
-              <DatePicker
-                onChange={handleOnChangeStartDate}
-                value={startDate && JSON.parse(startDate)}
-                label="Start Date"
-                slotProps={{ textField: { size: 'small' } }}
-                sx={{ mx: 1 }}
-                maxDate={(endDate && JSON.parse(endDate)) || new Date()}
-              />
-              <DatePicker
-                onChange={handleOnChangeEndDate}
-                value={endDate && JSON.parse(endDate)}
-                label="End Date"
-                slotProps={{ textField: { size: 'small' } }}
-                sx={{ mx: 1 }}
-                minDate={startDate && JSON.parse(startDate)}
-                maxDate={new Date()}
-              />
-              <FormControl size="small">
-                <InputLabel id="past-range-select-label">Past Range</InputLabel>
-                <Select
-                  labelId="past-range-select-label"
-                  value={pastRange.toString()}
-                  label="Past Range"
-                  onChange={handleOnChangePastRange}
-                  sx={{ minWidth: 100 }}
-                >
-                  <MenuItem value={1}>1 year</MenuItem>
-                  <MenuItem value={2}>2 years</MenuItem>
-                  <MenuItem value={3}>3 years</MenuItem>
-                  <MenuItem value={4}>4 years</MenuItem>
-                  <MenuItem value={5}>5 years</MenuItem>
-                </Select>
-              </FormControl>
-            </Toolbar>
-          </Grid>
+        <Grid
+          container
+          component={Box}
+          p={2}
+          spacing={2}
+          sx={{ width: '100%' }}
+        >
           {isLoading && (
             <Box
               sx={{
-                minHeight: '75vh',
+                minHeight: '70vh',
                 width: '100%',
                 display: 'flex',
                 justifyContent: 'center',

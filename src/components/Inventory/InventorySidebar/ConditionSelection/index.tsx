@@ -19,7 +19,7 @@ import {
   updateConditionSelections,
   selectAllCondition,
 } from '~/redux/reducers/inventorySlice';
-import { condition } from '~/helpers/selectData';
+import { condition } from '~/helpers/AutocompleteAndSelectData';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;

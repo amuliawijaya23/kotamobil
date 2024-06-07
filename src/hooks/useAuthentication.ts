@@ -54,7 +54,8 @@ const useAuthentication = () => {
     if (Cookies.get(COOKIE_NAME)) {
       getUserData();
     } else {
-      handleLogout();
+      dispatch(setAuthenticated(false));
+      dispatch(logout());
     }
   }, [dispatch, getUserData, handleLogout]);
 
@@ -78,10 +79,10 @@ const useAuthentication = () => {
         return false;
       }
 
-      const response = await axios.post('/api/auth/register', {
-        firstName: `${firstName[0].toUpperCase()}${
-          firstName.substring(1).toLowerCase
-        }`,
+      const registerResponse = await axios.post('/api/auth/register', {
+        firstName: `${firstName[0].toUpperCase()}${firstName
+          .substring(1)
+          .toLowerCase()}`,
         lastName: lastName
           ? `${lastName[0].toUpperCase()}${lastName.substring(1).toLowerCase()}`
           : '',
@@ -89,11 +90,19 @@ const useAuthentication = () => {
         password,
       });
 
-      if (response.status !== 200) {
-        dispatch(setError(response.data.message));
+      if (registerResponse.status !== 200) {
+        dispatch(setError(registerResponse.data.message));
         return false;
       }
-      dispatch(login(response.data));
+
+      const loginResponse = await axios.post('/api/auth/login', {
+        email,
+        password,
+      });
+      const userData = { ...loginResponse.data.user };
+      delete userData.password;
+
+      dispatch(login(userData));
       dispatch(setAuthenticated(true));
       dispatch(resetAuthForm());
       dispatch(resetError());

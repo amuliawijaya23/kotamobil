@@ -99,7 +99,7 @@ const Contacts = () => {
     <>
       <Toolbar />
       <ContactForm open={openForm} onCloseForm={handleCloseForm} />
-      <Box sx={{ width: '100%' }}>
+      <Box>
         <ContactsToolbar
           onOpenForm={handleOpenForm}
           numSelected={selectedContacts.length}
@@ -201,11 +201,11 @@ const Contacts = () => {
             </TableBody>
           </Table>
         </TableContainer>
-        {contacts?.length === 0 && (
+        {(!contacts || contacts.length === 0) && (
           <Box
             sx={{
               width: '100%',
-              minHeight: '75vh',
+              minHeight: '70vh',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
@@ -217,7 +217,7 @@ const Contacts = () => {
             </Typography>
           </Box>
         )}
-        {contacts && contacts.length > 10 && (
+        {contacts && contacts.length > 0 && (
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"

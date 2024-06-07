@@ -45,7 +45,7 @@ import {
   assembly,
   fuelType,
   transmission,
-} from '~/helpers/selectData';
+} from '~/helpers/AutocompleteAndSelectData';
 
 const listenerMiddleware = createListenerMiddleware();
 
@@ -261,6 +261,7 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
       listenerApi.dispatch(
         setMonthsOfInterval(JSON.stringify(monthsOfInterval)),
       );
+
       listenerApi.dispatch(setInventoryData(vehicles));
       listenerApi.dispatch(setQueryData(queryData));
       listenerApi.dispatch(setContactsData(contacts));
@@ -288,7 +289,8 @@ let dashboardSearchRequest: CancelTokenSource;
 listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
   predicate: (_action, currentState, previousState) => {
     return (
-      (previousState.dashboard.startDate !== null &&
+      (currentState.app.isAuthenticated &&
+        previousState.dashboard.startDate !== null &&
         previousState.dashboard.startDate !==
           currentState.dashboard.startDate) ||
       (previousState.dashboard.endDate !== null &&
@@ -402,6 +404,7 @@ let vehicleSearchRequest: CancelTokenSource;
 listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
   predicate: (_action, currentState, previousState) => {
     return (
+      currentState.app.isAuthenticated &&
       previousState.inventory.queryData !== null &&
       previousState.inventory.queryData !== currentState.inventory.queryData
     );
@@ -460,7 +463,10 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
 let contactSearchRequest: CancelTokenSource;
 listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
   predicate: (_action, currentState, previousState) => {
-    return previousState.contacts.search !== currentState.contacts.search;
+    return (
+      currentState.app.isAuthenticated &&
+      previousState.contacts.search !== currentState.contacts.search
+    );
   },
   effect: async (_action, listenerApi) => {
     if (contactSearchRequest) {

@@ -144,21 +144,20 @@ const Inventory = () => {
           open={openFilter}
           sx={{
             justifyContent: 'center',
+            overflow: 'auto',
           }}
         >
           <Toolbar />
+          <InventoryToolbar
+            onToggleFilter={handleToggleFilter}
+            onToggleForm={handleToggleForm}
+          />
+          <Divider />
           <Grid container component={Box} p={2} spacing={2}>
-            <Grid xs={12}>
-              <InventoryToolbar
-                onToggleFilter={handleToggleFilter}
-                onToggleForm={handleToggleForm}
-              />
-              <Divider />
-            </Grid>
             {isLoading && (
               <Box
                 sx={{
-                  minHeight: '75vh',
+                  minHeight: '70vh',
                   width: '100%',
                   display: 'flex',
                   justifyContent: 'center',
@@ -185,7 +184,7 @@ const Inventory = () => {
               <Grid
                 xs={12}
                 sx={{
-                  minHeight: '75vh',
+                  minHeight: '70vh',
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
@@ -224,18 +223,9 @@ const Inventory = () => {
           sx={{
             display: 'flex',
             justifyContent: 'center',
-            width: '100%',
           }}
         >
-          <Grid
-            container
-            component={Box}
-            p={2}
-            spacing={2}
-            mt={1}
-            width="100%"
-            height="100%"
-          >
+          <Grid container component={Box} p={2} spacing={2} mt={1}>
             <Toolbar />
             <Grid xs={12}>
               <InventoryToolbar
@@ -248,7 +238,7 @@ const Inventory = () => {
               <Box
                 sx={{
                   width: '100%',
-                  height: '75vh',
+                  height: '70vh',
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
@@ -272,7 +262,7 @@ const Inventory = () => {
               <Grid
                 xs={12}
                 sx={{
-                  height: '75vh',
+                  height: '70vh',
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
@@ -307,7 +297,6 @@ const Inventory = () => {
           </Grid>
         </Box>
       )}
-
       <VehicleForm open={openForm} onCloseForm={handleCloseForm} />
     </Box>
   );

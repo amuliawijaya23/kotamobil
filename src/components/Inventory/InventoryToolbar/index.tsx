@@ -42,73 +42,63 @@ const InventoryToolbar = ({
   };
 
   return (
-    queryData && (
-      <Toolbar
-        component={Box}
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-        }}
-      >
-        <Grid container sx={{ width: '100%' }}>
-          <Grid xs={3} sm={2} lg={1} display="flex" alignItems="center">
-            <Typography>{`${inventory ? inventory?.length : 0} Vehicle${
-              inventory && inventory?.length > 1 ? 's' : ''
-            }`}</Typography>
-          </Grid>
-          <Grid></Grid>
-          <Grid
-            xs={6}
-            sm={8}
-            lg={10}
-            display="flex"
-            alignItems="center"
-            justifyContent="end"
-          >
-            <TextField
-              size="small"
-              placeholder="Search..."
-              value={queryData?.search}
-              onChange={handleOnChangeSearch}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-          <Grid
-            xs={3}
-            sm={2}
-            lg={1}
-            display="flex"
-            justifyContent="end"
-            alignItems="center"
-          >
-            <Box>
-              <Tooltip title="Filter">
-                <IconButton
-                  onClick={onToggleFilter}
-                  onMouseDown={handleMouseDown}
-                >
-                  <FilterListIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Add listing">
-                <IconButton
-                  onClick={onToggleForm}
-                  onMouseDown={handleMouseDown}
-                >
-                  <AddIcon />
-                </IconButton>
-              </Tooltip>
-            </Box>
-          </Grid>
+    <Toolbar>
+      <Grid container sx={{ width: '100%' }}>
+        <Grid xs={3} sm={2} lg={1} display="flex" alignItems="center">
+          <Typography>{`${inventory ? inventory?.length : 0} Vehicle${
+            inventory && inventory?.length > 1 ? 's' : ''
+          }`}</Typography>
         </Grid>
-      </Toolbar>
-    )
+        <Grid
+          xs={6}
+          sm={8}
+          lg={10}
+          display="flex"
+          alignItems="center"
+          justifyContent="end"
+        >
+          <TextField
+            size="small"
+            placeholder="Search..."
+            disabled={!queryData}
+            value={queryData?.search}
+            onChange={handleOnChangeSearch}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Grid>
+        <Grid
+          xs={3}
+          sm={2}
+          lg={1}
+          display="flex"
+          justifyContent="end"
+          alignItems="center"
+        >
+          <Box>
+            <Tooltip title="Filter">
+              <IconButton
+                disabled={!queryData}
+                onClick={onToggleFilter}
+                onMouseDown={handleMouseDown}
+              >
+                <FilterListIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Add listing">
+              <IconButton onClick={onToggleForm} onMouseDown={handleMouseDown}>
+                <AddIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        </Grid>
+      </Grid>
+    </Toolbar>
   );
 };
 

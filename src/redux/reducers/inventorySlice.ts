@@ -8,7 +8,7 @@ import {
   assembly,
   fuelType,
   transmission,
-} from '~/helpers/selectData';
+} from '~/helpers/AutocompleteAndSelectData';
 
 export interface QueryData {
   makesModels: { [key: string]: string[] };

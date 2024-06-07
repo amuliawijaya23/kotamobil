@@ -19,7 +19,7 @@ const ProfitChart = () => {
   const pastTotalProfit = useAppSelector(getPastTotalProfit);
 
   const series = useMemo(() => {
-    if (totalProfit === 0 && pastTotalProfit === 0) {
+    if (!totalProfit && !pastTotalProfit) {
       return [];
     }
     return [
@@ -45,31 +45,28 @@ const ProfitChart = () => {
         title="Monthly Profit"
         titleTypographyProps={{
           variant: 'body1',
-          textAlign: 'center',
           fontWeight: 'bold',
         }}
       />
       <CardContent sx={{ height: 300 }}>
-        {profitPerMonth && pastProfitPerMonth && (
-          <LineChart
-            margin={{ left: 20, right: 0 }}
-            series={series}
-            xAxis={[
-              {
-                id: 'months',
-                data: JSON.parse(monthsOfIntervals as string) as Date[],
-                scaleType: 'band',
-                valueFormatter: (value) => format(new Date(value), 'MMM'),
-              },
-            ]}
-            yAxis={[
-              {
-                id: 'profit',
-                valueFormatter: (value) => (value / 1000000).toString(),
-              },
-            ]}
-          />
-        )}
+        <LineChart
+          margin={{ left: 20, right: 0 }}
+          series={series}
+          xAxis={[
+            {
+              id: 'months',
+              data: JSON.parse(monthsOfIntervals as string) as Date[],
+              scaleType: 'band',
+              valueFormatter: (value) => format(new Date(value), 'MMM'),
+            },
+          ]}
+          yAxis={[
+            {
+              id: 'profit',
+              valueFormatter: (value) => (value / 1000000).toString(),
+            },
+          ]}
+        />
       </CardContent>
     </Card>
   );

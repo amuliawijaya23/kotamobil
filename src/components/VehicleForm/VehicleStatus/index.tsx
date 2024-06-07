@@ -18,12 +18,10 @@ import {
   Button,
   Tooltip,
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
 import { DatePicker } from '@mui/x-date-pickers';
 import { NumericFormat } from 'react-number-format';
-
+import AddIcon from '@mui/icons-material/Add';
 import ContactForm from '~/components/ContactForm';
-
 import { useAppSelector, useAppDispatch } from '~/redux/store';
 import {
   getVehicleFormData,
@@ -41,6 +39,7 @@ import {
 } from '~/redux/reducers/vehicleFormSlice';
 import { getAppAlert } from '~/redux/reducers/appSlice';
 import { getContactsData } from '~/redux/reducers/contactsSlice';
+import { condition, status } from '~/helpers/AutocompleteAndSelectData';
 
 interface VehicleStatusProps {
   contact: ContactData | null;
@@ -155,8 +154,11 @@ const VehicleStatus = ({ contact, onBuyerChange }: VehicleStatusProps) => {
               alert?.severity == 'error' && !vehicleFormData.status,
             )}
           >
-            <MenuItem value="Available">Available</MenuItem>
-            <MenuItem value="Sold">Sold</MenuItem>
+            {status.map((s) => (
+              <MenuItem key={`${s}-status-form-selection`} value={s}>
+                {s}
+              </MenuItem>
+            ))}
           </Select>
           {alert?.severity == 'error' && !vehicleFormData.status && (
             <FormHelperText error>{alert.message}</FormHelperText>
@@ -418,8 +420,11 @@ const VehicleStatus = ({ contact, onBuyerChange }: VehicleStatusProps) => {
               )}
               onChange={handleConditionChange}
             >
-              <MenuItem value="New">New</MenuItem>
-              <MenuItem value="Used">Used</MenuItem>
+              {condition.map((c) => (
+                <MenuItem key={`${c}-condition-form-selection`} value={c}>
+                  {c}
+                </MenuItem>
+              ))}
             </Select>
             {alert?.severity == 'error' && !vehicleFormData.condition && (
               <FormHelperText error>{alert.message}</FormHelperText>

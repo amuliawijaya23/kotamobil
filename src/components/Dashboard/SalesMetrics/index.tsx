@@ -7,14 +7,15 @@ import {
   CardContent,
   Unstable_Grid2 as Grid,
 } from '@mui/material';
-import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import { useAppSelector } from '~/redux/store';
 import {
   getTotalSales,
   getPastTotalSales,
 } from '~/redux/reducers/dashboardSlice';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
 
 const SalesMetrics = () => {
   const totalSales = useAppSelector(getTotalSales);
@@ -27,6 +28,17 @@ const SalesMetrics = () => {
     return 0;
   }, [totalSales, pastTotalSales]);
 
+  const colorIndicator = useMemo(() => {
+    if (salesDelta > 0) {
+      return 'success';
+    }
+
+    if (salesDelta < 0) {
+      return 'error';
+    }
+    return 'info';
+  }, [salesDelta]);
+
   return (
     <Card>
       <CardContent>
@@ -35,13 +47,13 @@ const SalesMetrics = () => {
             <Typography color="inherit" variant="overline" gutterBottom>
               Current Sales
             </Typography>
-            {totalSales && totalSales > 0 ? (
+            {totalSales ? (
               <Typography variant="subtitle2" fontWeight="bold">
                 {totalSales} Vehicles Sold
               </Typography>
             ) : (
               <Typography variant="subtitle2" fontWeight="bold">
-                No Vehicle Sold
+                No Vehicles Sold
               </Typography>
             )}
             <Typography
@@ -52,13 +64,13 @@ const SalesMetrics = () => {
             >
               Past Sales
             </Typography>
-            {pastTotalSales && pastTotalSales > 0 ? (
+            {pastTotalSales ? (
               <Typography variant="subtitle2" fontWeight="bold">
                 {pastTotalSales} Vehicles Sold
               </Typography>
             ) : (
               <Typography variant="subtitle2" fontWeight="bold">
-                No Vehicle Sold
+                No Vehicles Sold
               </Typography>
             )}
           </Grid>
@@ -67,32 +79,45 @@ const SalesMetrics = () => {
               sx={{
                 height: 50,
                 width: 50,
-                bgcolor: salesDelta < 0 ? 'error.main' : 'success.main',
+                bgcolor: `${colorIndicator}.main`,
               }}
             >
               <DirectionsCarIcon />
             </Avatar>
           </Grid>
         </Grid>
-        {salesDelta !== null && pastTotalSales !== null && (
-          <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-            {salesDelta >= 0 && <ArrowUpwardIcon color="success" />}
-            {salesDelta < 0 && <ArrowDownwardIcon color="error" />}
-            <Typography
-              color={salesDelta < 0 ? 'error' : 'success'}
-              sx={{ mr: 1 }}
-              variant="caption"
-            >
-              {salesDelta >= 0 &&
-                `${((salesDelta / pastTotalSales) * 100).toFixed(2)}%`}
-              {salesDelta < 0 &&
-                `${((salesDelta / pastTotalSales) * 100).toFixed(2)}%`}
-            </Typography>
-            <Typography color="textSecondary" variant="caption">
-              From Past Sales
-            </Typography>
-          </Box>
-        )}
+        <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
+          {!salesDelta && !pastTotalSales ? (
+            <>
+              <HorizontalRuleIcon color="info" />
+              <Typography
+                color={colorIndicator}
+                variant="caption"
+                fontWeight="bold"
+              >
+                0% Change
+              </Typography>
+            </>
+          ) : (
+            <>
+              {salesDelta === 0 && (
+                <HorizontalRuleIcon color={colorIndicator} />
+              )}
+              {salesDelta > 0 && <ArrowUpwardIcon color={colorIndicator} />}
+              {salesDelta < 0 && <ArrowDownwardIcon color={colorIndicator} />}
+              <Typography
+                color={salesDelta < 0 ? 'error' : 'success'}
+                sx={{ mr: 1 }}
+                variant="caption"
+                fontWeight="bold"
+              >
+                {!pastTotalSales && `100% `}
+                {pastTotalSales &&
+                  `${((salesDelta / pastTotalSales) * 100).toFixed(2)}% Change`}
+              </Typography>
+            </>
+          )}
+        </Box>
       </CardContent>
     </Card>
   );

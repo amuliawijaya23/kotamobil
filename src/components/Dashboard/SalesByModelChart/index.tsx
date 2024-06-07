@@ -57,8 +57,8 @@ const SalesByModelChart = () => {
         {currentData &&
           salesByModel &&
           (totalSales === 0 ? (
-            <Typography variant="body1" fontWeight="bold" textAlign="center">
-              No Data Found
+            <Typography variant="body2" textAlign="center">
+              No data to display
             </Typography>
           ) : (
             <PieChart
@@ -82,8 +82,8 @@ const SalesByModelChart = () => {
         {!currentData &&
           pastSalesByModel &&
           (pastTotalSales === 0 ? (
-            <Typography variant="body1" fontWeight="bold" textAlign="center">
-              No Data Found
+            <Typography variant="body2" textAlign="center">
+              No data to display
             </Typography>
           ) : (
             <PieChart

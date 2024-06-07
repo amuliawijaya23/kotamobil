@@ -18,8 +18,8 @@ export interface VehicleForm {
   model: string;
   bodyType: string;
   assembly: string;
-  year: number | boolean;
-  odometer: number | boolean;
+  year: number | null;
+  odometer: number | null;
   color: string;
   transmission: string;
   fuelType: string;
@@ -50,8 +50,8 @@ const initialState: VehicleFormState = {
     model: '',
     bodyType: '',
     assembly: 'Complete-Knock-Down',
-    year: false,
-    odometer: false,
+    year: null,
+    odometer: null,
     color: '',
     transmission: 'Automatic',
     fuelType: 'Petrol',
@@ -80,13 +80,13 @@ export const vehicleFormSlice = createSlice({
     setDateSold: (state, action: PayloadAction<string>) => {
       state.form.dateSold = action.payload;
     },
-    setPrice: (state, action: PayloadAction<number | null>) => {
+    setPrice: (state, action: PayloadAction<number>) => {
       state.form.price = action.payload;
     },
-    setMarketPrice: (state, action: PayloadAction<number | null>) => {
+    setMarketPrice: (state, action: PayloadAction<number>) => {
       state.form.marketPrice = action.payload;
     },
-    setPurchasePrice: (state, action: PayloadAction<number | null>) => {
+    setPurchasePrice: (state, action: PayloadAction<number>) => {
       state.form.purchasePrice = action.payload;
     },
     setSoldPrice: (state, action: PayloadAction<number | null>) => {
@@ -116,10 +116,10 @@ export const vehicleFormSlice = createSlice({
     setAssembly: (state, action: PayloadAction<string>) => {
       state.form.assembly = action.payload;
     },
-    setYear: (state, action: PayloadAction<number | boolean>) => {
+    setYear: (state, action: PayloadAction<number>) => {
       state.form.year = action.payload;
     },
-    setOdometer: (state, action: PayloadAction<number | boolean>) => {
+    setOdometer: (state, action: PayloadAction<number>) => {
       state.form.odometer = action.payload;
     },
     setColor: (state, action: PayloadAction<string>) => {

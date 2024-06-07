@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import type { CountryType } from '~/helpers/selectData';
+import type { CountryType } from '~/helpers/AutocompleteAndSelectData';
 import { validateEmail } from '~/helpers';
 
 export interface ContactForm {

@@ -38,7 +38,7 @@ import {
   setUpdateId,
   setCountry,
 } from '~/redux/reducers/contactFormSlice';
-import { countryCodes } from '~/helpers/selectData';
+import { countryCodes } from '~/helpers/AutocompleteAndSelectData';
 import useContactData from '~/hooks/useContactData';
 
 interface ContactsToolbar {
@@ -169,7 +169,8 @@ const ContactsToolbar = ({ numSelected, onOpenForm }: ContactsToolbar) => {
         ) : (
           <Typography
             sx={{ flex: '1 1 100%' }}
-            variant="h6"
+            variant="body1"
+            fontWeight="bold"
             id="tableTitle"
             component="div"
           >

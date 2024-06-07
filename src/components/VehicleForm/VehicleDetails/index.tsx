@@ -11,6 +11,7 @@ import {
   Select,
   SelectChangeEvent,
   MenuItem,
+  Autocomplete,
 } from '@mui/material';
 import { useAppSelector, useAppDispatch } from '~/redux/store';
 import {
@@ -28,10 +29,22 @@ import {
   setDescription,
 } from '~/redux/reducers/vehicleFormSlice';
 import { getAppAlert } from '~/redux/reducers/appSlice';
+import {
+  makesAndModels,
+  bodyType,
+  assembly,
+  fuelType,
+  transmission,
+} from '~/helpers/AutocompleteAndSelectData';
 
 const VehicleDetails = () => {
   const vehicleFormData = useAppSelector(getVehicleFormData);
   const alert = useAppSelector(getAppAlert);
+  const makes = Object.keys(makesAndModels);
+  const models = makes.reduce<string[]>((acc, make) => {
+    const makeModels = makesAndModels[make as keyof typeof makesAndModels];
+    return acc.concat(makeModels);
+  }, []);
 
   const dispatch = useAppDispatch();
 
@@ -45,16 +58,36 @@ const VehicleDetails = () => {
     dispatch(setBodyType(event.target.value));
   };
 
-  const handleMakeChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  const handleOnChangeMake = (
+    _event: React.SyntheticEvent<Element, Event>,
+    value: string,
   ) => {
-    dispatch(setMake(event.target.value));
+    dispatch(setMake(value));
+  };
+
+  const handleMakeChange = (
+    _event: React.SyntheticEvent<Element, Event>,
+    value: string | null,
+  ) => {
+    if (value) {
+      dispatch(setMake(value));
+    }
+  };
+
+  const handleOnChangeModel = (
+    _event: React.SyntheticEvent<Element, Event>,
+    value: string,
+  ) => {
+    dispatch(setModel(value));
   };
 
   const handleModelChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    _event: React.SyntheticEvent<Element, Event>,
+    value: string | null,
   ) => {
-    dispatch(setModel(event.target.value));
+    if (value) {
+      dispatch(setModel(value));
+    }
   };
 
   const handleAssemblyChange = (event: SelectChangeEvent) => {
@@ -137,14 +170,11 @@ const VehicleDetails = () => {
             id="vehicle-body-select"
             label="body Type"
           >
-            <MenuItem value="Sedan">Sedan</MenuItem>
-            <MenuItem value="SUV">SUV</MenuItem>
-            <MenuItem value="MPV">MPV</MenuItem>
-            <MenuItem value="Coupe">Coupe</MenuItem>
-            <MenuItem value="Hatchback">Hatchback</MenuItem>
-            <MenuItem value="Sport">Sport</MenuItem>
-            <MenuItem value="Convertible">Convertible</MenuItem>
-            <MenuItem value="Pickup">Pickup</MenuItem>
+            {bodyType.map((body) => (
+              <MenuItem key={`${body}-body-form-selection`} value={body}>
+                {body}
+              </MenuItem>
+            ))}
           </Select>
           {alert?.severity === 'error' && !vehicleFormData.bodyType && (
             <FormHelperText error>{alert.message}</FormHelperText>
@@ -152,38 +182,66 @@ const VehicleDetails = () => {
         </FormControl>
       </Grid>
       <Grid xs={12} sm={6}>
-        <FormControl size="small" fullWidth>
-          <InputLabel htmlFor="outlined-vehicle-name">Make</InputLabel>
-          <OutlinedInput
-            value={vehicleFormData.make}
-            onChange={handleMakeChange}
-            error={Boolean(
-              alert?.severity === 'error' && !vehicleFormData.make,
-            )}
-            type="text"
-            label="Make"
-          />
-          {alert?.severity === 'error' && !vehicleFormData.make && (
-            <FormHelperText error>{alert.message}</FormHelperText>
+        <Autocomplete
+          fullWidth
+          autoHighlight
+          options={makes}
+          value={vehicleFormData.make && vehicleFormData.make}
+          isOptionEqualToValue={() => true}
+          onChange={handleMakeChange}
+          onInputChange={handleOnChangeMake}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Make"
+              size="small"
+              error={Boolean(
+                alert?.severity === 'error' && !vehicleFormData.make,
+              )}
+              helperText={
+                alert?.severity === 'error' &&
+                !vehicleFormData.make &&
+                alert.message
+              }
+              FormHelperTextProps={{ error: true }}
+              inputProps={{ ...params.inputProps }}
+            />
           )}
-        </FormControl>
+        />
       </Grid>
       <Grid xs={12} sm={6}>
-        <FormControl size="small" fullWidth>
-          <InputLabel htmlFor="outlined-vehicle-name">Model</InputLabel>
-          <OutlinedInput
-            value={vehicleFormData.model}
-            onChange={handleModelChange}
-            error={Boolean(
-              alert?.severity === 'error' && !vehicleFormData.model,
-            )}
-            type="text"
-            label="Model"
-          />
-          {alert?.severity === 'error' && !vehicleFormData.model && (
-            <FormHelperText error>{alert.message}</FormHelperText>
+        <Autocomplete
+          fullWidth
+          autoHighlight
+          options={
+            vehicleFormData.make && makes.includes(vehicleFormData.make)
+              ? makesAndModels[
+                  vehicleFormData.make as keyof typeof makesAndModels
+                ]
+              : models
+          }
+          value={vehicleFormData.model && vehicleFormData.model}
+          isOptionEqualToValue={() => true}
+          onChange={handleModelChange}
+          onInputChange={handleOnChangeModel}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Model"
+              size="small"
+              error={Boolean(
+                alert?.severity === 'error' && !vehicleFormData.model,
+              )}
+              helperText={
+                alert?.severity === 'error' &&
+                !vehicleFormData.model &&
+                alert.message
+              }
+              FormHelperTextProps={{ error: true }}
+              inputProps={{ ...params.inputProps }}
+            />
           )}
-        </FormControl>
+        />
       </Grid>
       <Grid xs={12} sm={6}>
         <FormControl size="small" fullWidth>
@@ -199,8 +257,11 @@ const VehicleDetails = () => {
             id="vehicle-assembly-select"
             label="Assembly"
           >
-            <MenuItem value="Complete-Knock-Down">Complete-Knock-Down</MenuItem>
-            <MenuItem value="Complete-Built-Up">Complete-Built-Up</MenuItem>
+            {assembly.map((a) => (
+              <MenuItem key={`${a}-assembly-form-selection`} value={a}>
+                {a}
+              </MenuItem>
+            ))}
           </Select>
           {alert?.severity === 'error' && !vehicleFormData.assembly && (
             <FormHelperText error>{alert.message}</FormHelperText>
@@ -274,8 +335,11 @@ const VehicleDetails = () => {
             id="vehicle-transmission-select"
             label="Transmission"
           >
-            <MenuItem value="Automatic">Automatic</MenuItem>
-            <MenuItem value="Manual">Manual</MenuItem>
+            {transmission.map((t) => (
+              <MenuItem key={`${t}-transmission-form-selection`} value={t}>
+                {t}
+              </MenuItem>
+            ))}
           </Select>
           {alert?.severity === 'error' && !vehicleFormData.transmission && (
             <FormHelperText error>{alert.message}</FormHelperText>
@@ -296,10 +360,11 @@ const VehicleDetails = () => {
             id="vehicle-fuel-select"
             label="Fuel Type"
           >
-            <MenuItem value="Petrol">Petrol</MenuItem>
-            <MenuItem value="Diesel">Diesel</MenuItem>
-            <MenuItem value="Hybrid">Hybrid</MenuItem>
-            <MenuItem value="Electric">Electric</MenuItem>
+            {fuelType.map((fuel) => (
+              <MenuItem key={`${fuel}-fuel-form-selection`} value={fuel}>
+                {fuel}
+              </MenuItem>
+            ))}
           </Select>
           {alert?.severity === 'error' && !vehicleFormData.fuelType && (
             <FormHelperText error>{alert.message}</FormHelperText>

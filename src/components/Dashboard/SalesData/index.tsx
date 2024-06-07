@@ -193,13 +193,8 @@ const SalesData = () => {
               p: 2,
             }}
           >
-            <Typography
-              variant="body1"
-              fontWeight="bold"
-              component="p"
-              textAlign="center"
-            >
-              No Data Found
+            <Typography variant="body2" component="p" textAlign="center">
+              No data to display
             </Typography>
           </Box>
         )}

@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import { Box, Paper, Snackbar, Alert, IconButton } from '@mui/material';
+import { Box, Snackbar, Alert, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import NavBar from '~/components/Navigation';
 import { useAppSelector, useAppDispatch } from '~/redux/store';
@@ -35,7 +35,7 @@ const Layout = ({ onLogout }: LayoutProps) => {
           {alert?.message}
         </Alert>
       </Snackbar>
-      <Box component={Paper}>
+      <Box>
         <Box component={'header'}>
           <NavBar onLogout={onLogout} />
         </Box>
