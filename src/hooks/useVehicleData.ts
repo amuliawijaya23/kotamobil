@@ -10,6 +10,7 @@ import {
   resetVehicleData,
 } from '~/redux/reducers/vehicleSlice';
 import { useParams, useNavigate } from 'react-router-dom';
+import { setAlert } from '~/redux/reducers/appSlice';
 
 const useVehicleData = () => {
   const { id } = useParams();
@@ -43,9 +44,12 @@ const useVehicleData = () => {
     try {
       const response = await axios.delete(`/api/vehicle/delete/${id}`);
 
-      if (response.status === 200) {
+      if (response.status === 204) {
         const updatedInventory = inventory.filter((item) => item._id !== id);
         dispatch(setInventoryData(updatedInventory));
+        dispatch(
+          setAlert({ message: response.data.message, severity: 'success' }),
+        );
         navigate('/inventory');
       }
     } catch (error) {
