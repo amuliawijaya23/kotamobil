@@ -91,6 +91,7 @@ const ModelSelection = ({ models, sortedMakes }: ModelSelectionProps) => {
               label={<Typography variant="subtitle2">All</Typography>}
               control={
                 <Checkbox
+                  color="secondary"
                   checked={models?.length === queryData.selectedModels.length}
                   onChange={handleSelectAllModelsChange}
                 />
@@ -119,6 +120,7 @@ const ModelSelection = ({ models, sortedMakes }: ModelSelectionProps) => {
                             }
                             control={
                               <Checkbox
+                                color="secondary"
                                 checked={queryData.selectedModels.includes(
                                   model,
                                 )}

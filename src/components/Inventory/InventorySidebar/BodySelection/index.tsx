@@ -87,6 +87,7 @@ const BodySelection = () => {
               label={<Typography variant="subtitle2">All</Typography>}
               control={
                 <Checkbox
+                  color="secondary"
                   checked={
                     bodyType.length === queryData?.selectedBodyType.length
                   }
@@ -102,6 +103,7 @@ const BodySelection = () => {
                   label={<Typography variant="subtitle2">{b}</Typography>}
                   control={
                     <Checkbox
+                      color="secondary"
                       checked={queryData.selectedBodyType.includes(b)}
                       onChange={() => handleBodyTypeSelection(b)}
                     />

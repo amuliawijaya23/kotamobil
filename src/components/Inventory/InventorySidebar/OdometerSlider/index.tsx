@@ -38,6 +38,7 @@ const OdometerSlider = () => {
         <Grid container py={2} display="flex" justifyContent="center">
           <Grid xs={12} display="flex" justifyContent="center">
             <Slider
+              color="secondary"
               getAriaLabel={() => 'odometer range'}
               valueLabelDisplay="off"
               value={queryData.odometerRange}

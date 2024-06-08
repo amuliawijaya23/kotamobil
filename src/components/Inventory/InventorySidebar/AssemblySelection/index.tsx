@@ -87,6 +87,7 @@ const AssemblySelection = () => {
               label={<Typography variant="subtitle2">All</Typography>}
               control={
                 <Checkbox
+                  color="secondary"
                   checked={
                     assembly.length === queryData.selectedAssembly.length
                   }
@@ -102,6 +103,7 @@ const AssemblySelection = () => {
                   label={<Typography variant="subtitle2">{a}</Typography>}
                   control={
                     <Checkbox
+                      color="secondary"
                       checked={queryData.selectedAssembly.includes(a)}
                       onChange={() => handleAssemblySelection(a)}
                     />

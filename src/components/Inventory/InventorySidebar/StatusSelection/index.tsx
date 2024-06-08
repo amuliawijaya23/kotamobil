@@ -87,6 +87,7 @@ const StatusSelection = () => {
               label={<Typography variant="subtitle2">All</Typography>}
               control={
                 <Checkbox
+                  color="secondary"
                   checked={status.length === queryData.selectedStatus.length}
                   onChange={handleSelectAllStatusChange}
                 />
@@ -100,6 +101,7 @@ const StatusSelection = () => {
                   label={<Typography variant="subtitle2">{s}</Typography>}
                   control={
                     <Checkbox
+                      color="secondary"
                       checked={queryData.selectedStatus.includes(s)}
                       onChange={() => handleStatusSelection(s)}
                     />

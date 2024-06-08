@@ -87,6 +87,7 @@ const ConditionSelection = () => {
               label={<Typography variant="subtitle2">All</Typography>}
               control={
                 <Checkbox
+                  color="secondary"
                   checked={
                     condition.length === queryData.selectedCondition.length
                   }
@@ -102,6 +103,7 @@ const ConditionSelection = () => {
                   label={<Typography variant="subtitle2">{c}</Typography>}
                   control={
                     <Checkbox
+                      color="secondary"
                       checked={queryData.selectedCondition.includes(c)}
                       onChange={() => handleConditionSelection(c)}
                     />

@@ -106,8 +106,12 @@ const NavBar = ({ onLogout }: NavBarProps) => {
             <img
               onClick={handleOnClickHome}
               onMouseDown={handleMouseDown}
-              src="/src/assets/gudangmobil.png"
-              style={{ height: 50, marginRight: 10, cursor: 'pointer' }}
+              src={
+                theme === 'light'
+                  ? '/src/assets/gudangmobil-logo-dark.png'
+                  : '/src/assets/gudangmobil-logo-light.png'
+              }
+              style={{ height: 40, marginRight: 10, cursor: 'pointer' }}
             />
           </Box>
           <IconButton

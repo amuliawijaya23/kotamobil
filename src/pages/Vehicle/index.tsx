@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Unstable_Grid2 as Grid,
   Toolbar,
@@ -40,6 +40,12 @@ const Vehicle = () => {
   const [openImages, setOpenImages] = useState<boolean>(false);
   const [openConfirmation, setOpenConfirmation] = useState<boolean>(false);
   const [activeStep, setActiveStep] = useState<number>(0);
+
+  useEffect(() => {
+    if (vehicle?.images && activeStep > vehicle?.images?.length - 1) {
+      setActiveStep(vehicle?.images.length - 1);
+    }
+  }, [vehicle?.images, activeStep]);
 
   const handleOpenForm = () => {
     setOpen(true);

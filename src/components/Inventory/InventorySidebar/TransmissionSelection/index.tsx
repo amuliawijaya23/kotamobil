@@ -87,6 +87,7 @@ const TransmissionSelection = () => {
               label={<Typography variant="subtitle2">All</Typography>}
               control={
                 <Checkbox
+                  color="secondary"
                   checked={
                     transmission.length ===
                     queryData.selectedTransmission.length
@@ -103,6 +104,7 @@ const TransmissionSelection = () => {
                   label={<Typography variant="subtitle2">{t}</Typography>}
                   control={
                     <Checkbox
+                      color="secondary"
                       checked={queryData.selectedTransmission.includes(t)}
                       onChange={() => handleTransmissionSelection(t)}
                     />

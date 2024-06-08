@@ -87,6 +87,7 @@ const FuelSelection = () => {
               label={<Typography variant="subtitle2">All</Typography>}
               control={
                 <Checkbox
+                  color="secondary"
                   checked={
                     fuelType.length === queryData.selectedFuelType.length
                   }
@@ -102,6 +103,7 @@ const FuelSelection = () => {
                   label={<Typography variant="subtitle2">{f}</Typography>}
                   control={
                     <Checkbox
+                      color="secondary"
                       checked={queryData.selectedFuelType.includes(f)}
                       onChange={() => handleFuelTypeSelection(f)}
                     />

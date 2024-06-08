@@ -23,6 +23,7 @@ import {
   setConfirmPassword,
   resetError,
 } from '~/redux/reducers/authFormSlice';
+import { getTheme } from '~/redux/reducers/themeSlice';
 import { useNavigate } from 'react-router-dom';
 
 interface RegisterProps {
@@ -32,6 +33,7 @@ interface RegisterProps {
 const Register = ({ onRegister }: RegisterProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const theme = useAppSelector(getTheme);
   const authFormData = useAppSelector(getAuthFormData);
   const error = useAppSelector(getAuthFormError);
 
@@ -125,9 +127,13 @@ const Register = ({ onRegister }: RegisterProps) => {
               mt={1}
             >
               <img
-                src="/src/assets/gudangmobil.png"
+                src={
+                  theme === 'light'
+                    ? '/src/assets/gudangmobil-logo-dark.png'
+                    : '/src/assets/gudangmobil-logo-light.png'
+                }
                 alt="logo"
-                style={{ width: 200, height: 80 }}
+                style={{ width: 150, height: 60 }}
               />
               <Typography variant="h4" component="h1" sx={{ mt: 2 }}>
                 Sign Up

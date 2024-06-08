@@ -91,6 +91,7 @@ const MakeSelection = ({ makes, sortedMakes }: MakeSelectionProps) => {
               label={<Typography variant="subtitle2">All</Typography>}
               control={
                 <Checkbox
+                  color="secondary"
                   checked={makes?.length === queryData.selectedMakes.length}
                   onChange={handleSelectAllMakesChange}
                 />
@@ -105,6 +106,7 @@ const MakeSelection = ({ makes, sortedMakes }: MakeSelectionProps) => {
                     label={<Typography variant="subtitle2">{make}</Typography>}
                     control={
                       <Checkbox
+                        color="secondary"
                         checked={queryData.selectedMakes.includes(make)}
                         onChange={() => handleMakeSelection(make)}
                       />

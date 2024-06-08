@@ -44,7 +44,7 @@ const useVehicleData = () => {
     try {
       const response = await axios.delete(`/api/vehicle/delete/${id}`);
 
-      if (response.status === 204) {
+      if (response.status === 200) {
         const updatedInventory = inventory.filter((item) => item._id !== id);
         dispatch(setInventoryData(updatedInventory));
         navigate('/inventory');
