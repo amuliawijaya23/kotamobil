@@ -47,10 +47,10 @@ const useVehicleData = () => {
       if (response.status === 204) {
         const updatedInventory = inventory.filter((item) => item._id !== id);
         dispatch(setInventoryData(updatedInventory));
+        navigate('/inventory');
         dispatch(
           setAlert({ message: response.data.message, severity: 'success' }),
         );
-        navigate('/inventory');
       }
     } catch (error) {
       console.error('Error occured while deleting vehicle:', error);

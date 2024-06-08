@@ -34,6 +34,7 @@ const Login = ({ onLogin }: LoginProps) => {
   useEffect(() => {
     return () => {
       dispatch(resetAuthForm());
+      dispatch(resetError());
     };
   }, [dispatch]);
 

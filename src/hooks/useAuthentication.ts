@@ -2,7 +2,7 @@ import Cookies from 'js-cookie';
 import { useEffect, useCallback } from 'react';
 import axios, { AxiosError } from 'axios';
 import { useAppDispatch, useAppSelector } from '~/redux/store';
-import { setAuthenticated, setLoading } from '~/redux/reducers/appSlice';
+import { setAuthenticated } from '~/redux/reducers/appSlice';
 import { login, logout } from '~/redux/reducers/userSlice';
 import { resetContacts } from '~/redux/reducers/contactsSlice';
 import { resetInventory } from '~/redux/reducers/inventorySlice';
@@ -60,7 +60,6 @@ const useAuthentication = () => {
   }, [dispatch, getUserData, handleLogout]);
 
   const handleRegister = async () => {
-    dispatch(setLoading(true));
     const { firstName, lastName, email, password, confirmPassword } =
       authFormData;
     try {
@@ -79,7 +78,7 @@ const useAuthentication = () => {
         return false;
       }
 
-      const registerResponse = await axios.post('/api/auth/register', {
+      await axios.post('/api/auth/register', {
         firstName: `${firstName[0].toUpperCase()}${firstName
           .substring(1)
           .toLowerCase()}`,
@@ -90,18 +89,13 @@ const useAuthentication = () => {
         password,
       });
 
-      if (registerResponse.status !== 200) {
-        dispatch(setError(registerResponse.data.message));
-        return false;
-      }
-
-      const loginResponse = await axios.post('/api/auth/login', {
+      const response = await axios.post('/api/auth/login', {
         email,
         password,
       });
-      const userData = { ...loginResponse.data.user };
-      delete userData.password;
 
+      const userData = { ...response.data };
+      delete userData.password;
       dispatch(login(userData));
       dispatch(setAuthenticated(true));
       dispatch(resetAuthForm());
@@ -112,14 +106,11 @@ const useAuthentication = () => {
       if (error instanceof AxiosError) {
         dispatch(setError(error.response?.data.message));
       }
-    } finally {
-      dispatch(setLoading(false));
     }
     return false;
   };
 
   const handleLogin = async () => {
-    dispatch(setLoading(true));
     try {
       const { email, password } = authFormData;
       if (!email || !password) {
@@ -134,12 +125,7 @@ const useAuthentication = () => {
 
       const response = await axios.post('/api/auth/login', { email, password });
 
-      if (response.status !== 200) {
-        dispatch(setError(response.data.message));
-        return false;
-      }
-
-      const userData = { ...response.data.user };
+      const userData = { ...response.data };
       delete userData.password;
       dispatch(login(userData));
       dispatch(setAuthenticated(true));
@@ -151,8 +137,6 @@ const useAuthentication = () => {
       if (error instanceof AxiosError) {
         dispatch(setError(error.response?.data.message));
       }
-    } finally {
-      dispatch(setLoading(false));
     }
     return false;
   };

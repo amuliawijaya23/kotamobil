@@ -227,7 +227,10 @@ const useVehicleForm = () => {
         ? await axios.post(`/api/vehicle/update/${vehicle._id}`, formData)
         : await axios.post('/api/vehicle/add', formData);
 
-      if (response.status === 200 && response.data) {
+      if (
+        response.status === 200 ||
+        (response.status === 201 && response.data)
+      ) {
         const action = vehicle
           ? updateVehicleFromInventory
           : addVehicleToInventory;

@@ -22,7 +22,6 @@ import type { CountryType } from '~/helpers/AutocompleteAndSelectData';
 const useContactForm = () => {
   const dispatch = useAppDispatch();
   const contactFormData = useAppSelector(getContactFormData);
-  // const [country, setCountry] = useState<CountryType | null>(null);
 
   const handleResetForm = useCallback(() => {
     dispatch(resetContactForm());
@@ -111,7 +110,10 @@ const useContactForm = () => {
         ? await axios.post(`/api/contact/update/${updateId}`, formData)
         : await axios.post('/api/contact/add', formData);
 
-      if (response.status == 200 && response.data) {
+      if (
+        response.status === 201 ||
+        (response.status === 200 && response.data)
+      ) {
         const action = updateId ? updateContact : addContact;
         dispatch(action(response.data));
         const message = updateId ? 'Contact updated!' : 'New contact created!';
