@@ -207,7 +207,7 @@ const calculateTotalProfit = (profitPerMonth: number[]) => {
 
 listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
   predicate: (_action, currentState, previousState) =>
-    !previousState.app.isAuthenticated && currentState.app.isAuthenticated,
+    !previousState.user.data && currentState.user.data !== null,
   effect: async (_action, listenerApi) => {
     listenerApi.dispatch(setLoading(true));
     const start = startOfYear(new Date());

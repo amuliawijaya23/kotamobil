@@ -6,7 +6,6 @@ import themeReducer from './reducers/themeSlice';
 import contactsReducer from './reducers/contactsSlice';
 import inventoryReducer from './reducers/inventorySlice';
 import vehicleReducer from './reducers/vehicleSlice';
-import authFormReducer from './reducers/authFormSlice';
 import vehicleFormReducer from './reducers/vehicleFormSlice';
 import contactFormReducer from './reducers/contactFormSlice';
 import dashboardReducer from './reducers/dashboardSlice';
@@ -21,7 +20,6 @@ export const store = configureStore({
     contacts: contactsReducer,
     inventory: inventoryReducer,
     vehicle: vehicleReducer,
-    authForm: authFormReducer,
     vehicleForm: vehicleFormReducer,
     contactForm: contactFormReducer,
   },

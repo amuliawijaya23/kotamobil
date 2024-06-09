@@ -5,10 +5,7 @@ import NavBar from '~/components/Navigation';
 import { useAppSelector, useAppDispatch } from '~/redux/store';
 import { getAppAlert, resetAlert } from '~/redux/reducers/appSlice';
 
-interface LayoutProps {
-  onLogout: () => Promise<boolean>;
-}
-const Layout = ({ onLogout }: LayoutProps) => {
+const Layout = () => {
   const dispatch = useAppDispatch();
   const alert = useAppSelector(getAppAlert);
 
@@ -37,7 +34,7 @@ const Layout = ({ onLogout }: LayoutProps) => {
       </Snackbar>
       <Box>
         <Box component={'header'}>
-          <NavBar onLogout={onLogout} />
+          <NavBar />
         </Box>
         <Box component="main">
           <Outlet />

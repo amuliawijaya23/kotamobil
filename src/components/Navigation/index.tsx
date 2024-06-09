@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useAppDispatch } from '~/redux/store';
 import { useAppSelector } from '~/redux/store';
-import { getAppStatus } from '~/redux/reducers/appSlice';
+import { getUserData } from '~/redux/reducers/userSlice';
 import { getTheme, toggleTheme } from '~/redux/reducers/themeSlice';
 
 interface AppBarProps extends MuiAppBarProps {
@@ -37,12 +37,8 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-interface NavBarProps {
-  onLogout: () => Promise<boolean>;
-}
-
-const NavBar = ({ onLogout }: NavBarProps) => {
-  const { isAuthenticated } = useAppSelector(getAppStatus);
+const NavBar = () => {
+  const user = useAppSelector(getUserData);
   const theme = useAppSelector(getTheme);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -98,7 +94,7 @@ const NavBar = ({ onLogout }: NavBarProps) => {
         >
           <Box
             sx={{
-              display: { xs: isAuthenticated ? 'none' : 'flex', sm: 'flex' },
+              display: { xs: user ? 'none' : 'flex', sm: 'flex' },
               justifyContent: 'center',
               alignItems: 'center',
             }}
@@ -121,14 +117,14 @@ const NavBar = ({ onLogout }: NavBarProps) => {
             color="inherit"
             sx={{
               display: {
-                xs: isAuthenticated ? 'flex' : 'none',
+                xs: user ? 'flex' : 'none',
                 sm: 'none',
               },
             }}
           >
             <HomeIcon />
           </IconButton>
-          {isAuthenticated && (
+          {user && (
             <>
               <Button
                 onClick={handleOnClickDashboard}
@@ -161,8 +157,8 @@ const NavBar = ({ onLogout }: NavBarProps) => {
           <IconButton onClick={toggleThemeMode} color="inherit" sx={{ mr: 2 }}>
             {theme === 'light' ? <Brightness7Icon /> : <Brightness4Icon />}
           </IconButton>
-          {isAuthenticated && <UserProfile onLogout={onLogout} />}
-          {!isAuthenticated && (
+          {user && <UserProfile />}
+          {!user && (
             <>
               <Button
                 onClick={handleOnClickLogin}

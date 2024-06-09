@@ -9,16 +9,16 @@ import {
   ListItemText,
 } from '@mui/material';
 import StringAvatar from '~/components/StringAvatar';
-import { useAppSelector } from '~/redux/store';
-import { getUserData } from '~/redux/reducers/userSlice';
+import { useAppSelector, useAppDispatch } from '~/redux/store';
+import { getUserData, logoutUser } from '~/redux/reducers/userSlice';
+import { resetInventory } from '~/redux/reducers/inventorySlice';
+import { resetContacts } from '~/redux/reducers/contactsSlice';
+import { resetDashboard } from '~/redux/reducers/dashboardSlice';
 import { useNavigate } from 'react-router-dom';
 
-interface UserProfileProps {
-  onLogout: () => Promise<boolean>;
-}
-
-const UserProfile = ({ onLogout }: UserProfileProps) => {
+const UserProfile = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const user = useAppSelector(getUserData);
   const [open, setOpen] = useState<HTMLButtonElement | null>(null);
   const profileId = open ? 'profile-menu' : undefined;
@@ -35,13 +35,15 @@ const UserProfile = ({ onLogout }: UserProfileProps) => {
     setOpen(null);
   };
 
-  const handleOnLogout = async () => {
+  const handleLogout = async () => {
     try {
-      if (await onLogout()) {
-        navigate('/login', { replace: true });
-      }
+      await dispatch(logoutUser()).unwrap();
+      dispatch(resetInventory());
+      dispatch(resetContacts());
+      dispatch(resetDashboard());
+      navigate('/login');
     } catch (error) {
-      console.error('Error occured while logging out:', error);
+      console.error(`Error logging out: ${error}`);
     }
   };
 
@@ -84,7 +86,7 @@ const UserProfile = ({ onLogout }: UserProfileProps) => {
               sx={{ display: 'block' }}
             >
               <ListItemButton
-                onClick={index === 0 ? () => {} : handleOnLogout}
+                onClick={index === 0 ? () => {} : handleLogout}
                 sx={{ justifyContent: 'initial', px: 5 }}
               >
                 <ListItemText primary={title} sx={{ opacity: open ? 1 : 0 }} />

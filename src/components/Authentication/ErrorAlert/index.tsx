@@ -1,19 +1,30 @@
 import React from 'react';
 import { Collapse, Alert, IconButton } from '@mui/material';
+import { useAppSelector, useAppDispatch } from '~/redux/store';
+import {
+  clearUserError,
+  getUserError,
+  getUserStatus,
+} from '~/redux/reducers/userSlice';
 import CloseIcon from '@mui/icons-material/Close';
 
-interface ErrorAlertProps {
-  error: string;
-  onClearError: () => void;
-}
-
-const ErrorAlert = ({ error, onClearError }: ErrorAlertProps) => {
+const ErrorAlert = () => {
+  const dispatch = useAppDispatch();
+  const userStatus = useAppSelector(getUserStatus);
+  const userError = useAppSelector(getUserError);
   const handleMouseDownClose = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
 
+  const handleClearError = () => {
+    dispatch(clearUserError());
+  };
+
   return (
-    <Collapse in={Boolean(error)} sx={{ width: '100%', mt: 1, mb: 1 }}>
+    <Collapse
+      in={Boolean(userStatus === 'failed')}
+      sx={{ width: '100%', mt: 1, mb: 1 }}
+    >
       <Alert
         severity="error"
         variant="filled"
@@ -22,14 +33,14 @@ const ErrorAlert = ({ error, onClearError }: ErrorAlertProps) => {
             aria-label="close alert"
             color="inherit"
             size="small"
-            onClick={onClearError}
+            onClick={handleClearError}
             onMouseDown={handleMouseDownClose}
           >
             <CloseIcon fontSize="inherit" />
           </IconButton>
         }
       >
-        {error}
+        {userError}
       </Alert>
     </Collapse>
   );
