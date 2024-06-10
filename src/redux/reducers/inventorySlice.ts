@@ -1,6 +1,12 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { RootState } from '../store';
 import type { VehicleData } from './vehicleSlice';
+import { isAxiosError } from 'axios';
+import { PayloadAction, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { RootState } from '../store';
+import {
+  addVehicleService,
+  updateVehicleService,
+  deleteVehicleService,
+} from '~/services/vehicleServices';
 import {
   status,
   condition,
@@ -33,43 +39,76 @@ export interface QueryData {
 }
 
 interface InventoryState {
-  data: VehicleData[] | null;
+  vehicles: VehicleData[] | null;
   queryData: QueryData | null;
-  isLoading: boolean;
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  error: string | null;
 }
 
 const initialState: InventoryState = {
-  data: null,
+  vehicles: null,
   queryData: null,
-  isLoading: false,
+  status: 'idle',
+  error: null,
 };
+
+export const addVehicle = createAsyncThunk(
+  'inventory/addVehicle',
+  async (formData: FormData, thunkAPI) => {
+    try {
+      const vehicle = await addVehicleService(formData);
+      return vehicle;
+    } catch (error) {
+      if (isAxiosError(error) && error.response) {
+        return thunkAPI.rejectWithValue(error.response.data.message);
+      }
+      return thunkAPI.rejectWithValue('An unknown error occured');
+    }
+  },
+);
+
+export const updateVehicle = createAsyncThunk(
+  'inventory/updateVehicle',
+  async ({ id, formData }: { id: string; formData: FormData }, thunkAPI) => {
+    try {
+      const vehicle = await updateVehicleService(id, formData);
+      return vehicle;
+    } catch (error) {
+      if (isAxiosError(error) && error.response) {
+        return thunkAPI.rejectWithValue(error.response.data.message);
+      }
+      return thunkAPI.rejectWithValue('An unknown error occured');
+    }
+  },
+);
+
+export const deleteVehicle = createAsyncThunk(
+  'inventory/deleteVehicle',
+  async (id: string, thunkAPI) => {
+    try {
+      const vehicleId = await deleteVehicleService(id);
+      return vehicleId;
+    } catch (error) {
+      if (isAxiosError(error) && error.response) {
+        return thunkAPI.rejectWithValue(error.response.data.message);
+      }
+      return thunkAPI.rejectWithValue('An unknown error occured');
+    }
+  },
+);
 
 export const inventorySlice = createSlice({
   name: 'inventory',
   initialState,
   reducers: {
-    setInventoryLoading: (state, action: PayloadAction<boolean>) => {
-      state.isLoading = action.payload;
+    setInventoryStatus: (
+      state,
+      action: PayloadAction<'idle' | 'loading' | 'succeeded' | 'failed'>,
+    ) => {
+      state.status = action.payload;
     },
-    setInventoryData: (state, action: PayloadAction<VehicleData[]>) => {
-      state.data = action.payload;
-    },
-    addVehicleToInventory: (state, action: PayloadAction<VehicleData>) => {
-      if (state.data) {
-        state.data.unshift(action.payload);
-      }
-    },
-    updateVehicleFromInventory: (state, action: PayloadAction<VehicleData>) => {
-      if (state.data) {
-        const index = state.data?.findIndex(
-          (vehicle) => vehicle._id === action.payload._id,
-        );
-
-        if (index !== -1) {
-          state.data.splice(index, 1);
-          state.data.unshift(action.payload);
-        }
-      }
+    setInventoryVehicles: (state, action: PayloadAction<VehicleData[]>) => {
+      state.vehicles = action.payload;
     },
     setQueryData: (state, action: PayloadAction<QueryData>) => {
       state.queryData = action.payload;
@@ -107,7 +146,7 @@ export const inventorySlice = createSlice({
           );
           newSelectedModels = state.queryData.selectedModels.filter(
             (model) =>
-              !state.data?.find(
+              !state.vehicles?.find(
                 (vehicle) => vehicle.model === model && vehicle.make === make,
               ),
           );
@@ -329,14 +368,65 @@ export const inventorySlice = createSlice({
     },
     resetInventory: () => initialState,
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(addVehicle.pending, (state) => {
+        state.status === 'loading';
+      })
+      .addCase(
+        addVehicle.fulfilled,
+        (state, action: PayloadAction<VehicleData>) => {
+          state.status === 'succeeded';
+          state.vehicles?.unshift(action.payload);
+        },
+      )
+      .addCase(addVehicle.rejected, (state, action) => {
+        state.status === 'failed';
+        state.error === (action.payload as string);
+      })
+      .addCase(updateVehicle.pending, (state) => {
+        state.status === 'loading';
+      })
+      .addCase(
+        updateVehicle.fulfilled,
+        (state, action: PayloadAction<VehicleData>) => {
+          state.status === 'succeeded';
+          const index = state.vehicles?.findIndex(
+            (vehicle) => vehicle._id === action.payload._id,
+          );
+          if (index !== undefined && index !== -1) {
+            state.vehicles?.splice(index, 1);
+            state.vehicles?.unshift(action.payload);
+          }
+        },
+      )
+      .addCase(updateVehicle.rejected, (state, action) => {
+        state.status === 'failed';
+        state.error = action.payload as string;
+      })
+      .addCase(deleteVehicle.pending, (state) => {
+        state.status === 'loading';
+      })
+      .addCase(deleteVehicle.fulfilled, (state, action) => {
+        state.status === 'succeeded';
+        const newInventory = state.vehicles?.filter(
+          (vehicle) => vehicle._id !== action.payload,
+        );
+        if (newInventory) {
+          state.vehicles = newInventory;
+        }
+      })
+      .addCase(deleteVehicle.rejected, (state, action) => {
+        state.status === 'failed';
+        state.error = action.payload as string;
+      });
+  },
 });
 
 export const {
-  setInventoryLoading,
-  setInventoryData,
+  setInventoryStatus,
+  setInventoryVehicles,
   setQueryData,
-  addVehicleToInventory,
-  updateVehicleFromInventory,
   setSearch,
   updatePriceRange,
   updateYearRange,
@@ -359,8 +449,7 @@ export const {
   selectAllTransmission,
   resetInventory,
 } = inventorySlice.actions;
-export const getInventory = (state: RootState) => state.inventory.data;
+export const getInventory = (state: RootState) => state.inventory.vehicles;
 export const getQueryData = (state: RootState) => state.inventory.queryData;
-export const getInventoryStatus = (state: RootState) =>
-  state.inventory.isLoading;
+export const getInventoryStatus = (state: RootState) => state.inventory.status;
 export default inventorySlice.reducer;

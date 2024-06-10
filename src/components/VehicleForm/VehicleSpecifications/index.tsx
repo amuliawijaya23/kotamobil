@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import {
   Box,
   Divider,
@@ -9,45 +10,24 @@ import {
   OutlinedInput,
   IconButton,
 } from '@mui/material';
-
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import { FieldArray, useFormikContext } from 'formik';
 
-import { useAppSelector, useAppDispatch } from '~/redux/store';
-import {
-  getVehicleFormData,
-  setSpecification,
-} from '~/redux/reducers/vehicleFormSlice';
+interface VehicleSpecificationsValues {
+  specification: string[];
+}
 
 const VehicleSpecifications = () => {
-  const vehicleFormData = useAppSelector(getVehicleFormData);
+  const { values, setFieldValue } =
+    useFormikContext<VehicleSpecificationsValues>();
 
-  const dispatch = useAppDispatch();
-
-  const handleSpecificationChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    index: number,
-  ) => {
-    const specification = [...vehicleFormData.specification];
-    specification[index] = event.target.value;
-    dispatch(setSpecification(specification));
-  };
-
-  const handleAddSpecification = () => {
-    const specification = [...vehicleFormData.specification];
-    specification.push('');
-    dispatch(setSpecification(specification));
-  };
-
-  const handleRemoveSpecification = (index: number) => {
-    const specification = [...vehicleFormData.specification];
-    specification.splice(index, 1);
-    dispatch(setSpecification(specification));
-  };
-
-  const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-  };
+  const handleMouseDown = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+    },
+    [],
+  );
 
   return (
     <>
@@ -70,7 +50,9 @@ const VehicleSpecifications = () => {
           </Typography>
           <Tooltip title="Add Specification">
             <IconButton
-              onClick={handleAddSpecification}
+              onClick={() =>
+                setFieldValue('specification', [...values.specification, ''])
+              }
               onMouseDown={handleMouseDown}
               color="inherit"
             >
@@ -87,39 +69,51 @@ const VehicleSpecifications = () => {
           specifications.
         </Typography>
       </Grid>
-      {vehicleFormData.specification.map((spec, index) => (
-        <Grid key={`specification-form-${index}`} xs={12} sm={6}>
-          <Box
-            sx={{
-              width: '100%',
-              display: 'flex',
-            }}
-          >
-            <FormControl size="small" fullWidth>
-              <InputLabel htmlFor="outlined-vehicle-specification">
-                Specification
-              </InputLabel>
-              <OutlinedInput
-                value={spec}
-                onChange={(e) => handleSpecificationChange(e, index)}
-                type="text"
-                label="Specification"
-              />
-            </FormControl>
-            <Tooltip title="Remove specification">
-              <IconButton
-                onClick={() => handleRemoveSpecification(index)}
-                onMouseDown={handleMouseDown}
-                edge="end"
-                size="small"
-                color="inherit"
-              >
-                <RemoveCircleOutlineIcon />
-              </IconButton>
-            </Tooltip>
-          </Box>
-        </Grid>
-      ))}
+      <FieldArray
+        name="specification"
+        render={(arrayHelpers) => (
+          <>
+            {values.specification.map((spec: string, index: number) => (
+              <Grid key={`specification-form-${index}`} xs={12} sm={6}>
+                <Box
+                  sx={{
+                    width: '100%',
+                    display: 'flex',
+                  }}
+                >
+                  <FormControl size="small" fullWidth>
+                    <InputLabel
+                      htmlFor={`outlined-vehicle-specification-${index}`}
+                    >
+                      Specification
+                    </InputLabel>
+                    <OutlinedInput
+                      value={spec}
+                      onChange={(e) =>
+                        arrayHelpers.replace(index, e.target.value)
+                      }
+                      type="text"
+                      label="Specification"
+                      id={`outlined-vehicle-specification-${index}`}
+                    />
+                  </FormControl>
+                  <Tooltip title="Remove specification">
+                    <IconButton
+                      onClick={() => arrayHelpers.remove(index)}
+                      onMouseDown={handleMouseDown}
+                      edge="end"
+                      size="small"
+                      color="inherit"
+                    >
+                      <RemoveCircleOutlineIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+              </Grid>
+            ))}
+          </>
+        )}
+      />
     </>
   );
 };

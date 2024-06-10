@@ -1,77 +1,36 @@
-import { useEffect } from 'react';
+import { useCallback } from 'react';
 import {
   Unstable_Grid2 as Grid,
   Box,
   Paper,
   Button,
   Typography,
+  TextField,
   Link,
 } from '@mui/material';
-import EmailInput from '~/components/Authentication/EmailInput';
-import PasswordInput from '~/components/Authentication/PasswordInput';
+import LoadingButton from '@mui/lab/LoadingButton';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import PasswordField from '~/components/Authentication/PasswordField';
 import ErrorAlert from '~/components/Authentication/ErrorAlert';
 import { useAppSelector, useAppDispatch } from '~/redux/store';
-import {
-  getAuthFormData,
-  getAuthFormError,
-  setEmail,
-  setPassword,
-  resetAuthForm,
-  resetError,
-} from '~/redux/reducers/authFormSlice';
 import { getTheme } from '~/redux/reducers/themeSlice';
+import { loginUser } from '~/redux/reducers/userSlice';
 import { useNavigate } from 'react-router-dom';
 
-interface LoginProps {
-  onLogin: () => Promise<boolean | void>;
-}
-
-const Login = ({ onLogin }: LoginProps) => {
-  const dispatch = useAppDispatch();
+const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const theme = useAppSelector(getTheme);
-  const authFormData = useAppSelector(getAuthFormData);
-  const error = useAppSelector(getAuthFormError);
 
-  useEffect(() => {
-    return () => {
-      dispatch(resetAuthForm());
-      dispatch(resetError());
-    };
-  }, [dispatch]);
+  const validationSchema = Yup.object({
+    email: Yup.string().email('Invalid email address').required('Required'),
+    password: Yup.string().required('Required'),
+  });
 
-  const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-  };
-
-  const handleClearError = () => {
-    dispatch(resetError());
-  };
-
-  const handleOnChangeEmail = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    dispatch(setEmail(event.target.value));
-  };
-
-  const handleOnChangePassword = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    dispatch(setPassword(event.target.value));
-  };
-
-  const handleOnLogin = async (
-    event: React.FormEvent<EventTarget | HTMLFormElement>,
-  ) => {
-    event.preventDefault();
-    try {
-      if (await onLogin()) {
-        navigate('/', { replace: true });
-      }
-    } catch (error) {
-      console.error('Error occured while logging in', error);
-    }
-  };
+  const handleCancel = useCallback(() => {
+    navigate('/');
+  }, [navigate]);
 
   return (
     <Grid
@@ -79,83 +38,112 @@ const Login = ({ onLogin }: LoginProps) => {
       component={Box}
       sx={{
         height: '100vh',
+        width: '100vw',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
       }}
     >
-      <Grid xs={12} display="flex" alignItems="center" justifyContent="center">
-        <Box
-          component="form"
-          onSubmit={handleOnLogin}
-          sx={{
-            width: { xs: '70%', sm: '45%', md: '35%', lg: '25%', xl: '15%' },
+      <Grid xs={12} display="flex" justifyContent="center">
+        <Formik
+          initialValues={{ email: '', password: '' }}
+          validationSchema={validationSchema}
+          onSubmit={async (values, { setSubmitting }) => {
+            await dispatch(loginUser(values));
+            setSubmitting(false);
           }}
         >
-          <Grid
-            container
-            component={Paper}
-            variant="outlined"
-            spacing={1}
-            p={2}
-          >
-            <Grid
-              xs={12}
-              display="flex"
-              flexDirection="column"
-              justifyContent="center"
-              alignItems="center"
-              mt={1}
+          {({ isSubmitting, isValid, errors, touched }) => (
+            <Box
+              component={Form}
+              sx={{
+                width: {
+                  xs: '70%',
+                  sm: '45%',
+                  md: '35%',
+                  lg: '25%',
+                  xl: '15%',
+                },
+              }}
             >
-              <img
-                src={
-                  theme === 'light'
-                    ? '/src/assets/gudangmobil-logo-dark.png'
-                    : '/src/assets/gudangmobil-logo-light.png'
-                }
-                alt="logo"
-                style={{ width: 150, height: 60 }}
-              />
-              <Typography variant="h4" component="h1" sx={{ mt: 2 }}>
-                Sign In
-              </Typography>
-              <ErrorAlert error={error} onClearError={handleClearError} />
-            </Grid>
-            <Grid xs={12}>
-              <EmailInput
-                value={authFormData.email}
-                onChangeHandler={handleOnChangeEmail}
-                isValidEmail={authFormData.isValidEmail}
-                error={error}
-              />
-              <PasswordInput
-                value={authFormData.password}
-                label="Password"
-                onChangeHandler={handleOnChangePassword}
-                error={error}
-              />
-            </Grid>
-            <Grid xs={6}>
-              <Button
-                fullWidth
-                variant="contained"
-                onMouseDown={handleMouseDown}
+              <Grid
+                container
+                component={Paper}
+                variant="outlined"
+                spacing={1}
+                p={2}
               >
-                Cancel
-              </Button>
-            </Grid>
-            <Grid xs={6}>
-              <Button fullWidth variant="contained" type="submit">
-                Sign In
-              </Button>
-            </Grid>
-            <Grid xs={12} mb={1}>
-              <Typography variant="subtitle1">
-                Not a member?{' '}
-                <Link color="inherit" href="/register">
-                  <b>Sign Up</b>
-                </Link>
-              </Typography>
-            </Grid>
-          </Grid>
-        </Box>
+                <Grid
+                  xs={12}
+                  display="flex"
+                  flexDirection="column"
+                  justifyContent="center"
+                  alignItems="center"
+                  mt={1}
+                >
+                  <img
+                    src={
+                      theme === 'light'
+                        ? '/src/assets/gudangmobil-logo-dark.png'
+                        : '/src/assets/gudangmobil-logo-light.png'
+                    }
+                    alt="logo"
+                    style={{ width: 150, height: 60 }}
+                  />
+                  <Typography variant="h4" component="h1" sx={{ mt: 2 }}>
+                    Sign In
+                  </Typography>
+                  <ErrorAlert />
+                </Grid>
+                <Grid xs={12}>
+                  <Field
+                    as={TextField}
+                    fullWidth
+                    size="small"
+                    name="email"
+                    label="Email"
+                    type="email"
+                    error={touched.email && errors.email}
+                    helperText={<ErrorMessage name="email" />}
+                    sx={{ mb: 1 }}
+                  />
+                  <Field
+                    as={PasswordField}
+                    fullWidth
+                    size="small"
+                    name="password"
+                    label="Password"
+                    sx={{ mb: 1 }}
+                  />
+                </Grid>
+                <Grid xs={6}>
+                  <Button fullWidth variant="contained" onClick={handleCancel}>
+                    Cancel
+                  </Button>
+                </Grid>
+                <Grid xs={6}>
+                  <LoadingButton
+                    fullWidth
+                    variant="contained"
+                    type="submit"
+                    disabled={isSubmitting || !isValid}
+                    loading={isSubmitting}
+                  >
+                    Sign In
+                  </LoadingButton>
+                </Grid>
+                <Grid xs={12} mb={1}>
+                  <Typography variant="subtitle1">
+                    Not a member?{' '}
+                    <Link color="inherit" href="/register">
+                      <b>Sign Up</b>
+                    </Link>
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Box>
+          )}
+        </Formik>
       </Grid>
     </Grid>
   );

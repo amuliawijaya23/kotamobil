@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import {
   Divider,
   Typography,
@@ -11,36 +12,72 @@ import {
 } from '@mui/material';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-
+import { useFormikContext } from 'formik';
+import { useAppDispatch } from '~/redux/store';
+import { setAlert } from '~/redux/reducers/appSlice';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-
 import { useDropzone } from 'react-dropzone';
 
 interface VehicleImagesProps {
-  images: File[] | null | undefined;
-  vehicleImages: { key: string; url: string }[] | null;
-  onDrop: (acceptedFiles: File[] | undefined) => void;
-  onRemoveVehicleImages: (index: number) => void;
-  onRemoveUploadedImages: (index: number) => void;
+  currentImages: { key: string; url: string }[] | null;
+  onRemoveCurrentImages: (index: number) => void;
+}
+interface VehicleFormValues {
+  images: File[];
+  // Add other form fields as necessary
 }
 
 const VehicleImages = ({
-  images,
-  vehicleImages,
-  onDrop,
-  onRemoveVehicleImages,
-  onRemoveUploadedImages,
+  currentImages,
+  onRemoveCurrentImages,
 }: VehicleImagesProps) => {
+  const dispatch = useAppDispatch();
   const theme = useTheme();
-
   const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
+  const { setFieldValue, values } = useFormikContext<VehicleFormValues>();
 
   let imageListCol = 2;
 
   if (isMdUp) {
     imageListCol = 5;
   }
+
+  const onDrop = useCallback(
+    (acceptedFiles: File[] | undefined) => {
+      if (acceptedFiles) {
+        const currentImagesLength =
+          (currentImages?.length || 0) + (values.images?.length || 0);
+        const totalImagesLength = currentImagesLength + acceptedFiles.length;
+
+        if (totalImagesLength > 10) {
+          dispatch(
+            setAlert({
+              message: 'You have exceeded the maximum number of allowed images',
+              severity: 'error',
+            }),
+          );
+          return;
+        }
+
+        const updatedImages = values.images
+          ? values.images.concat(acceptedFiles)
+          : acceptedFiles;
+
+        setFieldValue('images', updatedImages);
+      }
+    },
+    [currentImages, values.images, setFieldValue, dispatch],
+  );
+
+  const onRemoveUploadedImages = useCallback(
+    (index: number) => {
+      const updatedImages = [...values.images];
+      updatedImages.splice(index, 1);
+      setFieldValue('images', updatedImages);
+    },
+    [setFieldValue, values.images],
+  );
 
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
@@ -64,8 +101,8 @@ const VehicleImages = ({
 
       <Grid xs={12}>
         <ImageList cols={imageListCol} rowHeight={125}>
-          {vehicleImages &&
-            vehicleImages.map((image, index) => (
+          {currentImages &&
+            currentImages.map((image, index) => (
               <ImageListItem
                 key={image.key}
                 sx={{
@@ -80,15 +117,15 @@ const VehicleImages = ({
                   style={{ height: 120 }}
                 />
                 <IconButton
-                  onClick={() => onRemoveVehicleImages(index)}
+                  onClick={() => onRemoveCurrentImages(index)}
                   sx={{ position: 'absolute', top: '1px', right: '1px' }}
                 >
                   <RemoveCircleIcon />
                 </IconButton>
               </ImageListItem>
             ))}
-          {!vehicleImages ||
-            (vehicleImages.length === 0 && !images && (
+          {!currentImages ||
+            (currentImages.length === 0 && !values.images && (
               <ImageListItem key={`image-placeholder`}>
                 <img
                   loading="lazy"
@@ -99,8 +136,8 @@ const VehicleImages = ({
                 />
               </ImageListItem>
             ))}
-          {images &&
-            images.map((image: File, index: number) => (
+          {values.images &&
+            values.images.map((image: File, index: number) => (
               <ImageListItem
                 key={`image-upload-${index}`}
                 sx={{ position: 'relative' }}

@@ -5,9 +5,12 @@ import { Navigate } from 'react-router-dom';
 const COOKIE_NAME = import.meta.env.VITE_API_COOKIE_NAME;
 
 const UnauthenticatedRoute = ({ children }: { children: React.ReactNode }) => {
-  if (Cookies.get(COOKIE_NAME)) {
+  const AppCookie = Cookies.get(COOKIE_NAME);
+
+  if (AppCookie) {
     return <Navigate to="/" />;
   }
+
   return children;
 };
 

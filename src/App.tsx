@@ -18,7 +18,7 @@ import { getAppStatus } from './redux/reducers/appSlice';
 
 function App() {
   const { isLoading } = useAppSelector(getAppStatus);
-  const { handleLogin, handleRegister, handleLogout } = useAuthentication();
+  useAuthentication();
 
   if (isLoading) {
     return (
@@ -39,13 +39,13 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Layout onLogout={handleLogout} />}>
+        <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route
             path="/login"
             element={
               <UnauthenticatedRoute>
-                <Login onLogin={handleLogin} />
+                <Login />
               </UnauthenticatedRoute>
             }
           />
@@ -53,7 +53,7 @@ function App() {
             path="/register"
             element={
               <UnauthenticatedRoute>
-                <Register onRegister={handleRegister} />
+                <Register />
               </UnauthenticatedRoute>
             }
           />

@@ -3,7 +3,7 @@ import { useEffect, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '~/redux/store';
 import {
   getInventory,
-  setInventoryData,
+  setInventoryVehicles,
 } from '~/redux/reducers/inventorySlice';
 import {
   setVehicleData,
@@ -46,7 +46,7 @@ const useVehicleData = () => {
 
       if (response.status === 200) {
         const updatedInventory = inventory.filter((item) => item._id !== id);
-        dispatch(setInventoryData(updatedInventory));
+        dispatch(setInventoryVehicles(updatedInventory));
         navigate('/inventory');
         dispatch(
           setAlert({ message: response.data.message, severity: 'success' }),

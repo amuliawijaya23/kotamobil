@@ -26,7 +26,7 @@ const VehicleInformation = () => {
             <b>MSRP:</b>{' '}
             <NumericFormat
               displayType="text"
-              value={vehicle?.price}
+              value={vehicle?.marketPrice}
               thousandSeparator="."
               decimalSeparator=","
               prefix="Rp "
