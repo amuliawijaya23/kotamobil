@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import {
   IconButton,
   Avatar,
@@ -23,19 +23,25 @@ const UserProfile = () => {
   const [open, setOpen] = useState<HTMLButtonElement | null>(null);
   const profileId = open ? 'profile-menu' : undefined;
 
-  const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-  };
+  const handleMouseDown = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+    },
+    [],
+  );
 
-  const handleProfileOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
-    setOpen(e.currentTarget);
-  };
+  const handleProfileOpen = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      setOpen(e.currentTarget);
+    },
+    [],
+  );
 
-  const handleProfileClose = () => {
+  const handleProfileClose = useCallback(() => {
     setOpen(null);
-  };
+  }, []);
 
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     try {
       await dispatch(logoutUser()).unwrap();
       dispatch(resetInventory());
@@ -45,7 +51,7 @@ const UserProfile = () => {
     } catch (error) {
       console.error(`Error logging out: ${error}`);
     }
-  };
+  }, [dispatch, navigate]);
 
   return (
     <>

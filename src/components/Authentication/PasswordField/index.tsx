@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { TextField, IconButton, InputAdornment } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { ErrorMessage, useField } from 'formik';
@@ -11,9 +11,9 @@ const PasswordField: React.FC<PasswordFieldProps> = ({ label, ...props }) => {
   const [field, meta] = useField(props);
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
-  const handleShowPassword = () => {
+  const handleShowPassword = useCallback(() => {
     setShowPassword((show) => !show);
-  };
+  }, []);
 
   return (
     <TextField

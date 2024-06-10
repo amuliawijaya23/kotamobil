@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Collapse, Alert, IconButton } from '@mui/material';
 import { useAppSelector, useAppDispatch } from '~/redux/store';
 import {
@@ -16,9 +16,9 @@ const ErrorAlert = () => {
     event.preventDefault();
   };
 
-  const handleClearError = () => {
+  const handleClearError = useCallback(() => {
     dispatch(clearUserError());
-  };
+  }, [dispatch]);
 
   return (
     <Collapse

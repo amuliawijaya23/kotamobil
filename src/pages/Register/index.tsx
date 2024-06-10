@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import {
   Unstable_Grid2 as Grid,
   Box,
@@ -40,9 +41,9 @@ const Register = () => {
       .required('Required'),
   });
 
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     navigate('/');
-  };
+  }, [navigate]);
 
   return (
     <Grid

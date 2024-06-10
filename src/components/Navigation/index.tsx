@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import { styled } from '@mui/material/styles';
 import { Box, Toolbar, Button, IconButton } from '@mui/material';
@@ -43,39 +44,40 @@ const NavBar = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const handleMouseDown = (
-    event: React.MouseEvent<HTMLButtonElement | HTMLParagraphElement>,
-  ) => {
-    event.preventDefault();
-  };
+  const handleMouseDown = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement | HTMLParagraphElement>) => {
+      event.preventDefault();
+    },
+    [],
+  );
 
-  const handleOnClickHome = () => {
+  const handleOnClickHome = useCallback(() => {
     navigate('/');
-  };
+  }, [navigate]);
 
-  const handleOnClickDashboard = () => {
+  const handleOnClickDashboard = useCallback(() => {
     navigate('/dashboard');
-  };
+  }, [navigate]);
 
-  const handleOnClickInventory = () => {
+  const handleOnClickInventory = useCallback(() => {
     navigate('/inventory');
-  };
+  }, [navigate]);
 
-  const handleOnClickContacts = () => {
+  const handleOnClickContacts = useCallback(() => {
     navigate('/contacts');
-  };
+  }, [navigate]);
 
-  const handleOnClickLogin = () => {
+  const handleOnClickLogin = useCallback(() => {
     navigate('/login');
-  };
+  }, [navigate]);
 
-  const handleOnClickRegister = () => {
+  const handleOnClickRegister = useCallback(() => {
     navigate('/register');
-  };
+  }, [navigate]);
 
-  const toggleThemeMode = () => {
+  const toggleThemeMode = useCallback(() => {
     dispatch(toggleTheme());
-  };
+  }, [dispatch]);
 
   return (
     <AppBar position="fixed">

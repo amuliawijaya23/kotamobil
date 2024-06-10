@@ -10,8 +10,8 @@ import { setLoading } from './reducers/appSlice';
 import { setContactsData } from './reducers/contactsSlice';
 import {
   QueryData,
-  setInventoryData,
-  setInventoryLoading,
+  setInventoryVehicles,
+  setInventoryStatus,
   setQueryData,
 } from './reducers/inventorySlice';
 import {
@@ -262,7 +262,7 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
         setMonthsOfInterval(JSON.stringify(monthsOfInterval)),
       );
 
-      listenerApi.dispatch(setInventoryData(vehicles));
+      listenerApi.dispatch(setInventoryVehicles(vehicles));
       listenerApi.dispatch(setQueryData(queryData));
       listenerApi.dispatch(setContactsData(contacts));
       listenerApi.dispatch(setTotalSales(totalSales));
@@ -410,7 +410,7 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
     );
   },
   effect: async (_action, listenerApi) => {
-    listenerApi.dispatch(setInventoryLoading(true));
+    listenerApi.dispatch(setInventoryStatus('loading'));
     if (vehicleSearchRequest) {
       vehicleSearchRequest.cancel('Search Cancelled');
     }
@@ -447,7 +447,7 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
         },
         { cancelToken: vehicleSearchRequest.token },
       );
-      listenerApi.dispatch(setInventoryData(inventory.data));
+      listenerApi.dispatch(setInventoryVehicles(inventory.data));
     } catch (error) {
       if (axios.isCancel(error)) {
         console.log('Search Cancelled');
@@ -455,7 +455,7 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
       }
       console.error('Error searching for vehicles:', error);
     } finally {
-      listenerApi.dispatch(setInventoryLoading(false));
+      listenerApi.dispatch(setInventoryStatus('succeeded'));
     }
   },
 });

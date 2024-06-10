@@ -54,7 +54,7 @@ const Inventory = () => {
   const [openFilter, setOpenFilter] = useState<boolean>(false);
   const [openForm, setOpenForm] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
-  const isLoading = useAppSelector(getInventoryStatus);
+  const status = useAppSelector(getInventoryStatus);
 
   const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -154,7 +154,7 @@ const Inventory = () => {
           />
           <Divider />
           <Grid container component={Box} p={2} spacing={2}>
-            {isLoading && (
+            {status === 'loading' && (
               <Box
                 sx={{
                   minHeight: '70vh',
@@ -167,7 +167,7 @@ const Inventory = () => {
                 <Loading />
               </Box>
             )}
-            {!isLoading &&
+            {status !== 'loading' &&
               visibleItems.map((vehicle: VehicleData, index: number) => (
                 <Grid
                   key={`${vehicle.name}-card-${index}`}
@@ -180,7 +180,7 @@ const Inventory = () => {
                   <VehicleCard vehicle={vehicle} />
                 </Grid>
               ))}
-            {!isLoading && visibleItems.length === 0 && (
+            {status !== 'loading' && visibleItems.length === 0 && (
               <Grid
                 xs={12}
                 sx={{
@@ -196,7 +196,7 @@ const Inventory = () => {
                 </Typography>
               </Grid>
             )}
-            {!isLoading && paginationCount > 1 && (
+            {status !== 'loading' && paginationCount > 1 && (
               <Grid xs={12} mt={2}>
                 <Toolbar
                   sx={{
@@ -234,7 +234,7 @@ const Inventory = () => {
               />
               <Divider />
             </Grid>
-            {isLoading && (
+            {status === 'loading' && (
               <Box
                 sx={{
                   width: '100%',
@@ -247,7 +247,7 @@ const Inventory = () => {
                 <Loading />
               </Box>
             )}
-            {!isLoading &&
+            {status !== 'loading' &&
               visibleItems.map((vehicle: VehicleData, index: number) => (
                 <Grid
                   key={`${vehicle.name}-card-${index}`}
@@ -258,7 +258,7 @@ const Inventory = () => {
                   <VehicleCard vehicle={vehicle} />
                 </Grid>
               ))}
-            {visibleItems.length === 0 && !isLoading && (
+            {visibleItems.length === 0 && status !== 'loading' && (
               <Grid
                 xs={12}
                 sx={{
@@ -274,7 +274,7 @@ const Inventory = () => {
                 </Typography>
               </Grid>
             )}
-            {!isLoading && paginationCount > 1 && (
+            {status !== 'loading' && paginationCount > 1 && (
               <Grid xs={12} mt={2}>
                 <Toolbar
                   sx={{

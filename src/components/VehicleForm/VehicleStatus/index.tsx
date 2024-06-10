@@ -1,18 +1,11 @@
 import type { ContactData } from '~/redux/reducers/contactsSlice';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import {
   Divider,
   Autocomplete,
   Box,
   Typography,
   Unstable_Grid2 as Grid,
-  FormControl,
-  FormHelperText,
-  InputLabel,
-  OutlinedInput,
-  Select,
-  SelectChangeEvent,
-  MenuItem,
   TextField,
   IconButton,
   Button,
@@ -21,92 +14,41 @@ import {
 import { DatePicker } from '@mui/x-date-pickers';
 import { NumericFormat } from 'react-number-format';
 import AddIcon from '@mui/icons-material/Add';
+import SelectField from '../SelectField';
 import ContactForm from '~/components/ContactForm';
-import { useAppSelector, useAppDispatch } from '~/redux/store';
-import {
-  getVehicleFormData,
-  setName,
-  setStatus,
-  setDateAdded,
-  setDateSold,
-  setPrice,
-  setMarketPrice,
-  setPurchasePrice,
-  setSoldPrice,
-  setCondition,
-  setPlateNumber,
-  setTaxDate,
-} from '~/redux/reducers/vehicleFormSlice';
-import { getAppAlert } from '~/redux/reducers/appSlice';
+import { useFormikContext, Field, ErrorMessage } from 'formik';
+import { useAppSelector } from '~/redux/store';
 import { getContactsData } from '~/redux/reducers/contactsSlice';
 import { condition, status } from '~/helpers/AutocompleteAndSelectData';
 
-interface VehicleStatusProps {
-  contact: ContactData | null;
-  onBuyerChange: (event: unknown, input: ContactData | null) => void;
+interface VehicleStatusValues {
+  name: string;
+  status: string;
+  dateAdded: Date | null;
+  dateSold: Date | null;
+  buyerId: string;
+  price: number | null;
+  marketPrice: number | null;
+  purchasePrice: number | null;
+  soldPrice: number | null;
+  condition: string;
+  plateNumber: string;
+  taxDate: Date | null;
 }
 
-const VehicleStatus = ({ contact, onBuyerChange }: VehicleStatusProps) => {
-  const [openContactForm, setOpenContactForm] = useState<boolean>(false);
-  const vehicleFormData = useAppSelector(getVehicleFormData);
+const VehicleStatus = () => {
+  const { setFieldValue, values, touched, errors } =
+    useFormikContext<VehicleStatusValues>();
   const contacts = useAppSelector(getContactsData);
-  const alert = useAppSelector(getAppAlert);
+  const [openContactForm, setOpenContactForm] = useState<boolean>(false);
 
-  const dispatch = useAppDispatch();
-
-  const handleOpenContactForm = () => {
+  const handleOpenContactForm = useCallback(() => {
     setOpenContactForm(true);
-  };
+  }, []);
 
-  const handleCloseContactForm = () => {
+  const handleCloseContactForm = useCallback(() => {
     setOpenContactForm(false);
-  };
-
-  const handleVehicleNameChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    dispatch(setName(event.target.value));
-  };
-
-  const handleStatusChange = (event: SelectChangeEvent) => {
-    dispatch(setStatus(event.target.value));
-  };
-
-  const handleDateAddedChange = (input: Date | null) => {
-    dispatch(setDateAdded(JSON.stringify(input)));
-  };
-
-  const handleDateSoldChange = (input: Date | null) => {
-    dispatch(setDateSold(JSON.stringify(input)));
-  };
-
-  const handlePriceChange = (value: number | null) => {
-    dispatch(setPrice(value));
-  };
-
-  const handleMarketPriceChange = (value: number | null) => {
-    dispatch(setMarketPrice(value));
-  };
-  const handlePurchasePriceChange = (value: number | null) => {
-    dispatch(setPurchasePrice(value));
-  };
-  const handleSoldPriceChange = (value: number | null) => {
-    dispatch(setSoldPrice(value));
-  };
-
-  const handleConditionChange = (event: SelectChangeEvent) => {
-    dispatch(setCondition(event.target.value));
-  };
-
-  const handlePlateNumberChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    dispatch(setPlateNumber(event.target.value));
-  };
-
-  const handleTaxDateChange = (input: Date | null) => {
-    dispatch(setTaxDate(JSON.stringify(input)));
-  };
+  }, []);
 
   return (
     <>
@@ -126,111 +68,75 @@ const VehicleStatus = ({ contact, onBuyerChange }: VehicleStatusProps) => {
         <Divider />
       </Grid>
       <Grid xs={12}>
-        <FormControl size="small" fullWidth>
-          <InputLabel htmlFor="outlined-vehicle-name">Name</InputLabel>
-          <OutlinedInput
-            onChange={handleVehicleNameChange}
-            value={vehicleFormData.name}
-            type="text"
-            label="Name"
-            error={Boolean(alert?.severity == 'error' && !vehicleFormData.name)}
-          />
-          {alert?.severity == 'error' && !vehicleFormData.name && (
-            <FormHelperText error>{alert.message}</FormHelperText>
-          )}
-        </FormControl>
+        <Field
+          as={TextField}
+          name="name"
+          label="Name"
+          fullWidth
+          size="small"
+          variant="outlined"
+          error={touched.name && Boolean(errors.name)}
+          helperText={<ErrorMessage name="name" />}
+        />
       </Grid>
       <Grid xs={12} sm={6} md={4}>
-        <FormControl size="small" fullWidth>
-          <InputLabel id="vehicle-status-select-label">Status</InputLabel>
-          <Select
-            size="small"
-            labelId="vehicle-status-select-label"
-            id="vehicle-status-select"
-            value={vehicleFormData.status}
-            label="Status"
-            onChange={handleStatusChange}
-            error={Boolean(
-              alert?.severity == 'error' && !vehicleFormData.status,
-            )}
-          >
-            {status.map((s) => (
-              <MenuItem key={`${s}-status-form-selection`} value={s}>
-                {s}
-              </MenuItem>
-            ))}
-          </Select>
-          {alert?.severity == 'error' && !vehicleFormData.status && (
-            <FormHelperText error>{alert.message}</FormHelperText>
-          )}
-        </FormControl>
+        <Field as={SelectField} options={status} name="status" label="Status" />
       </Grid>
       <Grid xs={0} sm={6} md={8}></Grid>
       <Grid xs={12} sm={6}>
         <DatePicker
-          onChange={handleDateAddedChange}
+          onChange={(date) => setFieldValue('dateAdded', date)}
           label="Date Added"
-          value={JSON.parse(vehicleFormData.dateAdded)}
+          value={values.dateAdded}
           slotProps={{
             textField: {
               fullWidth: true,
               size: 'small',
-              error: Boolean(
-                alert?.severity == 'error' && !vehicleFormData.dateAdded,
-              ),
-              helperText:
-                alert?.severity == 'error' &&
-                !vehicleFormData.dateAdded &&
-                `${alert.message}`,
-              FormHelperTextProps: { error: true },
+              error: Boolean(touched.dateAdded && errors.dateAdded),
+              helperText: <ErrorMessage name="dateAdded" component="div" />,
             },
           }}
           maxDate={new Date()}
         />
       </Grid>
-      {vehicleFormData.status === 'Sold' && (
+      {values.status === 'Sold' && (
         <Grid xs={12} sm={6}>
           <DatePicker
-            onChange={handleDateSoldChange}
+            onChange={(date) => setFieldValue('dateSold', date)}
             label="Date Sold"
-            value={
-              vehicleFormData.dateSold && JSON.parse(vehicleFormData.dateSold)
-            }
+            value={values.dateSold}
             slotProps={{
               textField: {
                 fullWidth: true,
                 size: 'small',
-                error: Boolean(
-                  alert?.severity == 'error' &&
-                    vehicleFormData.status === 'Sold' &&
-                    !vehicleFormData.dateSold,
-                ),
-                helperText:
-                  alert?.severity == 'error' &&
-                  vehicleFormData.status === 'Sold' &&
-                  !vehicleFormData.dateSold &&
-                  alert?.message,
-                FormHelperTextProps: { error: true },
+                error: Boolean(touched.dateSold && errors.dateSold),
+                helperText: <ErrorMessage name="dateSold" component="div" />,
               },
             }}
             maxDate={new Date()}
           />
         </Grid>
       )}
-      {vehicleFormData.status === 'Sold' && contacts && (
+      {values.status === 'Sold' && contacts && (
         <>
           <Grid xs={12} sm={6}>
             <Autocomplete
               fullWidth
               autoHighlight
               options={contacts}
-              value={contact}
+              value={
+                contacts.find((contact) => contact._id === values.buyerId) ||
+                null
+              }
               getOptionLabel={(option) =>
                 `${option.firstName}${
                   option.lastName ? ` ${option.lastName}` : ''
                 }`
               }
-              onChange={onBuyerChange}
+              onChange={(_event, newValue: ContactData | null) =>
+                setFieldValue('buyerId', newValue ? newValue._id : '')
+              }
+              isOptionEqualToValue={(option, value) => option._id === value._id}
               renderOption={(props, option) => (
                 <li {...props} key={`${option._id}-autocomplete`}>
                   {option.firstName}
@@ -240,20 +146,15 @@ const VehicleStatus = ({ contact, onBuyerChange }: VehicleStatusProps) => {
               renderInput={(params) => (
                 <TextField
                   {...params}
+                  name="buyerId"
                   label="Buyer"
                   size="small"
                   error={Boolean(
-                    alert?.severity === 'error' &&
-                      vehicleFormData.status === 'Sold' &&
-                      !vehicleFormData.buyerId,
+                    touched.buyerId &&
+                      errors.buyerId &&
+                      values.status === 'Sold',
                   )}
-                  helperText={
-                    alert?.severity === 'error' &&
-                    vehicleFormData.status === 'Sold' &&
-                    !vehicleFormData.buyerId &&
-                    alert.message
-                  }
-                  FormHelperTextProps={{ error: true }}
+                  helperText={<ErrorMessage name="buyerId" component="div" />}
                   inputProps={{ ...params.inputProps }}
                 />
               )}
@@ -289,21 +190,12 @@ const VehicleStatus = ({ contact, onBuyerChange }: VehicleStatusProps) => {
         <NumericFormat
           onValueChange={(values) => {
             if (!values.floatValue) {
-              handlePriceChange(null);
-            }
-            if (values.floatValue) {
-              handlePriceChange(values.floatValue);
+              setFieldValue('price', null);
+            } else {
+              setFieldValue('price', values.floatValue);
             }
           }}
-          isAllowed={undefined}
-          error={Boolean(alert?.severity == 'error' && !vehicleFormData.price)}
-          helperText={
-            alert?.severity == 'error' &&
-            !vehicleFormData.price &&
-            alert.message
-          }
-          FormHelperTextProps={{ error: true }}
-          value={vehicleFormData.price}
+          value={values.price}
           fullWidth
           displayType="input"
           customInput={TextField}
@@ -312,20 +204,20 @@ const VehicleStatus = ({ contact, onBuyerChange }: VehicleStatusProps) => {
           thousandSeparator="."
           decimalSeparator=","
           prefix="Rp "
+          error={Boolean(touched.price && errors.price)}
+          helperText={<ErrorMessage name="price" />}
         />
       </Grid>
       <Grid xs={12} sm={6}>
         <NumericFormat
           onValueChange={(values) => {
             if (!values.floatValue) {
-              handleMarketPriceChange(null);
-            }
-            if (values.floatValue) {
-              handleMarketPriceChange(values.floatValue);
+              setFieldValue('marketPrice', null);
+            } else {
+              setFieldValue('marketPrice', values.floatValue);
             }
           }}
-          isAllowed={undefined}
-          value={vehicleFormData.marketPrice}
+          value={values.marketPrice}
           fullWidth
           displayType="input"
           customInput={TextField}
@@ -340,14 +232,12 @@ const VehicleStatus = ({ contact, onBuyerChange }: VehicleStatusProps) => {
         <NumericFormat
           onValueChange={(values) => {
             if (!values.floatValue) {
-              handlePurchasePriceChange(null);
-            }
-            if (values.floatValue) {
-              handlePurchasePriceChange(values.floatValue);
+              setFieldValue('purchasePrice', null);
+            } else {
+              setFieldValue('purchasePrice', values.floatValue);
             }
           }}
-          isAllowed={undefined}
-          value={vehicleFormData.purchasePrice}
+          value={values.purchasePrice}
           fullWidth
           displayType="input"
           customInput={TextField}
@@ -358,29 +248,17 @@ const VehicleStatus = ({ contact, onBuyerChange }: VehicleStatusProps) => {
           prefix="Rp "
         />
       </Grid>
-      {vehicleFormData.status === 'Sold' && (
+      {values.status === 'Sold' && (
         <Grid xs={12} sm={6}>
           <NumericFormat
             onValueChange={(values) => {
               if (!values.floatValue) {
-                handleSoldPriceChange(null);
-              }
-              if (values.floatValue) {
-                handleSoldPriceChange(values.floatValue);
+                setFieldValue('soldPrice', null);
+              } else {
+                setFieldValue('soldPrice', values.floatValue);
               }
             }}
-            isAllowed={undefined}
-            error={Boolean(
-              alert?.severity == 'error' && !vehicleFormData.soldPrice,
-            )}
-            helperText={
-              alert?.severity == 'error' &&
-              vehicleFormData.status === 'Sold' &&
-              !vehicleFormData.soldPrice &&
-              alert.message
-            }
-            FormHelperTextProps={{ error: true }}
-            value={vehicleFormData.soldPrice}
+            value={values.soldPrice}
             fullWidth
             displayType="input"
             customInput={TextField}
@@ -389,6 +267,8 @@ const VehicleStatus = ({ contact, onBuyerChange }: VehicleStatusProps) => {
             thousandSeparator="."
             decimalSeparator=","
             prefix="Rp "
+            error={Boolean(touched.soldPrice && errors.soldPrice)}
+            helperText={<ErrorMessage name="soldPrice" />}
           />
         </Grid>
       )}
@@ -405,80 +285,39 @@ const VehicleStatus = ({ contact, onBuyerChange }: VehicleStatusProps) => {
       </Grid>
       <Grid xs={12}>
         <Box sx={{ width: { xs: '100%', sm: '50%', md: '40%' } }}>
-          <FormControl size="small" fullWidth>
-            <InputLabel id="vehicle-condition-select-label">
-              Condition
-            </InputLabel>
-            <Select
-              size="small"
-              labelId="vehicle-condition-select-label"
-              id="vehicle-condition-select"
-              value={vehicleFormData.condition}
-              label="Condition"
-              error={Boolean(
-                alert?.severity == 'error' && !vehicleFormData.condition,
-              )}
-              onChange={handleConditionChange}
-            >
-              {condition.map((c) => (
-                <MenuItem key={`${c}-condition-form-selection`} value={c}>
-                  {c}
-                </MenuItem>
-              ))}
-            </Select>
-            {alert?.severity == 'error' && !vehicleFormData.condition && (
-              <FormHelperText error>{alert.message}</FormHelperText>
-            )}
-          </FormControl>
+          <Field
+            as={SelectField}
+            options={condition}
+            name="condition"
+            label="Condition"
+          />
         </Box>
       </Grid>
-      {vehicleFormData.condition === 'Used' && (
+      {values.condition === 'Used' && (
         <>
           <Grid xs={12} sm={6}>
-            <FormControl size="small" fullWidth>
-              <InputLabel htmlFor="outlined-vehicle-plate-number">
-                Plate Number
-              </InputLabel>
-              <OutlinedInput
-                onChange={handlePlateNumberChange}
-                value={vehicleFormData.plateNumber}
-                error={Boolean(
-                  alert?.severity == 'error' &&
-                    vehicleFormData.condition === 'Used' &&
-                    !vehicleFormData.plateNumber,
-                )}
-                type="text"
-                label="Plate Number"
-              />
-              {alert?.severity == 'error' &&
-                vehicleFormData.condition === 'Used' &&
-                !vehicleFormData.plateNumber && (
-                  <FormHelperText error>{alert.message}</FormHelperText>
-                )}
-            </FormControl>
+            <Field
+              as={TextField}
+              name="plateNumber"
+              label="Plate Number"
+              fullWidth
+              size="small"
+              variant="outlined"
+              error={touched.plateNumber && Boolean(errors.plateNumber)}
+              helperText={<ErrorMessage name="plateNumber" />}
+            />
           </Grid>
           <Grid xs={12} sm={6}>
             <DatePicker
-              onChange={handleTaxDateChange}
+              onChange={(date) => setFieldValue('taxDate', date)}
               label="Tax Date"
-              value={
-                vehicleFormData.taxDate && JSON.parse(vehicleFormData.taxDate)
-              }
+              value={values.taxDate}
               slotProps={{
                 textField: {
                   fullWidth: true,
                   size: 'small',
-                  error: Boolean(
-                    alert?.severity == 'error' &&
-                      vehicleFormData.condition === 'Used' &&
-                      !vehicleFormData.taxDate,
-                  ),
-                  helperText:
-                    alert?.severity == 'error' &&
-                    vehicleFormData.condition === 'Used' &&
-                    !vehicleFormData.taxDate &&
-                    alert.message,
-                  FormHelperTextProps: { error: true },
+                  error: Boolean(touched.taxDate && errors.taxDate),
+                  helperText: <ErrorMessage name="taxDate" component="div" />,
                 },
               }}
             />
