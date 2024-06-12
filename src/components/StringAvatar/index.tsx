@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Avatar } from '@mui/material';
 
 interface StringAvataProps {
@@ -22,13 +23,17 @@ const stringToColor = (string: string) => {
 };
 
 const StringAvatar = ({ name }: StringAvataProps) => {
-  const props = {
-    sx: { bgcolor: stringToColor(name) },
-    children:
-      name.split(' ').length > 1
-        ? `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`
-        : name[0],
-  };
+  const props = useMemo(
+    () => ({
+      sx: { bgcolor: stringToColor(name) },
+      children:
+        name.split(' ').length > 1
+          ? `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`
+          : name[0],
+    }),
+    [name],
+  );
+
   return <Avatar sizes="small" {...props} />;
 };
 

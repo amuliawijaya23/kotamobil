@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { styled } from '@mui/material/styles';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import {
@@ -42,17 +42,20 @@ const ConditionSelection = () => {
   const queryData = useAppSelector(getQueryData);
   const [expanded, setExpanded] = useState<boolean>(false);
 
-  const handleExpandClick = () => {
+  const handleExpandClick = useCallback(() => {
     setExpanded((prev) => !prev);
-  };
+  }, []);
 
-  const handleConditionSelection = (selectedCondition: string) => {
-    dispatch(updateConditionSelections(selectedCondition));
-  };
+  const handleConditionSelection = useCallback(
+    (selectedCondition: string) => {
+      dispatch(updateConditionSelections(selectedCondition));
+    },
+    [dispatch],
+  );
 
-  const handleSelectAllConditionChange = () => {
+  const handleSelectAllConditionChange = useCallback(() => {
     dispatch(selectAllCondition());
-  };
+  }, [dispatch]);
 
   return (
     queryData && (

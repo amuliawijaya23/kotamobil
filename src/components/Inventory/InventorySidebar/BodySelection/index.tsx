@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { styled } from '@mui/material/styles';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import {
@@ -42,17 +42,20 @@ const BodySelection = () => {
   const queryData = useAppSelector(getQueryData);
   const [expanded, setExpanded] = useState<boolean>(false);
 
-  const handleExpandClick = () => {
+  const handleExpandClick = useCallback(() => {
     setExpanded((prev) => !prev);
-  };
+  }, []);
 
-  const handleBodyTypeSelection = (selectedBodyType: string) => {
-    dispatch(updateBodyTypeSelections(selectedBodyType));
-  };
+  const handleBodyTypeSelection = useCallback(
+    (selectedBodyType: string) => {
+      dispatch(updateBodyTypeSelections(selectedBodyType));
+    },
+    [dispatch],
+  );
 
-  const handleSelectAllBodyTypeChange = () => {
+  const handleSelectAllBodyTypeChange = useCallback(() => {
     dispatch(selectAllBodyType());
-  };
+  }, [dispatch]);
 
   return (
     queryData && (

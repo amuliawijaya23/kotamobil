@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import {
   Divider,
   Typography,
@@ -7,7 +8,6 @@ import {
 } from '@mui/material';
 import { useFormikContext, FormikProps, Field, ErrorMessage } from 'formik';
 import SelectField from '../SelectField';
-
 import {
   makesAndModels,
   bodyType,
@@ -38,11 +38,15 @@ const VehicleDetails = () => {
     errors,
   }: FormikProps<VehicleDetailsValues> =
     useFormikContext<VehicleDetailsValues>();
-  const makes = Object.keys(makesAndModels);
-  const models = makes.reduce<string[]>((acc, make) => {
-    const makeModels = makesAndModels[make as keyof typeof makesAndModels];
-    return acc.concat(makeModels);
-  }, []);
+  const makes = useMemo(() => Object.keys(makesAndModels), []);
+  const models = useMemo(
+    () =>
+      makes.reduce<string[]>((acc, make) => {
+        const makeModels = makesAndModels[make as keyof typeof makesAndModels];
+        return acc.concat(makeModels);
+      }, []),
+    [makes],
+  );
 
   return (
     <>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import {
   Unstable_Grid2 as Grid,
   Toolbar,
@@ -18,11 +18,14 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { useAppSelector } from '~/redux/store';
+import { useAppSelector, useAppDispatch } from '~/redux/store';
+import { setAlert } from '~/redux/reducers/appSlice';
+import { deleteVehicle } from '~/redux/reducers/inventorySlice';
 import {
   getVehicleData,
   getVehicleStatus,
 } from '~/redux/reducers/vehicleSlice';
+import { useNavigate } from 'react-router-dom';
 import useVehicleData from '~/hooks/useVehicleData';
 import Loading from '~/components/Loading';
 import VehicleForm from '~/components/VehicleForm';
@@ -33,9 +36,11 @@ import VehicleImageStepper from '~/components/Vehicle/VehicleImageStepper';
 import PageNotFound from '../PageNotFound';
 
 const Vehicle = () => {
-  const { handleOnDelete } = useVehicleData();
+  useVehicleData();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const vehicle = useAppSelector(getVehicleData);
-  const isLoading = useAppSelector(getVehicleStatus);
+  const status = useAppSelector(getVehicleStatus);
   const [open, setOpen] = useState<boolean>(false);
   const [openImages, setOpenImages] = useState<boolean>(false);
   const [openConfirmation, setOpenConfirmation] = useState<boolean>(false);
@@ -47,40 +52,66 @@ const Vehicle = () => {
     }
   }, [vehicle?.images, activeStep]);
 
-  const handleOpenForm = () => {
-    setOpen(true);
-  };
-
-  const handleCloseForm = () => {
-    setOpen(false);
-  };
-
-  const handleOpenImages = (index: number) => {
+  const handleOpenImages = useCallback((index: number) => {
     setActiveStep(index);
     setOpenImages(true);
-  };
+  }, []);
 
-  const handleCloseImages = () => {
+  const handleCloseImages = useCallback(() => {
     setOpenImages(false);
-  };
+  }, []);
 
-  const handleOpenConfirmation = () => {
+  const handleOpenForm = useCallback(() => {
+    setOpen(true);
+  }, []);
+
+  const handleCloseForm = useCallback(() => {
+    setOpen(false);
+  }, []);
+
+  const handleOpenConfirmation = useCallback(() => {
     setOpenConfirmation(true);
-  };
+  }, []);
 
-  const handleCloseConfirmation = () => {
+  const handleCloseConfirmation = useCallback(() => {
     setOpenConfirmation(false);
-  };
+  }, []);
 
-  const handleNextActiveStep = () => {
+  const handleNextActiveStep = useCallback(() => {
     setActiveStep((prev) => prev + 1);
-  };
+  }, []);
 
-  const handlePrevActiveStep = () => {
+  const handlePrevActiveStep = useCallback(() => {
     setActiveStep((prev) => prev - 1);
-  };
+  }, []);
 
-  if (isLoading) {
+  const handleOnDelete = useCallback(async () => {
+    try {
+      if (vehicle) {
+        const response = await dispatch(deleteVehicle(vehicle._id));
+
+        if (response.meta.requestStatus === 'fulfilled') {
+          navigate('/inventory');
+          dispatch(
+            setAlert({ message: 'Vehicle Deleted!', severity: 'success' }),
+          );
+        }
+
+        if (response.meta.requestStatus === 'rejected') {
+          dispatch(
+            setAlert({
+              message: response.payload as string,
+              severity: 'error',
+            }),
+          );
+        }
+      }
+    } catch (error) {
+      console.error('Error occured while deleting vehicle:', error);
+    }
+  }, [dispatch, navigate, vehicle]);
+
+  if (status === 'loading') {
     return (
       <Box
         sx={{
@@ -96,7 +127,7 @@ const Vehicle = () => {
     );
   }
 
-  if (!vehicle && !isLoading) {
+  if (!vehicle && status === 'succeeded') {
     return <PageNotFound />;
   }
 

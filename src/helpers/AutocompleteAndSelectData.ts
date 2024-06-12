@@ -20,7 +20,6 @@ export const bodyType = [
 export const assembly = ['Complete-Knock-Down', 'Complete-Built-Up'];
 export const fuelType = ['Petrol', 'Diesel', 'Hybrid', 'Electric'];
 export const transmission = ['Automatic', 'Manual'];
-
 export const makesAndModels = {
   Toyota: [
     'Avanza',

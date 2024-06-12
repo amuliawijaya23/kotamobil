@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import {
   Card,
   CardHeader,
@@ -22,9 +22,9 @@ const SalesByModelChart = () => {
   const pastTotalSales = useAppSelector(getPastTotalSales);
   const [currentData, setCurrentData] = useState<boolean>(true);
 
-  const handleOnChangeCurrentData = () => {
+  const handleOnChangeCurrentData = useCallback(() => {
     setCurrentData((prev) => !prev);
-  };
+  }, []);
 
   return (
     <Card>

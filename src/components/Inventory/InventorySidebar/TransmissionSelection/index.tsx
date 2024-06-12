@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { styled } from '@mui/material/styles';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import {
@@ -42,17 +42,20 @@ const TransmissionSelection = () => {
   const queryData = useAppSelector(getQueryData);
   const [expanded, setExpanded] = useState<boolean>(false);
 
-  const handleExpandClick = () => {
+  const handleExpandClick = useCallback(() => {
     setExpanded((prev) => !prev);
-  };
+  }, []);
 
-  const handleTransmissionSelection = (selectedTransmission: string) => {
-    dispatch(updateTransmissionSelections(selectedTransmission));
-  };
+  const handleTransmissionSelection = useCallback(
+    (selectedTransmission: string) => {
+      dispatch(updateTransmissionSelections(selectedTransmission));
+    },
+    [dispatch],
+  );
 
-  const handleSelectAllTransmissionChange = () => {
+  const handleSelectAllTransmissionChange = useCallback(() => {
     dispatch(selectAllTransmission());
-  };
+  }, [dispatch]);
 
   return (
     queryData && (

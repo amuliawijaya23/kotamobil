@@ -1,51 +1,19 @@
 import type { CountryType } from '~/helpers/AutocompleteAndSelectData';
+import type { ContactFormValues } from '..';
 import {
   Box,
   Unstable_Grid2 as Grid,
   Typography,
   Autocomplete,
   TextField,
-  FormControl,
-  FormHelperText,
-  InputLabel,
-  OutlinedInput,
 } from '@mui/material';
 import { NumericFormat } from 'react-number-format';
-
-import { useAppSelector } from '~/redux/store';
-import { getAppAlert } from '~/redux/reducers/appSlice';
-import { getContactFormData } from '~/redux/reducers/contactFormSlice';
-
+import { useFormikContext, Field, ErrorMessage } from 'formik';
 import { countryCodes } from '~/helpers/AutocompleteAndSelectData';
 
-interface ContactInformationProps {
-  onFirstNameChange: (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
-  onLastNameChange: (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
-  onEmailChange: (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
-  onCountryChange: (event: unknown, values: CountryType | null) => void;
-  onMobileChange: (input: string) => void;
-  onAddressChange: (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void;
-}
-
-const ContactInformation = ({
-  onFirstNameChange,
-  onLastNameChange,
-  onEmailChange,
-  onCountryChange,
-  onMobileChange,
-  onAddressChange,
-}: ContactInformationProps) => {
-  const contactFormData = useAppSelector(getContactFormData);
-  const alert = useAppSelector(getAppAlert);
-
+const ContactInformation = () => {
+  const { values, touched, errors, setFieldValue } =
+    useFormikContext<ContactFormValues>();
   return (
     <>
       <Grid xs={12}>
@@ -59,81 +27,72 @@ const ContactInformation = ({
         </Typography>
       </Grid>
       <Grid xs={12}>
-        <FormControl size="small" fullWidth>
-          <InputLabel htmlFor="outlined-vehicle-name">First Name</InputLabel>
-          <OutlinedInput
-            value={contactFormData.firstName}
-            onChange={onFirstNameChange}
-            error={Boolean(
-              alert?.severity === 'error' && !contactFormData.firstName,
-            )}
-            type="text"
-            label="First Name"
-          />
-
-          <FormHelperText
-            error={Boolean(
-              alert?.severity === 'error' && !contactFormData.firstName,
-            )}
-          >
-            {alert?.severity === 'error' && !contactFormData.firstName ? (
-              <>{alert.message}</>
-            ) : (
-              'Required'
-            )}
-          </FormHelperText>
-        </FormControl>
+        <Field
+          as={TextField}
+          name="firstName"
+          label="First Name"
+          fullWidth
+          size="small"
+          variant="outlined"
+          error={touched.firstName && Boolean(errors.firstName)}
+          helperText={<ErrorMessage name="firstName" />}
+        />
       </Grid>
       <Grid xs={12}>
-        <FormControl size="small" fullWidth>
-          <InputLabel htmlFor="outlined-vehicle-name">Last Name</InputLabel>
-          <OutlinedInput
-            value={contactFormData.lastName}
-            onChange={onLastNameChange}
-            type="text"
-            label="Last Name"
-          />
-        </FormControl>
+        <Field
+          as={TextField}
+          name="lastName"
+          label="Last Name"
+          fullWidth
+          size="small"
+          variant="outlined"
+          error={touched.lastName && Boolean(errors.lastName)}
+          helperText={<ErrorMessage name="lastName" />}
+        />
       </Grid>
       <Grid xs={12}>
-        <FormControl size="small" fullWidth>
-          <InputLabel htmlFor="outlined-vehicle-name">Email</InputLabel>
-          <OutlinedInput
-            value={contactFormData.email}
-            onChange={onEmailChange}
-            error={Boolean(
-              !contactFormData.isValidEmail &&
-                contactFormData.email &&
-                contactFormData?.email?.length > 0,
-            )}
-            type="email"
-            label="Email"
-          />
-          {!contactFormData.isValidEmail && contactFormData.email && (
-            <FormHelperText>Invalid email address</FormHelperText>
-          )}
-        </FormControl>
+        <Field
+          as={TextField}
+          name="email"
+          label="Email"
+          fullWidth
+          size="small"
+          variant="outlined"
+          error={touched.email && Boolean(errors.email)}
+          helperText={<ErrorMessage name="email" />}
+        />
       </Grid>
       <Grid xs={12}>
-        <FormControl size="small" fullWidth>
-          <InputLabel htmlFor="outlined-vehicle-name">Address</InputLabel>
-          <OutlinedInput
-            value={contactFormData.address}
-            onChange={onAddressChange}
-            type="text"
-            label="Address"
-          />
-        </FormControl>
+        <Field
+          as={TextField}
+          name="address"
+          label="Address"
+          fullWidth
+          size="small"
+          variant="outlined"
+          error={touched.address && Boolean(errors.address)}
+          helperText={<ErrorMessage name="address" />}
+        />
       </Grid>
-      <Grid xs={4}>
+      <Grid xs={3}>
         <Autocomplete
+          autoHighlight
           id="country-select"
           options={countryCodes}
-          value={contactFormData.country}
-          onChange={onCountryChange}
-          autoHighlight
+          value={countryCodes.find(
+            (country) => country.phone === values.country,
+          )}
+          isOptionEqualToValue={(option, value) => option.phone === value.phone}
+          onChange={(_event, newValue: CountryType | null) =>
+            setFieldValue('country', newValue ? newValue.phone : '')
+          }
           componentsProps={{ popper: { style: { width: ' fit-content' } } }}
-          getOptionLabel={(option) => option.label}
+          getOptionLabel={(option) => `+${option.phone}`}
+          filterOptions={(options, { inputValue }) => {
+            return options.filter((country) =>
+              country.label.toLowerCase().includes(inputValue),
+            );
+          }}
           renderOption={(props, option) => (
             <Box
               {...props}
@@ -148,7 +107,7 @@ const ContactInformation = ({
                 src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
                 alt=""
               />
-              {option.code} +{option.phone}
+              +{option.phone}
             </Box>
           )}
           renderInput={(params) => (
@@ -156,11 +115,8 @@ const ContactInformation = ({
               {...params}
               label="Country"
               size="small"
-              helperText={
-                alert?.severity === 'error' &&
-                contactFormData.mobile.length < 10 &&
-                'Missing required parameters'
-              }
+              error={Boolean(touched.country && errors.country)}
+              helperText={<ErrorMessage name="country" />}
               inputProps={{
                 ...params.inputProps,
                 autoComplete: 'new-password', // disable autocomplete and autofill
@@ -169,37 +125,20 @@ const ContactInformation = ({
           )}
         />
       </Grid>
-      <Grid xs={8}>
+      <Grid xs={9}>
         <NumericFormat
           onValueChange={(values) => {
-            onMobileChange(values.formattedValue);
+            setFieldValue('mobile', values.formattedValue);
           }}
-          isAllowed={undefined}
-          error={Boolean(
-            alert?.severity === 'error' && contactFormData.mobile.length < 10,
-          )}
-          helperText={
-            alert?.severity == 'error' && contactFormData.mobile.length < 10
-              ? alert.message
-              : 'Required'
-          }
-          FormHelperTextProps={{
-            error: Boolean(
-              alert?.severity === 'error' && contactFormData.mobile.length < 10,
-            ),
-          }}
-          value={contactFormData.mobile}
+          value={values.mobile}
           fullWidth
           displayType="input"
           customInput={TextField}
           size="small"
           label="Mobile"
-          placeholder={
-            contactFormData.country ? `+${contactFormData.country.phone} ` : ''
-          }
-          prefix={
-            contactFormData.country ? `+${contactFormData.country.phone} ` : ''
-          }
+          placeholder="8170031958"
+          error={Boolean(touched.mobile && errors.mobile)}
+          helperText={<ErrorMessage name="mobile" />}
         />
       </Grid>
     </>

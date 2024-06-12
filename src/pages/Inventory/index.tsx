@@ -1,5 +1,5 @@
 import type { VehicleData } from '~/redux/reducers/vehicleSlice';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { styled } from '@mui/material/styles';
 import {
   Unstable_Grid2 as Grid,
@@ -56,46 +56,23 @@ const Inventory = () => {
   const [page, setPage] = useState<number>(1);
   const status = useAppSelector(getInventoryStatus);
 
-  const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-  };
+  const itemsPerPage = useMemo(() => {
+    let numOfItems = 10;
+    if (isMdUp && !isUltraUp) {
+      numOfItems = 12;
+    } else if (isUltraUp) {
+      numOfItems = 36;
+    }
+    return numOfItems;
+  }, [isMdUp, isUltraUp]);
 
-  const handleToggleFilter = () => {
-    setOpenFilter(!openFilter);
-  };
-
-  const handleCloseFilter = () => {
-    setOpenFilter(false);
-  };
-
-  const handleToggleForm = () => {
-    setOpenForm(!openForm);
-  };
-
-  const handleCloseForm = () => {
-    setOpenForm(false);
-  };
-
-  let itemsPerPage = 10;
-
-  if (isMdUp && !isUltraUp) {
-    itemsPerPage = 12;
-  } else if (isUltraUp) {
-    itemsPerPage = 36;
-  }
-
-  const paginationCount =
-    inventory && inventory.length > 0
-      ? Math.ceil(inventory.length / itemsPerPage)
-      : 0;
-
-  const handleChangePage = (
-    _event: React.ChangeEvent<unknown>,
-    newPage: number,
-  ) => {
-    setPage(newPage);
-    window.scrollTo(0, 0);
-  };
+  const paginationCount = useMemo(
+    () =>
+      inventory && inventory.length > 0
+        ? Math.ceil(inventory.length / itemsPerPage)
+        : 0,
+    [inventory, itemsPerPage],
+  );
 
   const visibleItems = useMemo(() => {
     if (inventory && inventory.length > 0) {
@@ -105,6 +82,37 @@ const Inventory = () => {
     }
     return [];
   }, [inventory, page, itemsPerPage]);
+
+  const handleMouseDown = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+    },
+    [],
+  );
+
+  const handleToggleFilter = useCallback(() => {
+    setOpenFilter((open) => !open);
+  }, []);
+
+  const handleCloseFilter = useCallback(() => {
+    setOpenFilter(false);
+  }, []);
+
+  const handleToggleForm = useCallback(() => {
+    setOpenForm((open) => !open);
+  }, []);
+
+  const handleCloseForm = useCallback(() => {
+    setOpenForm(false);
+  }, []);
+
+  const handleChangePage = useCallback(
+    (_event: React.ChangeEvent<unknown>, newPage: number) => {
+      setPage(newPage);
+      window.scrollTo(0, 0);
+    },
+    [],
+  );
 
   return (
     <Box sx={{ display: 'flex' }}>

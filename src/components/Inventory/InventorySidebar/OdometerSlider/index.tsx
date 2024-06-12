@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import {
   ListItem,
   ListItemText,
@@ -16,15 +17,16 @@ const OdometerSlider = () => {
   const dispatch = useAppDispatch();
   const queryData = useAppSelector(getQueryData);
 
-  const handleOdometerRangeChange = (
-    _event: Event,
-    newValue: number | number[],
-  ) => {
-    if (!Array.isArray(newValue)) {
-      return;
-    }
-    dispatch(updateOdometerRange(newValue as number[]));
-  };
+  const handleOdometerRangeChange = useCallback(
+    (_event: Event, newValue: number | number[]) => {
+      if (!Array.isArray(newValue)) {
+        return;
+      }
+      dispatch(updateOdometerRange(newValue as number[]));
+    },
+    [dispatch],
+  );
+
   return (
     queryData && (
       <>

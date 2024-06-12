@@ -1,209 +1,24 @@
-import axios, { CancelToken, CancelTokenSource } from 'axios';
+import type { VehicleSearchParams } from './reducers/inventorySlice';
+import axios, { AxiosError, CancelTokenSource } from 'axios';
 import { createListenerMiddleware } from '@reduxjs/toolkit';
-import {
-  startOfYear,
-  endOfMonth,
-  eachMonthOfInterval,
-  subYears,
-} from 'date-fns';
-import { setLoading } from './reducers/appSlice';
-import { setContactsData } from './reducers/contactsSlice';
-import {
-  QueryData,
-  setInventoryVehicles,
-  setInventoryStatus,
-  setQueryData,
-} from './reducers/inventorySlice';
-import {
-  VehicleData,
-  setVehicleImages,
-  setVehicleLoading,
-} from './reducers/vehicleSlice';
+import { startOfYear, eachMonthOfInterval, subYears } from 'date-fns';
+import { setAlert, setLoading } from './reducers/appSlice';
+import { getContacts, searchContacts } from './reducers/contactsSlice';
+import { searchVehicles, getVehicles } from './reducers/inventorySlice';
+import { getVehicleImages } from './reducers/vehicleSlice';
 import { RootState, AppDispatch } from './store';
 import {
   setEndDate,
   setStartDate,
   setMonthsOfInterval,
-  setPastProfitPerMonth,
-  setPastSales,
-  setPastSalesPerMonth,
-  setProfitPerMonth,
-  setSales,
-  setSalesPerMonth,
-  setTotalSales,
-  setPastTotalSales,
-  setTotalProfit,
-  setPastTotalProfit,
-  setSalesByModel,
-  setPastSalesByModel,
-  setDashboardLoading,
+  getVehicleSales,
+  getPastVehicleSales,
+  getMonthlyVehicleSales,
+  getPastMonthlyVehicleSales,
 } from './reducers/dashboardSlice';
-import {
-  status,
-  condition,
-  bodyType,
-  assembly,
-  fuelType,
-  transmission,
-} from '~/helpers/AutocompleteAndSelectData';
+import { clearUserData } from './reducers/userSlice';
 
 const listenerMiddleware = createListenerMiddleware();
-
-const fetchVehiclesAndContacts = async () => {
-  return Promise.all([axios.get('/api/vehicle'), axios.get('/api/contact')]);
-};
-
-const transformVehicleData = (vehicles: VehicleData[]): QueryData => {
-  const queryData: QueryData = {
-    makesModels: {},
-    search: '',
-    selectedMakes: [],
-    selectedModels: [],
-    minPrice: Infinity,
-    maxPrice: -Infinity,
-    minYear: Infinity,
-    maxYear: -Infinity,
-    minOdometer: Infinity,
-    maxOdometer: -Infinity,
-    priceRange: [],
-    yearRange: [],
-    odometerRange: [],
-    selectedStatus: status,
-    selectedCondition: condition,
-    selectedBodyType: bodyType,
-    selectedAssembly: assembly,
-    selectedFuelType: fuelType,
-    selectedTransmission: transmission,
-  };
-
-  for (const vehicle of vehicles) {
-    if (!queryData.makesModels[vehicle.make]) {
-      queryData.makesModels[vehicle.make] = [];
-      queryData.selectedMakes.push(vehicle.make);
-    }
-
-    if (!queryData.makesModels[vehicle.make].includes(vehicle.model)) {
-      queryData.makesModels[vehicle.make].push(vehicle.model);
-      queryData.selectedModels.push(vehicle.model);
-    }
-
-    if (vehicle.price < queryData.minPrice) {
-      queryData.minPrice = vehicle.price;
-      queryData.priceRange[0] = vehicle.price;
-    }
-
-    if (vehicle.price > queryData.maxPrice) {
-      queryData.maxPrice = vehicle.price;
-      queryData.priceRange[1] = vehicle.price;
-    }
-
-    if (vehicle.year < queryData.minYear) {
-      queryData.minYear = vehicle.year;
-      queryData.yearRange[0] = vehicle.year;
-    }
-
-    if (vehicle.year > queryData.maxYear) {
-      queryData.maxYear = vehicle.year;
-      queryData.yearRange[1] = vehicle.year;
-    }
-
-    if (vehicle.odometer < queryData.minOdometer) {
-      queryData.minOdometer = vehicle.odometer;
-      queryData.odometerRange[0] = vehicle.odometer;
-    }
-
-    if (vehicle.odometer > queryData.maxOdometer) {
-      queryData.maxOdometer = vehicle.odometer;
-      queryData.odometerRange[1] = vehicle.odometer;
-    }
-
-    Object.keys(queryData.makesModels).forEach((make) => {
-      queryData.makesModels[make].sort();
-    });
-  }
-
-  return queryData;
-};
-
-const fetchAllSalesData = async (
-  startDate: Date,
-  endDate: Date,
-  cancelToken?: CancelToken,
-) => {
-  const config = cancelToken ? { cancelToken } : {};
-  return axios.post('/api/vehicle/sales', { startDate, endDate }, config);
-};
-
-const calculateSalesByModel = (sales: VehicleData[]) => {
-  const salesByModel = sales.reduce<{ [key: string]: number }>(
-    (acc, sale: VehicleData) => {
-      const model = sale.model;
-      if (!acc[model]) {
-        acc[model] = 0;
-      }
-      acc[model]++;
-      return acc;
-    },
-    {},
-  );
-
-  return Object.keys(salesByModel).map((model) => ({
-    model,
-    sale: salesByModel[model],
-  }));
-};
-
-const fetchMonthlySalesData = async (
-  monthsOfInterval: Date[],
-  startDate: Date,
-  endDate: Date,
-  cancelToken?: CancelToken,
-) => {
-  const config = cancelToken ? { cancelToken } : {};
-  const responses = await Promise.all(
-    monthsOfInterval.map((month, index) => {
-      const startOfMonth = index === 0 ? new Date(startDate) : month;
-      const endOfMonthDate =
-        index === monthsOfInterval.length - 1
-          ? new Date(endDate)
-          : endOfMonth(new Date(month));
-      return axios.post(
-        '/api/vehicle/sales',
-        {
-          startDate: startOfMonth,
-          endDate: endOfMonthDate,
-        },
-        config,
-      );
-    }),
-  );
-  return responses.map((response) => response.data);
-};
-
-const calculateSalesMetrics = (salesPerMonth: VehicleData[][]) => {
-  const numOfSalesPerMonth = salesPerMonth.map(
-    (salesOfMonth) => salesOfMonth.length,
-  );
-  const profitPerMonth = salesPerMonth.map((salesOfMonth) =>
-    salesOfMonth.length === 0
-      ? 0
-      : salesOfMonth
-          .map(
-            (sale: VehicleData) =>
-              sale.soldPrice! - (sale.purchasePrice || sale.price),
-          )
-          .reduce((acc: number, a: number) => acc + a, 0),
-  );
-  return { numOfSalesPerMonth, profitPerMonth };
-};
-
-const calculateTotalSales = (numOfSalesPerMonth: number[]) => {
-  return numOfSalesPerMonth.reduce((acc, a) => acc + a);
-};
-
-const calculateTotalProfit = (profitPerMonth: number[]) => {
-  return profitPerMonth.reduce((acc: number, a: number) => acc + a);
-};
 
 listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
   predicate: (_action, currentState, previousState) =>
@@ -219,20 +34,12 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
     listenerApi.dispatch(setEndDate(JSON.stringify(end)));
 
     try {
-      const [vehiclesAndContactsResponse, salesResponse, pastSalesResponse] =
-        await Promise.all([
-          fetchVehiclesAndContacts(),
-          fetchAllSalesData(start, end),
-          fetchAllSalesData(pastStart, pastEnd),
-        ]);
-
-      const vehicles = vehiclesAndContactsResponse[0].data;
-      const contacts = vehiclesAndContactsResponse[1].data;
-      const queryData = transformVehicleData(vehicles);
-      const sales = salesResponse.data;
-      const pastSales = pastSalesResponse.data;
-      const salesByModel = calculateSalesByModel(sales);
-      const pastSalesByModel = calculateSalesByModel(pastSales);
+      listenerApi.dispatch(getVehicles());
+      listenerApi.dispatch(getContacts());
+      listenerApi.dispatch(getVehicleSales({ startDate: start, endDate: end }));
+      listenerApi.dispatch(
+        getPastVehicleSales({ startDate: pastStart, endDate: pastEnd }),
+      );
 
       const monthsOfInterval = eachMonthOfInterval({ start, end });
       const pastMonthsOfInterval = eachMonthOfInterval({
@@ -240,45 +47,38 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
         end: pastEnd,
       });
 
-      const [salesPerMonth, pastSalesPerMonth] = await Promise.all([
-        fetchMonthlySalesData(monthsOfInterval, start, end),
-        fetchMonthlySalesData(pastMonthsOfInterval, pastStart, pastEnd),
-      ]);
-
-      const { numOfSalesPerMonth, profitPerMonth } =
-        calculateSalesMetrics(salesPerMonth);
-
-      const {
-        numOfSalesPerMonth: numOfPastSalesPerMonth,
-        profitPerMonth: pastProfitPerMonth,
-      } = calculateSalesMetrics(pastSalesPerMonth);
-
-      const totalSales = calculateTotalSales(numOfSalesPerMonth);
-      const pastTotalSales = calculateTotalSales(numOfPastSalesPerMonth);
-      const totalProfit = calculateTotalProfit(profitPerMonth);
-      const pastTotalProfit = calculateTotalProfit(pastProfitPerMonth);
+      listenerApi.dispatch(
+        getMonthlyVehicleSales({
+          monthsOfInterval: monthsOfInterval,
+          startDate: start,
+          endDate: end,
+        }),
+      );
+      listenerApi.dispatch(
+        getPastMonthlyVehicleSales({
+          monthsOfInterval: pastMonthsOfInterval,
+          startDate: pastStart,
+          endDate: pastEnd,
+        }),
+      );
 
       listenerApi.dispatch(
         setMonthsOfInterval(JSON.stringify(monthsOfInterval)),
       );
-
-      listenerApi.dispatch(setInventoryVehicles(vehicles));
-      listenerApi.dispatch(setQueryData(queryData));
-      listenerApi.dispatch(setContactsData(contacts));
-      listenerApi.dispatch(setTotalSales(totalSales));
-      listenerApi.dispatch(setPastTotalSales(pastTotalSales));
-      listenerApi.dispatch(setTotalProfit(totalProfit));
-      listenerApi.dispatch(setPastTotalProfit(pastTotalProfit));
-      listenerApi.dispatch(setSalesByModel(salesByModel));
-      listenerApi.dispatch(setPastSalesByModel(pastSalesByModel));
-      listenerApi.dispatch(setSalesPerMonth(numOfSalesPerMonth));
-      listenerApi.dispatch(setPastSalesPerMonth(numOfPastSalesPerMonth));
-      listenerApi.dispatch(setProfitPerMonth(profitPerMonth));
-      listenerApi.dispatch(setPastProfitPerMonth(pastProfitPerMonth));
-      listenerApi.dispatch(setSales(sales));
-      listenerApi.dispatch(setPastSales(pastSales));
     } catch (error) {
       console.error('Failed to fetch vehicles and contacts', error);
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 401) {
+          listenerApi.dispatch(clearUserData());
+        } else {
+          listenerApi.dispatch(
+            setAlert({
+              message: error.response?.data.message,
+              severity: 'error',
+            }),
+          );
+        }
+      }
     } finally {
       listenerApi.dispatch(setLoading(false));
     }
@@ -299,7 +99,6 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
     );
   },
   effect: async (_action, listenerApi) => {
-    listenerApi.dispatch(setDashboardLoading(true));
     if (dashboardSearchRequest) {
       dashboardSearchRequest.cancel('Search Cancelled');
     }
@@ -312,10 +111,20 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
     const pastStart = subYears(start, pastRange);
     const pastEnd = subYears(end, pastRange);
     try {
-      const [salesResponse, pastSalesResponse] = await Promise.all([
-        fetchAllSalesData(start, end, dashboardSearchRequest.token),
-        fetchAllSalesData(pastStart, pastEnd, dashboardSearchRequest.token),
-      ]);
+      listenerApi.dispatch(
+        getVehicleSales({
+          startDate: start,
+          endDate: end,
+          cancelToken: dashboardSearchRequest.token,
+        }),
+      );
+      listenerApi.dispatch(
+        getPastVehicleSales({
+          startDate: pastStart,
+          endDate: pastEnd,
+          cancelToken: dashboardSearchRequest.token,
+        }),
+      );
 
       const monthsOfInterval = eachMonthOfInterval({ start, end });
       const pastMonthsOfInterval = eachMonthOfInterval({
@@ -323,55 +132,36 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
         end: pastEnd,
       });
 
-      const sales = salesResponse.data;
-      const pastSales = pastSalesResponse.data;
-      const salesByModel = calculateSalesByModel(sales);
-      const pastSalesByModel = calculateSalesByModel(pastSales);
-
-      const salesPerMonth = await fetchMonthlySalesData(
-        monthsOfInterval,
-        start,
-        end,
-        dashboardSearchRequest.token,
+      listenerApi.dispatch(
+        getMonthlyVehicleSales({
+          monthsOfInterval: monthsOfInterval,
+          startDate: start,
+          endDate: end,
+          cancelToken: dashboardSearchRequest.token,
+        }),
       );
-
-      const pastSalesPerMonth = await fetchMonthlySalesData(
-        pastMonthsOfInterval,
-        pastStart,
-        pastEnd,
-        dashboardSearchRequest.token,
+      listenerApi.dispatch(
+        getPastMonthlyVehicleSales({
+          monthsOfInterval: pastMonthsOfInterval,
+          startDate: pastStart,
+          endDate: pastEnd,
+          cancelToken: dashboardSearchRequest.token,
+        }),
       );
-
-      const { numOfSalesPerMonth, profitPerMonth } =
-        calculateSalesMetrics(salesPerMonth);
-      const {
-        numOfSalesPerMonth: numOfPastSalesPerMonth,
-        profitPerMonth: pastProfitPerMonth,
-      } = calculateSalesMetrics(pastSalesPerMonth);
-      const totalSales = calculateTotalSales(numOfSalesPerMonth);
-      const pastTotalSales = calculateTotalSales(numOfPastSalesPerMonth);
-      const totalProfit = calculateTotalProfit(profitPerMonth);
-      const pastTotalProfit = calculateTotalProfit(pastProfitPerMonth);
 
       listenerApi.dispatch(
         setMonthsOfInterval(JSON.stringify(monthsOfInterval)),
       );
-      listenerApi.dispatch(setTotalSales(totalSales));
-      listenerApi.dispatch(setPastTotalSales(pastTotalSales));
-      listenerApi.dispatch(setTotalProfit(totalProfit));
-      listenerApi.dispatch(setPastTotalProfit(pastTotalProfit));
-      listenerApi.dispatch(setSalesByModel(salesByModel));
-      listenerApi.dispatch(setPastSalesByModel(pastSalesByModel));
-      listenerApi.dispatch(setSalesPerMonth(numOfSalesPerMonth));
-      listenerApi.dispatch(setPastSalesPerMonth(numOfPastSalesPerMonth));
-      listenerApi.dispatch(setProfitPerMonth(profitPerMonth));
-      listenerApi.dispatch(setPastProfitPerMonth(pastProfitPerMonth));
-      listenerApi.dispatch(setSales(sales));
-      listenerApi.dispatch(setPastSales(pastSales));
     } catch (error) {
-      console.error(error);
-    } finally {
-      listenerApi.dispatch(setDashboardLoading(false));
+      console.error(`Error fetching dashboard data: ${error}`);
+      if (error instanceof AxiosError) {
+        listenerApi.dispatch(
+          setAlert({
+            message: error.response?.data.message,
+            severity: 'error',
+          }),
+        );
+      }
     }
   },
 });
@@ -385,77 +175,77 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
   },
   effect: async (_action, listenerApi) => {
     const id = listenerApi.getState().vehicle.data?._id;
-    listenerApi.dispatch(setVehicleLoading(true));
+
     try {
-      const { data } = await axios.get(`/api/vehicle/images/${id}`);
-      if (data && data.length > 0) {
-        listenerApi.dispatch(setVehicleImages(data));
+      if (id) {
+        listenerApi.dispatch(getVehicleImages(id));
       }
       return;
     } catch (error) {
       console.error('Error fetching vehicle images:', error);
-    } finally {
-      listenerApi.dispatch(setVehicleLoading(false));
+      if (error instanceof AxiosError) {
+        listenerApi.dispatch(
+          setAlert({
+            message: error.response?.data.message,
+            severity: 'error',
+          }),
+        );
+      }
     }
   },
 });
 
-let vehicleSearchRequest: CancelTokenSource;
+let searchVehiclesRequest: CancelTokenSource;
 listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
   predicate: (_action, currentState, previousState) => {
     return (
-      currentState.app.isAuthenticated &&
+      currentState.user.data !== null &&
       previousState.inventory.queryData !== null &&
       previousState.inventory.queryData !== currentState.inventory.queryData
     );
   },
   effect: async (_action, listenerApi) => {
-    listenerApi.dispatch(setInventoryStatus('loading'));
-    if (vehicleSearchRequest) {
-      vehicleSearchRequest.cancel('Search Cancelled');
+    if (searchVehiclesRequest) {
+      searchVehiclesRequest.cancel('Vehicle search cancelled');
     }
     try {
       const queryData = listenerApi.getState().inventory.queryData;
-      const search = queryData?.search;
-      const status = queryData?.selectedStatus;
-      const makes = queryData?.selectedMakes;
-      const models = queryData?.selectedModels;
-      const priceRange = queryData?.priceRange;
-      const yearRange = queryData?.yearRange;
-      const odometerRange = queryData?.odometerRange;
-      const condition = queryData?.selectedCondition;
-      const assembly = queryData?.selectedAssembly;
-      const bodyType = queryData?.selectedBodyType;
-      const fuelType = queryData?.selectedFuelType;
-      const transmission = queryData?.selectedTransmission;
-      vehicleSearchRequest = axios.CancelToken.source();
-      const inventory = await axios.post(
-        '/api/vehicle/search',
-        {
-          search: search,
-          status: status,
-          makes: makes,
-          models: models,
-          priceRange: priceRange,
-          yearRange: yearRange,
-          odometerRange: odometerRange,
-          condition: condition,
-          assembly: assembly,
-          bodyType: bodyType,
-          fuelType: fuelType,
-          transmission: transmission,
-        },
-        { cancelToken: vehicleSearchRequest.token },
-      );
-      listenerApi.dispatch(setInventoryVehicles(inventory.data));
+
+      if (queryData) {
+        const params: VehicleSearchParams = {
+          search: queryData.search,
+          status: queryData.selectedStatus,
+          makes: queryData.selectedMakes,
+          models: queryData.selectedModels,
+          priceRange: queryData.priceRange,
+          yearRange: queryData.yearRange,
+          odometerRange: queryData.odometerRange,
+          condition: queryData.selectedCondition,
+          assembly: queryData.selectedAssembly,
+          bodyType: queryData.selectedBodyType,
+          fuelType: queryData.selectedFuelType,
+          transmission: queryData.selectedTransmission,
+        };
+        searchVehiclesRequest = axios.CancelToken.source();
+
+        listenerApi.dispatch(
+          searchVehicles({ params, cancelToken: searchVehiclesRequest.token }),
+        );
+      }
     } catch (error) {
       if (axios.isCancel(error)) {
         console.log('Search Cancelled');
         return;
       }
+      if (error instanceof AxiosError) {
+        listenerApi.dispatch(
+          setAlert({
+            message: error.response?.data.message,
+            severity: 'error',
+          }),
+        );
+      }
       console.error('Error searching for vehicles:', error);
-    } finally {
-      listenerApi.dispatch(setInventoryStatus('succeeded'));
     }
   },
 });
@@ -464,7 +254,7 @@ let contactSearchRequest: CancelTokenSource;
 listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
   predicate: (_action, currentState, previousState) => {
     return (
-      currentState.app.isAuthenticated &&
+      currentState.user.data !== null &&
       previousState.contacts.search !== currentState.contacts.search
     );
   },
@@ -475,18 +265,23 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
     try {
       const search = listenerApi.getState().contacts.search;
       contactSearchRequest = axios.CancelToken.source();
-      const contacts = await axios.post(
-        '/api/contact/search',
-        { search },
-        { cancelToken: contactSearchRequest.token },
+      listenerApi.dispatch(
+        searchContacts({ search, cancelToken: contactSearchRequest.token }),
       );
-      listenerApi.dispatch(setContactsData(contacts.data));
     } catch (error) {
+      console.error('Error searching for contacts:', error);
       if (axios.isCancel(error)) {
         console.log('Search Cancelled');
         return;
       }
-      console.error('Error searching for contacts:', error);
+      if (error instanceof AxiosError) {
+        listenerApi.dispatch(
+          setAlert({
+            message: error.response?.data.message,
+            severity: 'error',
+          }),
+        );
+      }
     }
   },
 });

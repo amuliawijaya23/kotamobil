@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Box, Snackbar, Alert, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
@@ -9,9 +10,9 @@ const Layout = () => {
   const dispatch = useAppDispatch();
   const alert = useAppSelector(getAppAlert);
 
-  const handleClearAlert = () => {
+  const handleClearAlert = useCallback(() => {
     dispatch(resetAlert());
-  };
+  }, [dispatch]);
 
   return (
     <>

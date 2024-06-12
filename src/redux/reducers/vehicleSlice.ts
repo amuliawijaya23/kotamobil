@@ -1,5 +1,7 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../store';
+import { isAxiosError } from 'axios';
+import { getVehicleImagesService } from '~/services/vehicleServices';
 
 export interface VehicleData {
   _id: string;
@@ -34,20 +36,40 @@ export interface VehicleData {
 
 interface VehicleState {
   data: VehicleData | null;
-  isLoading: boolean;
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  error: string | null;
 }
 
 const initialState: VehicleState = {
   data: null,
-  isLoading: false,
+  status: 'idle',
+  error: null,
 };
+
+export const getVehicleImages = createAsyncThunk(
+  'vehicle/getVehicleImages',
+  async (id: string, thunkAPI) => {
+    try {
+      const images = await getVehicleImagesService(id);
+      return images;
+    } catch (error) {
+      if (isAxiosError(error) && error.response) {
+        return thunkAPI.rejectWithValue(error.response.data.message);
+      }
+      return thunkAPI.rejectWithValue('An unknown error occured');
+    }
+  },
+);
 
 export const vehicleSlice = createSlice({
   name: 'vehicle',
   initialState,
   reducers: {
-    setVehicleLoading: (state, action: PayloadAction<boolean>) => {
-      state.isLoading = action.payload;
+    setVehicleLoading: (
+      state,
+      action: PayloadAction<'idle' | 'loading' | 'succeeded' | 'failed'>,
+    ) => {
+      state.status = action.payload;
     },
     setVehicleData: (state, action: PayloadAction<VehicleData>) => {
       state.data = action.payload;
@@ -62,6 +84,24 @@ export const vehicleSlice = createSlice({
     },
     resetVehicleData: () => initialState,
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(getVehicleImages.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(
+        getVehicleImages.fulfilled,
+        (
+          state,
+          action: PayloadAction<{ key: string; url: string }[] | undefined>,
+        ) => {
+          state.status = 'succeeded';
+          if (action.payload && state.data) {
+            state.data.images = action.payload;
+          }
+        },
+      );
+  },
 });
 
 export const {
@@ -71,5 +111,5 @@ export const {
   resetVehicleData,
 } = vehicleSlice.actions;
 export const getVehicleData = (state: RootState) => state.vehicle.data;
-export const getVehicleStatus = (state: RootState) => state.vehicle.isLoading;
+export const getVehicleStatus = (state: RootState) => state.vehicle.status;
 export default vehicleSlice.reducer;

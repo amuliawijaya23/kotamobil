@@ -90,6 +90,11 @@ export const userSlice = createSlice({
         state.status = 'idle';
       }
     },
+    clearUserData: (state) => {
+      localStorage.removeItem(LC_USER_DATA);
+      state.status = 'idle';
+      state.data = null;
+    },
     clearUserError: (state) => {
       state.error = null;
     },
@@ -145,7 +150,8 @@ export const userSlice = createSlice({
   },
 });
 
-export const { initializeUser, clearUserError } = userSlice.actions;
+export const { initializeUser, clearUserData, clearUserError } =
+  userSlice.actions;
 export const getUserData = (state: RootState) => state.user.data;
 export const getUserStatus = (state: RootState) => state.user.status;
 export const getUserError = (state: RootState) => state.user.error;

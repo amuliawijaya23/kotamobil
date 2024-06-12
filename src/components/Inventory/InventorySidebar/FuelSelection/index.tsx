@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { styled } from '@mui/material/styles';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import {
@@ -42,17 +42,20 @@ const FuelSelection = () => {
   const queryData = useAppSelector(getQueryData);
   const [expanded, setExpanded] = useState<boolean>(false);
 
-  const handleExpandClick = () => {
+  const handleExpandClick = useCallback(() => {
     setExpanded((prev) => !prev);
-  };
+  }, []);
 
-  const handleFuelTypeSelection = (selectedFuelType: string) => {
-    dispatch(updateFuelTypeSelections(selectedFuelType));
-  };
+  const handleFuelTypeSelection = useCallback(
+    (selectedFuelType: string) => {
+      dispatch(updateFuelTypeSelections(selectedFuelType));
+    },
+    [dispatch],
+  );
 
-  const handleSelectAllFuelTypeChange = () => {
+  const handleSelectAllFuelTypeChange = useCallback(() => {
     dispatch(selectAllFuelType());
-  };
+  }, [dispatch]);
 
   return (
     queryData && (

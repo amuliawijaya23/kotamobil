@@ -6,8 +6,6 @@ import themeReducer from './reducers/themeSlice';
 import contactsReducer from './reducers/contactsSlice';
 import inventoryReducer from './reducers/inventorySlice';
 import vehicleReducer from './reducers/vehicleSlice';
-import vehicleFormReducer from './reducers/vehicleFormSlice';
-import contactFormReducer from './reducers/contactFormSlice';
 import dashboardReducer from './reducers/dashboardSlice';
 import listenerMiddleware from './listenerMiddleware';
 
@@ -20,8 +18,6 @@ export const store = configureStore({
     contacts: contactsReducer,
     inventory: inventoryReducer,
     vehicle: vehicleReducer,
-    vehicleForm: vehicleFormReducer,
-    contactForm: contactFormReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().prepend(listenerMiddleware.middleware),

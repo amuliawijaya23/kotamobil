@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import {
   ListItem,
   ListItemText,
@@ -12,15 +13,15 @@ const YearSlider = () => {
   const dispatch = useAppDispatch();
   const queryData = useAppSelector(getQueryData);
 
-  const handleYearRangeChange = (
-    _event: Event,
-    newValue: number | number[],
-  ) => {
-    if (!Array.isArray(newValue)) {
-      return;
-    }
-    dispatch(updateYearRange(newValue as number[]));
-  };
+  const handleYearRangeChange = useCallback(
+    (_event: Event, newValue: number | number[]) => {
+      if (!Array.isArray(newValue)) {
+        return;
+      }
+      dispatch(updateYearRange(newValue as number[]));
+    },
+    [dispatch],
+  );
 
   return (
     queryData && (

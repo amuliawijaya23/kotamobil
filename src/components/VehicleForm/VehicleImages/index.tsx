@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   Divider,
   Typography,
@@ -37,11 +37,13 @@ const VehicleImages = ({
   const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
   const { setFieldValue, values } = useFormikContext<VehicleFormValues>();
 
-  let imageListCol = 2;
-
-  if (isMdUp) {
-    imageListCol = 5;
-  }
+  const imageListCol = useMemo(() => {
+    let col = 2;
+    if (isMdUp) {
+      col = 5;
+    }
+    return col;
+  }, [isMdUp]);
 
   const onDrop = useCallback(
     (acceptedFiles: File[] | undefined) => {

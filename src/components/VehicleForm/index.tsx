@@ -22,7 +22,6 @@ import { setAlert, resetAlert } from '~/redux/reducers/appSlice';
 import { FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { addVehicle, updateVehicle } from '~/redux/reducers/inventorySlice';
-import { AxiosError } from 'axios';
 
 interface VehicleFormValues {
   name: string;
@@ -217,16 +216,17 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
           setStep(0);
           onCloseForm();
         }
-      } catch (error) {
-        console.error(`Error saving vehicle data: ${error}`);
-        if (error instanceof AxiosError) {
+
+        if (response.meta.requestStatus === 'rejected') {
           dispatch(
             setAlert({
-              message: error?.response?.data.message,
+              message: response.payload as string,
               severity: 'error',
             }),
           );
         }
+      } catch (error) {
+        console.error(`Error saving vehicle data: ${error}`);
       } finally {
         setSubmitting(false);
       }

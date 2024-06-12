@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import {
   Unstable_Grid2 as Grid,
   Box,
@@ -6,7 +7,6 @@ import {
   ListItem,
   ListItemText,
 } from '@mui/material';
-
 import { useAppSelector } from '~/redux/store';
 import { getVehicleData } from '~/redux/reducers/vehicleSlice';
 
@@ -14,7 +14,7 @@ const VehicleSpecification = () => {
   const vehicle = useAppSelector(getVehicleData);
 
   // split vehicle specifications into arrays of 3
-  const specifications = (() => {
+  const specifications = useMemo(() => {
     const specArrays = [];
     if (vehicle?.specification && vehicle.specification?.length > 0) {
       for (let i = 0; i < vehicle?.specification?.length; i += 3) {
@@ -23,7 +23,7 @@ const VehicleSpecification = () => {
       }
     }
     return specArrays;
-  })();
+  }, [vehicle?.specification]);
 
   return (
     <>

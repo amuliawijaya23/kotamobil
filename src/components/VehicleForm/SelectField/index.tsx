@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   FormControl,
   InputLabel,
@@ -20,7 +20,10 @@ const SelectField: React.FC<SelectFieldProps> = ({
   ...props
 }) => {
   const [field, meta] = useField<string>(props);
-  const errorText = meta.touched && meta.error ? meta.error : '';
+  const errorText = useMemo(
+    () => (meta.touched && meta.error ? meta.error : ''),
+    [meta],
+  );
 
   return (
     <FormControl size="small" fullWidth error={!!errorText}>

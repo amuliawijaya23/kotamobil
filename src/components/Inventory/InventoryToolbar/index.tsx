@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import {
   Box,
   Toolbar,
@@ -31,15 +32,19 @@ const InventoryToolbar = ({
   const inventory = useAppSelector(getInventory);
   const queryData = useAppSelector(getQueryData);
 
-  const handleMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-  };
+  const handleMouseDown = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+    },
+    [],
+  );
 
-  const handleOnChangeSearch = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    dispatch(setSearch(event.target.value));
-  };
+  const handleOnChangeSearch = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      dispatch(setSearch(event.target.value));
+    },
+    [dispatch],
+  );
 
   return (
     <Toolbar>
@@ -61,7 +66,7 @@ const InventoryToolbar = ({
             size="small"
             placeholder="Search..."
             disabled={!queryData}
-            value={queryData?.search}
+            value={queryData?.search || ''}
             onChange={handleOnChangeSearch}
             InputProps={{
               startAdornment: (
@@ -82,13 +87,15 @@ const InventoryToolbar = ({
         >
           <Box>
             <Tooltip title="Filter">
-              <IconButton
-                disabled={!queryData}
-                onClick={onToggleFilter}
-                onMouseDown={handleMouseDown}
-              >
-                <FilterListIcon />
-              </IconButton>
+              <span>
+                <IconButton
+                  disabled={!queryData}
+                  onClick={onToggleFilter}
+                  onMouseDown={handleMouseDown}
+                >
+                  <FilterListIcon />
+                </IconButton>
+              </span>
             </Tooltip>
             <Tooltip title="Add listing">
               <IconButton onClick={onToggleForm} onMouseDown={handleMouseDown}>

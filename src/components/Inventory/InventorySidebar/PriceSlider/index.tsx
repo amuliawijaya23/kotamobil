@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import {
   ListItem,
   ListItemText,
@@ -16,15 +17,15 @@ const PriceSlider = () => {
   const dispatch = useAppDispatch();
   const queryData = useAppSelector(getQueryData);
 
-  const handlePriceRangeChange = (
-    _event: Event,
-    newValue: number | number[],
-  ) => {
-    if (!Array.isArray(newValue)) {
-      return;
-    }
-    dispatch(updatePriceRange(newValue as number[]));
-  };
+  const handlePriceRangeChange = useCallback(
+    (_event: Event, newValue: number | number[]) => {
+      if (!Array.isArray(newValue)) {
+        return;
+      }
+      dispatch(updatePriceRange(newValue as number[]));
+    },
+    [dispatch],
+  );
 
   return (
     queryData && (

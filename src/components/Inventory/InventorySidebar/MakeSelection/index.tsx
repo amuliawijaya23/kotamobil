@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { styled } from '@mui/material/styles';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import {
@@ -46,17 +46,20 @@ const MakeSelection = ({ makes, sortedMakes }: MakeSelectionProps) => {
   const queryData = useAppSelector(getQueryData);
   const [expanded, setExpanded] = useState<boolean>(false);
 
-  const handleExpandClick = () => {
+  const handleExpandClick = useCallback(() => {
     setExpanded((prev) => !prev);
-  };
+  }, []);
 
-  const handleMakeSelection = (selectedMake: string) => {
-    dispatch(updateMakeSelections(selectedMake));
-  };
+  const handleMakeSelection = useCallback(
+    (selectedMake: string) => {
+      dispatch(updateMakeSelections(selectedMake));
+    },
+    [dispatch],
+  );
 
-  const handleSelectAllMakesChange = () => {
+  const handleSelectAllMakesChange = useCallback(() => {
     dispatch(selectAllMakes());
-  };
+  }, [dispatch]);
 
   return (
     queryData && (

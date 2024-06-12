@@ -1,4 +1,5 @@
 import type { VehicleData } from './vehicleSlice';
+import { CancelToken } from 'axios';
 import { isAxiosError } from 'axios';
 import { PayloadAction, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../store';
@@ -6,6 +7,8 @@ import {
   addVehicleService,
   updateVehicleService,
   deleteVehicleService,
+  getVehiclesService,
+  searchVehiclesService,
 } from '~/services/vehicleServices';
 import {
   status,
@@ -15,6 +18,7 @@ import {
   fuelType,
   transmission,
 } from '~/helpers/AutocompleteAndSelectData';
+import { transformVehicleData } from '~/helpers';
 
 export interface QueryData {
   makesModels: { [key: string]: string[] };
@@ -36,6 +40,21 @@ export interface QueryData {
   selectedAssembly: string[];
   selectedFuelType: string[];
   selectedTransmission: string[];
+}
+
+export interface VehicleSearchParams {
+  search: string;
+  status: string[];
+  makes: string[];
+  models: string[];
+  priceRange: number[];
+  yearRange: number[];
+  odometerRange: number[];
+  condition: string[];
+  assembly: string[];
+  bodyType: string[];
+  fuelType: string[];
+  transmission: string[];
 }
 
 interface InventoryState {
@@ -86,8 +105,44 @@ export const deleteVehicle = createAsyncThunk(
   'inventory/deleteVehicle',
   async (id: string, thunkAPI) => {
     try {
-      const vehicleId = await deleteVehicleService(id);
-      return vehicleId;
+      await deleteVehicleService(id);
+      return id;
+    } catch (error) {
+      if (isAxiosError(error) && error.response) {
+        return thunkAPI.rejectWithValue(error.response.data.message);
+      }
+      return thunkAPI.rejectWithValue('An unknown error occured');
+    }
+  },
+);
+
+export const getVehicles = createAsyncThunk(
+  'inventory/getVehicles',
+  async (_, thunkAPI) => {
+    try {
+      const vehicles = await getVehiclesService();
+      return vehicles;
+    } catch (error) {
+      if (isAxiosError(error) && error.response) {
+        return thunkAPI.rejectWithValue(error.response.data.message);
+      }
+      return thunkAPI.rejectWithValue('An unknown error occured');
+    }
+  },
+);
+
+export const searchVehicles = createAsyncThunk(
+  'inventory/searchVehicles',
+  async (
+    {
+      params,
+      cancelToken,
+    }: { params: VehicleSearchParams; cancelToken: CancelToken },
+    thunkAPI,
+  ) => {
+    try {
+      const vehicles = await searchVehiclesService(params, cancelToken);
+      return vehicles;
     } catch (error) {
       if (isAxiosError(error) && error.response) {
         return thunkAPI.rejectWithValue(error.response.data.message);
@@ -418,6 +473,36 @@ export const inventorySlice = createSlice({
       })
       .addCase(deleteVehicle.rejected, (state, action) => {
         state.status === 'failed';
+        state.error = action.payload as string;
+      })
+      .addCase(getVehicles.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(
+        getVehicles.fulfilled,
+        (state, action: PayloadAction<VehicleData[]>) => {
+          state.status = 'succeeded';
+          state.vehicles = action.payload;
+          const queryData = transformVehicleData(action.payload);
+          state.queryData = queryData;
+        },
+      )
+      .addCase(getVehicles.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload as string;
+      })
+      .addCase(searchVehicles.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(
+        searchVehicles.fulfilled,
+        (state, action: PayloadAction<VehicleData[]>) => {
+          state.status = 'succeeded';
+          state.vehicles = action.payload;
+        },
+      )
+      .addCase(searchVehicles.rejected, (state, action) => {
+        state.status = 'failed';
         state.error = action.payload as string;
       });
   },

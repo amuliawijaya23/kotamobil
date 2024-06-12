@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import {
   Unstable_Grid2 as Grid,
   Toolbar,
@@ -29,22 +30,31 @@ import {
 
 const Dashboard = () => {
   const dispatch = useAppDispatch();
-  const isLoading = useAppSelector(getDashboardStatus);
+  const status = useAppSelector(getDashboardStatus);
   const startDate = useAppSelector(getStartDate);
   const endDate = useAppSelector(getEndDate);
   const pastRange = useAppSelector(getPastRange);
 
-  const handleOnChangeStartDate = (input: Date | null) => {
-    dispatch(setStartDate(JSON.stringify(input)));
-  };
+  const handleOnChangeStartDate = useCallback(
+    (input: Date | null) => {
+      dispatch(setStartDate(JSON.stringify(input)));
+    },
+    [dispatch],
+  );
 
-  const handleOnChangeEndDate = (input: Date | null) => {
-    dispatch(setEndDate(JSON.stringify(input)));
-  };
+  const handleOnChangeEndDate = useCallback(
+    (input: Date | null) => {
+      dispatch(setEndDate(JSON.stringify(input)));
+    },
+    [dispatch],
+  );
 
-  const handleOnChangePastRange = (event: SelectChangeEvent) => {
-    dispatch(setPastRange(Number(event.target.value)));
-  };
+  const handleOnChangePastRange = useCallback(
+    (event: SelectChangeEvent) => {
+      dispatch(setPastRange(Number(event.target.value)));
+    },
+    [dispatch],
+  );
 
   return (
     <>
@@ -104,7 +114,7 @@ const Dashboard = () => {
           spacing={2}
           sx={{ width: '100%' }}
         >
-          {isLoading && (
+          {status === 'loading' && (
             <Box
               sx={{
                 minHeight: '70vh',
@@ -117,7 +127,7 @@ const Dashboard = () => {
               <Loading />
             </Box>
           )}
-          {!isLoading && (
+          {status !== 'loading' && (
             <>
               <Grid
                 xs={12}

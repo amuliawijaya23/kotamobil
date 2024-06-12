@@ -1,8 +1,7 @@
+import { useMemo } from 'react';
 import { Unstable_Grid2 as Grid, Typography, Divider } from '@mui/material';
-
 import { NumericFormat } from 'react-number-format';
 import { format } from 'date-fns/format';
-
 import { useAppSelector } from '~/redux/store';
 import { getVehicleData } from '~/redux/reducers/vehicleSlice';
 import { getContactsData } from '~/redux/reducers/contactsSlice';
@@ -10,9 +9,11 @@ import { getContactsData } from '~/redux/reducers/contactsSlice';
 const VehicleInformation = () => {
   const vehicle = useAppSelector(getVehicleData);
   const contacts = useAppSelector(getContactsData);
-  const customerData = vehicle?.sold
-    ? contacts?.find((c) => c._id === vehicle.buyerId)
-    : null;
+  const customerData = useMemo(
+    () =>
+      vehicle?.sold ? contacts?.find((c) => c._id === vehicle.buyerId) : null,
+    [vehicle, contacts],
+  );
 
   return (
     <>

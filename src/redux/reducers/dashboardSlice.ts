@@ -1,6 +1,17 @@
 import type { VehicleData } from './vehicleSlice';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../store';
+import { CancelToken, isAxiosError } from 'axios';
+import {
+  getMonthlyVehicleSalesService,
+  getVehicleSalesService,
+} from '~/services/vehicleServices';
+import {
+  calculateSalesByModel,
+  calculateSalesMetrics,
+  calculateTotalProfit,
+  calculateTotalSales,
+} from '~/helpers';
 
 interface DashboardState {
   salesByModel: { model: string; sale: number }[] | null;
@@ -19,7 +30,8 @@ interface DashboardState {
   startDate: string | null;
   endDate: string | null;
   pastRange: number;
-  isLoading: boolean;
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  error: string | null;
 }
 
 const initialState: DashboardState = {
@@ -39,16 +51,138 @@ const initialState: DashboardState = {
   endDate: null,
   pastRange: 1,
   monthsOfInterval: null,
-  isLoading: false,
+  status: 'idle',
+  error: null,
 };
+
+export const getVehicleSales = createAsyncThunk(
+  'dashboard/getVehicleSales',
+  async (
+    {
+      startDate,
+      endDate,
+      cancelToken,
+    }: { startDate: Date; endDate: Date; cancelToken?: CancelToken },
+    thunkAPI,
+  ) => {
+    try {
+      const vehicleSales = await getVehicleSalesService(
+        startDate,
+        endDate,
+        cancelToken,
+      );
+      return vehicleSales;
+    } catch (error) {
+      if (isAxiosError(error) && error.response) {
+        thunkAPI.rejectWithValue(error.response.data.message);
+      }
+      thunkAPI.rejectWithValue('An uknown error occured');
+    }
+  },
+);
+
+export const getPastVehicleSales = createAsyncThunk(
+  'dashboard/getPastVehicleSales',
+  async (
+    {
+      startDate,
+      endDate,
+      cancelToken,
+    }: { startDate: Date; endDate: Date; cancelToken?: CancelToken },
+    thunkAPI,
+  ) => {
+    try {
+      const vehicleSales = await getVehicleSalesService(
+        startDate,
+        endDate,
+        cancelToken,
+      );
+      return vehicleSales;
+    } catch (error) {
+      if (isAxiosError(error) && error.response) {
+        thunkAPI.rejectWithValue(error.response.data.message);
+      }
+      thunkAPI.rejectWithValue('An unknown error occured');
+    }
+  },
+);
+
+export const getMonthlyVehicleSales = createAsyncThunk(
+  'dashboard/getMonthlyVehicleSales',
+  async (
+    {
+      monthsOfInterval,
+      startDate,
+      endDate,
+      cancelToken,
+    }: {
+      monthsOfInterval: Date[];
+      startDate: Date;
+      endDate: Date;
+      cancelToken?: CancelToken;
+    },
+    thunkAPI,
+  ) => {
+    try {
+      const monthlyVehicleSales = await getMonthlyVehicleSalesService(
+        monthsOfInterval,
+        startDate,
+        endDate,
+        cancelToken,
+      );
+      return monthlyVehicleSales;
+    } catch (error) {
+      if (isAxiosError(error) && error.response) {
+        thunkAPI.rejectWithValue(error.response.data.message);
+      }
+      thunkAPI.rejectWithValue('An unknown error occured');
+    }
+  },
+);
+
+export const getPastMonthlyVehicleSales = createAsyncThunk(
+  'dashboard/getPastMonthlyVehicleSales',
+  async (
+    {
+      monthsOfInterval,
+      startDate,
+      endDate,
+      cancelToken,
+    }: {
+      monthsOfInterval: Date[];
+      startDate: Date;
+      endDate: Date;
+      cancelToken?: CancelToken;
+    },
+    thunkAPI,
+  ) => {
+    try {
+      const monthlyVehicleSales = await getMonthlyVehicleSalesService(
+        monthsOfInterval,
+        startDate,
+        endDate,
+        cancelToken,
+      );
+      return monthlyVehicleSales;
+    } catch (error) {
+      if (isAxiosError(error) && error.response) {
+        thunkAPI.rejectWithValue(error.response.data.message);
+      }
+      thunkAPI.rejectWithValue('An unknown error occured');
+    }
+  },
+);
 
 export const dashboardSlice = createSlice({
   name: 'dashboard',
   initialState,
   reducers: {
     resetDashboard: () => initialState,
-    setDashboardLoading: (state, action: PayloadAction<boolean>) => {
-      state.isLoading = action.payload;
+    setDashboardStatus: (
+      state,
+      action: PayloadAction<'idle' | 'loading' | 'succeeded' | 'failed'>,
+    ) => {
+      state.status = action.payload;
     },
     setStartDate: (state, action: PayloadAction<string>) => {
       state.startDate = action.payload;
@@ -105,11 +239,90 @@ export const dashboardSlice = createSlice({
       state.profitPerMonth = action.payload;
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(getVehicleSales.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(
+        getVehicleSales.fulfilled,
+        (state, action: PayloadAction<VehicleData[] | undefined>) => {
+          state.status = 'succeeded';
+          if (action.payload) {
+            state.sales = action.payload;
+            state.salesByModel = calculateSalesByModel(action.payload);
+          }
+        },
+      )
+      .addCase(getVehicleSales.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload as string;
+      })
+      .addCase(getPastVehicleSales.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(
+        getPastVehicleSales.fulfilled,
+        (state, action: PayloadAction<VehicleData[] | undefined>) => {
+          state.status = 'succeeded';
+          if (action.payload) {
+            state.pastSales = action.payload;
+            state.pastSalesByModel = calculateSalesByModel(action.payload);
+          }
+        },
+      )
+      .addCase(getPastVehicleSales.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload as string;
+      })
+      .addCase(getMonthlyVehicleSales.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(
+        getMonthlyVehicleSales.fulfilled,
+        (state, action: PayloadAction<VehicleData[][] | undefined>) => {
+          state.status = 'succeeded';
+          if (action.payload) {
+            const { numOfSalesPerMonth, profitPerMonth } =
+              calculateSalesMetrics(action.payload);
+            state.salesPerMonth = numOfSalesPerMonth;
+            state.profitPerMonth = profitPerMonth;
+            state.totalSales = calculateTotalSales(numOfSalesPerMonth);
+            state.totalProfit = calculateTotalProfit(profitPerMonth);
+          }
+        },
+      )
+      .addCase(getMonthlyVehicleSales.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload as string;
+      })
+      .addCase(getPastMonthlyVehicleSales.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(
+        getPastMonthlyVehicleSales.fulfilled,
+        (state, action: PayloadAction<VehicleData[][] | undefined>) => {
+          state.status = 'succeeded';
+          if (action.payload) {
+            const { numOfSalesPerMonth, profitPerMonth } =
+              calculateSalesMetrics(action.payload);
+            state.pastSalesPerMonth = numOfSalesPerMonth;
+            state.pastProfitPerMonth = profitPerMonth;
+            state.pastTotalSales = calculateTotalSales(numOfSalesPerMonth);
+            state.pastTotalProfit = calculateTotalProfit(profitPerMonth);
+          }
+        },
+      )
+      .addCase(getPastMonthlyVehicleSales.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload as string;
+      });
+  },
 });
 
 export const {
   resetDashboard,
-  setDashboardLoading,
+  setDashboardStatus,
   setStartDate,
   setEndDate,
   setPastRange,
@@ -127,8 +340,7 @@ export const {
   setPastProfitPerMonth,
   setProfitPerMonth,
 } = dashboardSlice.actions;
-export const getDashboardStatus = (state: RootState) =>
-  state.dashboard.isLoading;
+export const getDashboardStatus = (state: RootState) => state.dashboard.status;
 export const getStartDate = (state: RootState) => state.dashboard.startDate;
 export const getEndDate = (state: RootState) => state.dashboard.endDate;
 export const getPastRange = (state: RootState) => state.dashboard.pastRange;

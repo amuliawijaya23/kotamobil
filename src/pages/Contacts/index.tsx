@@ -1,5 +1,5 @@
 import type { Order } from '~/helpers';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   Toolbar,
   Box,
@@ -12,6 +12,13 @@ import {
   Checkbox,
   IconButton,
   Typography,
+  List,
+  ListItemButton,
+  ListItemText,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
 } from '@mui/material';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import FacebookIcon from '@mui/icons-material/Facebook';
@@ -20,71 +27,51 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import ContactsToolbar from '~/components/Contacts/ContactsToolbar';
 import ContactsHeader from '~/components/Contacts/ContactsHeader';
 import ContactForm from '~/components/ContactForm';
-
 import { useAppSelector, useAppDispatch } from '~/redux/store';
 import {
   getContactsData,
   getSelectedContacts,
   setSelectedContacts,
   setSelectAllContacts,
+  getContactsStatus,
+  getAssociatedBuyerIds,
+  getAssociatedVehicleIds,
+  resetError,
 } from '~/redux/reducers/contactsSlice';
 
 import { getComparator, stableSort } from '~/helpers';
+import { getInventory } from '~/redux/reducers/inventorySlice';
 
 const Contacts = () => {
   const dispatch = useAppDispatch();
   const contacts = useAppSelector(getContactsData);
+  const inventory = useAppSelector(getInventory);
   const selectedContacts = useAppSelector(getSelectedContacts);
+  const status = useAppSelector(getContactsStatus);
+  const associatedBuyerIds = useAppSelector(getAssociatedBuyerIds);
+  const associatedVehicleIds = useAppSelector(getAssociatedVehicleIds);
   const [order, setOrder] = useState<Order>('asc');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [openForm, setOpenForm] = useState(false);
 
-  const handleOpenForm = () => {
-    setOpenForm(true);
-  };
-
-  const handleCloseForm = () => {
-    setOpenForm(false);
-  };
-
-  const handleRequestSort = (event: React.MouseEvent<unknown>) => {
-    event.preventDefault();
-    const isAsc = order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-  };
-
-  const handleChangePage = (_event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      const newSelected = (contacts && contacts.map((n) => n._id)) || [];
-      dispatch(setSelectAllContacts(newSelected));
-      return;
+  const selectedContact = useMemo(() => {
+    if (selectedContacts.length === 1) {
+      const selected = contacts?.find(
+        (contact) => contact._id === selectedContacts[0],
+      );
+      return selected;
     }
-    dispatch(setSelectAllContacts([]));
-  };
+    return;
+  }, [contacts, selectedContacts]);
 
-  const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
-    event.preventDefault();
-    dispatch(setSelectedContacts(id));
-  };
-
-  const isSelected = (id: string) => selectedContacts.indexOf(id) !== -1;
-
-  const emptyRows =
-    page > 0
-      ? Math.max(0, (1 + page) * rowsPerPage - (contacts?.length || 0))
-      : 0;
+  const emptyRows = useMemo(
+    () =>
+      page > 0
+        ? Math.max(0, (1 + page) * rowsPerPage - (contacts?.length || 0))
+        : 0,
+    [page, rowsPerPage, contacts?.length],
+  );
 
   const visibleRows = useMemo(() => {
     if (contacts && contacts.length > 0) {
@@ -95,10 +82,139 @@ const Contacts = () => {
     }
   }, [order, page, rowsPerPage, contacts]);
 
+  const associatedVehicles = useMemo(
+    () =>
+      inventory?.filter((vehicle) =>
+        associatedVehicleIds?.includes(vehicle._id),
+      ),
+    [associatedVehicleIds, inventory],
+  );
+
+  const associatedBuyers = useMemo(
+    () => contacts?.filter((buyer) => associatedBuyerIds?.includes(buyer._id)),
+    [associatedBuyerIds, contacts],
+  );
+
+  const isErrorOpen = useMemo(() => {
+    return Boolean(
+      status === 'failed' && associatedBuyerIds && associatedVehicleIds,
+    );
+  }, [status, associatedBuyerIds, associatedVehicleIds]);
+
+  const handleOpenForm = useCallback(() => {
+    setOpenForm(true);
+  }, []);
+
+  const handleCloseForm = useCallback(() => {
+    setOpenForm(false);
+  }, []);
+
+  const handleRequestSort = useCallback(
+    (event: React.MouseEvent<unknown>) => {
+      event.preventDefault();
+      const isAsc = order === 'asc';
+      setOrder(isAsc ? 'desc' : 'asc');
+    },
+    [order],
+  );
+
+  const handleChangePage = useCallback((_event: unknown, newPage: number) => {
+    setPage(newPage);
+  }, []);
+
+  const handleChangeRowsPerPage = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setRowsPerPage(parseInt(event.target.value, 10));
+      setPage(0);
+    },
+    [],
+  );
+
+  const handleSelectAllClick = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (event.target.checked) {
+        const newSelected = (contacts && contacts.map((n) => n._id)) || [];
+        dispatch(setSelectAllContacts(newSelected));
+        return;
+      }
+      dispatch(setSelectAllContacts([]));
+    },
+    [dispatch, contacts],
+  );
+
+  const handleClick = useCallback(
+    (event: React.MouseEvent<unknown>, id: string) => {
+      event.preventDefault();
+      dispatch(setSelectedContacts(id));
+    },
+    [dispatch],
+  );
+
+  const isSelected = useCallback(
+    (id: string) => selectedContacts.indexOf(id) !== -1,
+    [selectedContacts],
+  );
+
+  const handleCloseError = useCallback(() => {
+    dispatch(resetError());
+  }, [dispatch]);
+
   return (
     <>
+      <Dialog open={isErrorOpen} onClose={handleCloseError}>
+        <DialogTitle>
+          <Typography variant="body1" fontWeight="bold">
+            Delete Contacts Failed
+          </Typography>
+          <Typography variant="body2">
+            We encountered an issue while trying to delete the selected
+            contacts. Before proceeding, please ensure the following vehicles
+            are updated accordingly:
+          </Typography>
+        </DialogTitle>
+        <DialogContent>
+          {associatedBuyers?.map((buyer) => {
+            const vehicles = associatedVehicles?.filter(
+              (v) => v.buyerId === buyer._id,
+            );
+
+            return (
+              <DialogContentText
+                component="div"
+                key={`associated-buyer-${buyer._id}`}
+              >
+                <Typography variant="body2" fontWeight="bold" sx={{ mt: 2 }}>
+                  {`${buyer.firstName}`}
+                  {`${buyer.lastName ? ` ${buyer.lastName}` : ''}:`}
+                </Typography>
+                <List disablePadding>
+                  {vehicles?.map((v) => (
+                    <ListItemButton
+                      key={`associated-vehicles-${v._id}`}
+                      dense
+                      LinkComponent={'a'}
+                      href={`vehicle/${v._id}`}
+                    >
+                      <ListItemText
+                        primaryTypographyProps={{ variant: 'caption' }}
+                        primary={v.name}
+                        role="link"
+                      />
+                    </ListItemButton>
+                  ))}
+                </List>
+              </DialogContentText>
+            );
+          })}
+        </DialogContent>
+      </Dialog>
+
       <Toolbar />
-      <ContactForm open={openForm} onCloseForm={handleCloseForm} />
+      <ContactForm
+        open={openForm}
+        contact={selectedContact}
+        onCloseForm={handleCloseForm}
+      />
       <Box>
         <ContactsToolbar
           onOpenForm={handleOpenForm}
@@ -127,7 +243,9 @@ const Contacts = () => {
                       tabIndex={-1}
                       key={contact._id}
                       selected={isItemSelected}
-                      sx={{ cursor: 'pointer' }}
+                      sx={{
+                        cursor: 'pointer',
+                      }}
                     >
                       <TableCell padding="checkbox">
                         <Checkbox

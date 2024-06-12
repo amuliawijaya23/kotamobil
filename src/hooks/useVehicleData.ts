@@ -1,20 +1,14 @@
-import axios from 'axios';
 import { useEffect, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '~/redux/store';
-import {
-  getInventory,
-  setInventoryVehicles,
-} from '~/redux/reducers/inventorySlice';
+import { getInventory } from '~/redux/reducers/inventorySlice';
 import {
   setVehicleData,
   resetVehicleData,
 } from '~/redux/reducers/vehicleSlice';
-import { useParams, useNavigate } from 'react-router-dom';
-import { setAlert } from '~/redux/reducers/appSlice';
+import { useParams } from 'react-router-dom';
 
 const useVehicleData = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const inventory = useAppSelector(getInventory);
 
@@ -38,26 +32,6 @@ const useVehicleData = () => {
       dispatch(resetVehicleData());
     };
   }, [id, dispatch, findAndSetVehicleData]);
-
-  const handleOnDelete = async () => {
-    if (!inventory || !Array.isArray(inventory)) return;
-    try {
-      const response = await axios.delete(`/api/vehicle/delete/${id}`);
-
-      if (response.status === 200) {
-        const updatedInventory = inventory.filter((item) => item._id !== id);
-        dispatch(setInventoryVehicles(updatedInventory));
-        navigate('/inventory');
-        dispatch(
-          setAlert({ message: response.data.message, severity: 'success' }),
-        );
-      }
-    } catch (error) {
-      console.error('Error occured while deleting vehicle:', error);
-    }
-  };
-
-  return { handleOnDelete };
 };
 
 export default useVehicleData;

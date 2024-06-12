@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   Card,
   Box,
@@ -15,6 +15,7 @@ import {
   Typography,
   Button,
   Divider,
+  Link,
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import { useAppSelector } from '~/redux/store';
@@ -41,34 +42,40 @@ const SalesData = () => {
   const [rowsPerPage, setRowsPerPage] = useState<number>(5);
   const [currentData, setCurrentData] = useState<boolean>(true);
 
-  const handleRequestSort = (
-    _event: React.MouseEvent<unknown>,
-    property: string,
-  ) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
+  const handleRequestSort = useCallback(
+    (_event: React.MouseEvent<unknown>, property: string) => {
+      const isAsc = orderBy === property && order === 'asc';
+      setOrder(isAsc ? 'desc' : 'asc');
+      setOrderBy(property);
+    },
+    [orderBy, order],
+  );
 
-  const handleChangePage = (_event: unknown, newPage: number) => {
+  const handleChangePage = useCallback((_event: unknown, newPage: number) => {
     setPage(newPage);
-  };
+  }, []);
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  const handleChangeRowsPerPage = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setRowsPerPage(parseInt(event.target.value, 10));
+      setPage(0);
+    },
+    [],
+  );
 
-  const handleOnChangeCurrentData = () => {
+  const handleOnChangeCurrentData = useCallback(() => {
     setCurrentData((prev) => !prev);
-  };
+  }, []);
 
-  const emptyRows =
-    pastSalesData && page > 0
+  const emptyRows = useMemo(() => {
+    return currentData
+      ? salesData && page > 0
+        ? Math.max(0, 1 * page * rowsPerPage - salesData.length)
+        : 0
+      : pastSalesData && page > 0
       ? Math.max(0, (1 + page) * rowsPerPage - pastSalesData.length)
       : 0;
+  }, [currentData, pastSalesData, salesData, page, rowsPerPage]);
 
   const visibleRows = useMemo(() => {
     if (pastSalesData && salesData) {
@@ -114,12 +121,13 @@ const SalesData = () => {
             {currentData ? 'See Past Data' : 'See Current Data'}
           </Button>
         </Toolbar>
-        <TableContainer>
-          <Table sx={{ minWidth: 750 }}>
-            <TableHead>
-              <TableRow>
+        <TableContainer component="div">
+          <Table component="div" sx={{ minWidth: 750 }}>
+            <TableHead component="div">
+              <TableRow component="div">
                 {headCells.map((cell, index) => (
                   <TableCell
+                    component="div"
                     key={`${cell.id}-head-cell`}
                     align={index === headCells.length - 1 ? 'right' : 'left'}
                     padding={'normal'}
@@ -143,24 +151,34 @@ const SalesData = () => {
                 ))}
               </TableRow>
             </TableHead>
-            <TableBody>
+            <TableBody component={'div'}>
               {visibleRows.map((row, index) => (
                 <TableRow
                   hover
                   key={`dashboard-sales-row-${index}`}
                   role="link"
+                  component={Link}
+                  href={`/vehicle/${row._id}`}
                   tabIndex={-1}
-                  sx={{ cursor: 'pointer' }}
+                  sx={{ cursor: 'pointer', textDecoration: 'none' }}
                 >
-                  <TableCell component="th" scope="row">
+                  <TableCell component="div" scope="row">
                     {row.dateSold &&
                       format(new Date(row.dateSold), 'dd MMM yyyy')}
                   </TableCell>
-                  <TableCell align="left">{row.name}</TableCell>
-                  <TableCell align="left">{row.make}</TableCell>
-                  <TableCell align="left">{row.model}</TableCell>
-                  <TableCell align="left">{row.year}</TableCell>
-                  <TableCell align="right">
+                  <TableCell component="div" align="left">
+                    {row.name}
+                  </TableCell>
+                  <TableCell component="div" align="left">
+                    {row.make}
+                  </TableCell>
+                  <TableCell component="div" align="left">
+                    {row.model}
+                  </TableCell>
+                  <TableCell component="div" align="left">
+                    {row.year}
+                  </TableCell>
+                  <TableCell component="div" align="right">
                     <NumericFormat
                       displayType="text"
                       value={row.soldPrice}
@@ -173,11 +191,12 @@ const SalesData = () => {
               ))}
               {emptyRows > 0 && (
                 <TableRow
+                  component="div"
                   style={{
                     height: 53 * emptyRows,
                   }}
                 >
-                  <TableCell colSpan={6} />
+                  <TableCell component="div" colSpan={6} />
                 </TableRow>
               )}
             </TableBody>

@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import {
   Unstable_Grid2 as Grid,
   Box,
@@ -5,10 +6,8 @@ import {
   ImageList,
   ImageListItem,
 } from '@mui/material';
-
 import { useAppSelector } from '~/redux/store';
 import { getVehicleData } from '~/redux/reducers/vehicleSlice';
-
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
@@ -18,25 +17,25 @@ interface VehicleImagesProps {
 
 const VehicleImages = ({ onOpenImages }: VehicleImagesProps) => {
   const vehicle = useAppSelector(getVehicleData);
-
   const theme = useTheme();
-
   const isUltraUp = useMediaQuery(theme.breakpoints.up('ultra'));
   const isXlUp = useMediaQuery(theme.breakpoints.up('xl'));
   const isLgUp = useMediaQuery(theme.breakpoints.up('lg'));
   const isSmUp = useMediaQuery(theme.breakpoints.up('sm'));
 
-  let imageListCol = 1;
-
-  if (isUltraUp) {
-    imageListCol = 5;
-  } else if (isXlUp) {
-    imageListCol = 5;
-  } else if (isLgUp) {
-    imageListCol = 5;
-  } else if (isSmUp) {
-    imageListCol = 2;
-  }
+  const imageListCol = useMemo(() => {
+    let col = 1;
+    if (isUltraUp) {
+      col = 5;
+    } else if (isXlUp) {
+      col = 5;
+    } else if (isLgUp) {
+      col = 5;
+    } else if (isSmUp) {
+      col = 2;
+    }
+    return col;
+  }, [isUltraUp, isXlUp, isLgUp, isSmUp]);
 
   return (
     <>
