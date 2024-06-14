@@ -80,7 +80,7 @@ const NavBar = () => {
   }, [dispatch]);
 
   return (
-    <AppBar position="fixed">
+    <AppBar position="fixed" sx={{ bgcolor: 'primary.main' }}>
       <Toolbar
         sx={{
           display: 'flex',
@@ -131,7 +131,7 @@ const NavBar = () => {
               <Button
                 onClick={handleOnClickDashboard}
                 onMouseDown={handleMouseDown}
-                color="inherit"
+                color="secondary"
                 variant="text"
               >
                 Dashboard
@@ -139,7 +139,7 @@ const NavBar = () => {
               <Button
                 onClick={handleOnClickInventory}
                 onMouseDown={handleMouseDown}
-                color="inherit"
+                color="secondary"
                 variant="text"
               >
                 Inventory
@@ -147,7 +147,7 @@ const NavBar = () => {
               <Button
                 onClick={handleOnClickContacts}
                 onMouseDown={handleMouseDown}
-                color="inherit"
+                color="secondary"
                 variant="text"
               >
                 Contacts
@@ -165,7 +165,7 @@ const NavBar = () => {
               <Button
                 onClick={handleOnClickLogin}
                 onMouseDown={handleMouseDown}
-                color="inherit"
+                color="secondary"
                 variant="text"
               >
                 Login
@@ -173,7 +173,7 @@ const NavBar = () => {
               <Button
                 onClick={handleOnClickRegister}
                 onMouseDown={handleMouseDown}
-                color="inherit"
+                color="secondary"
                 variant="text"
               >
                 Register

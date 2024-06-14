@@ -165,7 +165,7 @@ const Vehicle = () => {
         sx={{ mt: { lg: 5, ultra: 20 } }}
       >
         <Grid xs={12} sm={11} md={10} lg={9} ultra={6}>
-          <Card>
+          <Card sx={{ bgcolor: 'primary.light' }}>
             <CardHeader
               title={vehicle?.name}
               action={

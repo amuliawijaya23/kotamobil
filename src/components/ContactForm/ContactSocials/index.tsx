@@ -34,6 +34,7 @@ const ContactSocials = () => {
           fullWidth
           size="small"
           variant="outlined"
+          color="secondary"
           error={touched.instagram && Boolean(errors.instagram)}
           helperText={<ErrorMessage name="instagram" />}
           InputProps={{
@@ -53,6 +54,7 @@ const ContactSocials = () => {
           fullWidth
           size="small"
           variant="outlined"
+          color="secondary"
           error={touched.facebook && Boolean(errors.facebook)}
           helperText={<ErrorMessage name="facebook" />}
           InputProps={{
@@ -72,6 +74,7 @@ const ContactSocials = () => {
           fullWidth
           size="small"
           variant="outlined"
+          color="secondary"
           error={touched.twitter && Boolean(errors.twitter)}
           helperText={<ErrorMessage name="twitter" />}
           InputProps={{
@@ -91,6 +94,7 @@ const ContactSocials = () => {
           fullWidth
           size="small"
           variant="outlined"
+          color="secondary"
           error={touched.linkedIn && Boolean(errors.linkedIn)}
           helperText={<ErrorMessage name="linkedIn" />}
           InputProps={{

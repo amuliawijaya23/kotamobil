@@ -27,11 +27,14 @@ const SelectField: React.FC<SelectFieldProps> = ({
 
   return (
     <FormControl size="small" fullWidth error={!!errorText}>
-      <InputLabel id={`${field.name}-select-label`}>{label}</InputLabel>
+      <InputLabel id={`${field.name}-select-label`} color="secondary">
+        {label}
+      </InputLabel>
       <Select
         labelId={`${field.name}-select-label`}
         id={`${field.name}-select`}
         {...field}
+        color="secondary"
         label={label}
       >
         {options.map((option) => (

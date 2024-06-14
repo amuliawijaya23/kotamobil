@@ -236,6 +236,8 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
   const {
     values,
     isSubmitting,
+    touched,
+    setTouched,
     setFieldValue,
     setValues,
     resetForm,
@@ -314,11 +316,16 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
       setStep((step) => step + 1);
       dispatch(resetAlert());
     } else {
+      const touchedFields: { [key: string]: boolean } = {};
+      Object.keys(initialValues).forEach((key) => {
+        touchedFields[key] = true;
+      });
+      setTouched({ ...touched, ...touchedFields });
       dispatch(
         setAlert({ message: 'Missing required parameters', severity: 'error' }),
       );
     }
-  }, [dispatch, validateForm]);
+  }, [touched, setTouched, dispatch, validateForm]);
 
   const handlePreviousStep = () => {
     setStep((prev) => prev - 1);
@@ -327,6 +334,11 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
   const handleOnOpenConfirmation = useCallback(async () => {
     const validationError = await validateAllSteps(values);
     if (validationError) {
+      const touchedFields: { [key: string]: boolean } = {};
+      Object.keys(initialValues).forEach((key) => {
+        touchedFields[key] = true;
+      });
+      setTouched({ ...touched, ...touchedFields });
       dispatch(
         setAlert({
           message: 'Missing required parameters',
@@ -336,7 +348,7 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
       return;
     }
     setOpenConfirmation(true);
-  }, [values, dispatch]);
+  }, [values, touched, setTouched, dispatch]);
 
   const handleOnCloseConfirmation = useCallback(() => {
     setOpenConfirmation(false);
@@ -401,7 +413,10 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
         onClose={onClose}
         slotProps={{ backdrop: { invisible: true } }}
         PaperProps={{
-          sx: { width: { xs: '60%', sm: '50%', lg: '40%', xl: '30%' } },
+          sx: {
+            width: { xs: '60%', sm: '50%', lg: '40%', xl: '30%' },
+            bgcolor: 'primary.light',
+          },
         }}
       >
         <Toolbar />

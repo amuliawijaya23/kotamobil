@@ -41,7 +41,7 @@ const ContactsHeader = ({
       <TableRow>
         <TableCell padding="checkbox">
           <Checkbox
-            color="primary"
+            color="secondary"
             indeterminate={
               numSelected > 0 && numSelected < (contacts?.length || 0)
             }

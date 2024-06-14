@@ -26,41 +26,92 @@ const typographyOptions = {
 };
 
 const paletteOptions = {
+  background: {
+    default: '#e0e0e0',
+  },
+  text: {
+    primary: '#616161',
+  },
   primary: {
-    light: '#7f97a2',
-    main: '#cfd8dc',
-    dark: '#435761',
+    light: '#eeeeee',
+    main: '#e0e0e0',
+    dark: '#bdbdbd',
     contrastText: '#616161',
   },
   secondary: {
     light: '#fe7049',
     main: '#fe4d1c',
     dark: '#b13513',
-    contrastText: '#fff',
+    contrastText: '#9e9e9e',
   },
   success: {
     light: '#4caf50',
     main: '#43a047',
     dark: '#388e3c',
-    contrastText: '#fff',
+    contrastText: '#9e9e9e',
   },
   error: {
     light: '#c62828',
     main: '#d50000',
     dark: '#b71c1c',
-    contrastText: '#fff',
+    contrastText: '#9e9e9e',
   },
   warning: {
     light: '#ffeb3b',
     main: '#fdd835',
     dark: '#fbc02d',
-    contrastText: '#fff',
+    contrastText: '#9e9e9e',
   },
   info: {
     light: '#78909c',
     main: '#607d8b',
     dark: '#546e7a',
-    contrastText: '#fff',
+    contrastText: '#9e9e9e',
+  },
+};
+
+const darkPaletteOptions = {
+  background: {
+    default: '#12181b',
+  },
+  text: {
+    primary: '#bdbdbd',
+  },
+  primary: {
+    light: '#1a2327',
+    main: '#12181b',
+    dark: '#0c1012',
+    contrastText: '#bdbdbd',
+  },
+  secondary: {
+    light: '#fe7049',
+    main: '#fe4d1c',
+    dark: '#b13513',
+    contrastText: '#9e9e9e',
+  },
+  success: {
+    light: '#4caf50',
+    main: '#43a047',
+    dark: '#388e3c',
+    contrastText: '#9e9e9e',
+  },
+  error: {
+    light: '#c62828',
+    main: '#d50000',
+    dark: '#b71c1c',
+    contrastText: '#9e9e9e',
+  },
+  warning: {
+    light: '#ffeb3b',
+    main: '#fdd835',
+    dark: '#fbc02d',
+    contrastText: '#9e9e9e',
+  },
+  info: {
+    light: '#78909c',
+    main: '#607d8b',
+    dark: '#546e7a',
+    contrastText: '#9e9e9e',
   },
 };
 
@@ -79,10 +130,16 @@ export const ThemeRegistry = ({ children }: { children: React.ReactNode }) => {
       },
     },
     typography: typographyOptions,
-    palette: {
-      mode: theme === 'dark' ? 'dark' : 'light',
-      ...paletteOptions,
-    },
+    palette:
+      theme === 'dark'
+        ? {
+            mode: 'dark',
+            ...darkPaletteOptions,
+          }
+        : {
+            mode: 'light',
+            ...paletteOptions,
+          },
   });
 
   return (

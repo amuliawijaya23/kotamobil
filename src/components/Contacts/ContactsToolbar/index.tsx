@@ -186,6 +186,7 @@ const ContactsToolbar = ({ numSelected, onOpenForm }: ContactsToolbar) => {
               placeholder="Search..."
               value={search}
               onChange={handleOnChangeSearch}
+              color="secondary"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">

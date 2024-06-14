@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Card, CardHeader, CardContent } from '@mui/material';
-import { useAppSelector } from '~/redux/store';
 import { LineChart, LineSeriesType } from '@mui/x-charts';
+import { useAppSelector } from '~/redux/store';
 import {
   getMonthsOfInterval,
   getProfitPerMonth,
@@ -27,12 +27,14 @@ const ProfitChart = () => {
         type: 'line',
         label: 'Current',
         data: profitPerMonth,
+        color: '#1565c0',
         valueFormatter: (value: number) =>
           `Rp ${value?.toLocaleString('id-ID')}`,
       },
       {
         type: 'line',
         label: 'Past',
+        color: '#607d8b',
         data: pastProfitPerMonth,
         valueFormatter: (value) => `Rp ${value?.toLocaleString('id-ID')}`,
       },
@@ -40,7 +42,7 @@ const ProfitChart = () => {
   }, [totalProfit, pastTotalProfit, profitPerMonth, pastProfitPerMonth]);
 
   return (
-    <Card>
+    <Card sx={{ bgcolor: 'primary.light', color: 'secondary.main' }}>
       <CardHeader
         title="Monthly Profit"
         titleTypographyProps={{

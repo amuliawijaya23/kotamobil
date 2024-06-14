@@ -77,6 +77,7 @@ const VehicleStatus = () => {
           variant="outlined"
           error={touched.name && Boolean(errors.name)}
           helperText={<ErrorMessage name="name" />}
+          color="secondary"
         />
       </Grid>
       <Grid xs={12} sm={6} md={4}>
@@ -92,6 +93,7 @@ const VehicleStatus = () => {
             textField: {
               fullWidth: true,
               size: 'small',
+              color: 'secondary',
               error: Boolean(touched.dateAdded && errors.dateAdded),
               helperText: <ErrorMessage name="dateAdded" component="div" />,
             },
@@ -109,6 +111,7 @@ const VehicleStatus = () => {
               textField: {
                 fullWidth: true,
                 size: 'small',
+                color: 'secondary',
                 error: Boolean(touched.dateSold && errors.dateSold),
                 helperText: <ErrorMessage name="dateSold" component="div" />,
               },
@@ -149,6 +152,7 @@ const VehicleStatus = () => {
                   name="buyerId"
                   label="Buyer"
                   size="small"
+                  color="secondary"
                   error={Boolean(
                     touched.buyerId &&
                       errors.buyerId &&
@@ -201,6 +205,7 @@ const VehicleStatus = () => {
           customInput={TextField}
           size="small"
           label="Price"
+          color="secondary"
           thousandSeparator="."
           decimalSeparator=","
           prefix="Rp "
@@ -223,6 +228,7 @@ const VehicleStatus = () => {
           customInput={TextField}
           size="small"
           label="Market Price"
+          color="secondary"
           thousandSeparator="."
           decimalSeparator=","
           prefix="Rp "
@@ -243,6 +249,7 @@ const VehicleStatus = () => {
           customInput={TextField}
           size="small"
           label="Purchase Price"
+          color="secondary"
           thousandSeparator="."
           decimalSeparator=","
           prefix="Rp "
@@ -264,6 +271,7 @@ const VehicleStatus = () => {
             customInput={TextField}
             size="small"
             label="Sold Price"
+            color="secondary"
             thousandSeparator="."
             decimalSeparator=","
             prefix="Rp "
@@ -303,6 +311,7 @@ const VehicleStatus = () => {
               fullWidth
               size="small"
               variant="outlined"
+              color="secondary"
               error={touched.plateNumber && Boolean(errors.plateNumber)}
               helperText={<ErrorMessage name="plateNumber" />}
             />
@@ -316,6 +325,7 @@ const VehicleStatus = () => {
                 textField: {
                   fullWidth: true,
                   size: 'small',
+                  color: 'secondary',
                   error: Boolean(touched.taxDate && errors.taxDate),
                   helperText: <ErrorMessage name="taxDate" component="div" />,
                 },

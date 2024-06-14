@@ -40,11 +40,16 @@ const SalesMetrics = () => {
   }, [salesDelta]);
 
   return (
-    <Card>
+    <Card sx={{ bgcolor: 'primary.light' }}>
       <CardContent>
         <Grid container spacing={3} sx={{ justifyContent: 'space-between' }}>
           <Grid>
-            <Typography color="inherit" variant="overline" gutterBottom>
+            <Typography
+              color="secondary"
+              fontWeight="bold"
+              variant="overline"
+              gutterBottom
+            >
               Current Sales
             </Typography>
             {totalSales ? (
@@ -57,7 +62,8 @@ const SalesMetrics = () => {
               </Typography>
             )}
             <Typography
-              color="inherit"
+              color="secondary"
+              fontWeight="bold"
               variant="overline"
               gutterBottom
               sx={{ mt: 2 }}

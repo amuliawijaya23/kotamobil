@@ -121,6 +121,7 @@ const Inventory = () => {
           variant="persistent"
           open={openFilter}
           anchor="left"
+          PaperProps={{ sx: { bgcolor: 'primary.main' } }}
           sx={{
             width: drawerWidth,
             flexShrink: 0,

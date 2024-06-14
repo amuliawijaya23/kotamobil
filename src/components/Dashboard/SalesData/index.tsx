@@ -96,7 +96,7 @@ const SalesData = () => {
   ]);
 
   return (
-    <Card>
+    <Card sx={{ bgcolor: 'primary.light' }}>
       <CardContent>
         <Toolbar
           sx={{
@@ -108,12 +108,12 @@ const SalesData = () => {
             alignItems: 'center',
           }}
         >
-          <Typography variant="body1" fontWeight="bold">
+          <Typography variant="body1" color="secondary" fontWeight="bold">
             {currentData ? 'Sales Data' : 'Past Sales Data'}
           </Typography>
           <Button
             size="small"
-            color="info"
+            color="secondary"
             variant="outlined"
             onClick={handleOnChangeCurrentData}
             sx={{ minWidth: 125 }}

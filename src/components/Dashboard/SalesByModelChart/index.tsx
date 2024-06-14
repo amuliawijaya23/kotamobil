@@ -27,17 +27,18 @@ const SalesByModelChart = () => {
   }, []);
 
   return (
-    <Card>
+    <Card sx={{ bgcolor: 'primary.light' }}>
       <CardHeader
         title="Sales By Model"
         titleTypographyProps={{
+          color: 'secondary',
           variant: 'body1',
           fontWeight: 'bold',
         }}
         action={
           <Button
             size="small"
-            color="info"
+            color="secondary"
             variant="outlined"
             onClick={handleOnChangeCurrentData}
             sx={{ minWidth: 125 }}
@@ -88,6 +89,19 @@ const SalesByModelChart = () => {
           ) : (
             <PieChart
               margin={{ top: 10, bottom: 10, left: 10, right: 150 }}
+              colors={[
+                '#e65100',
+                '#263238',
+                '#ffd600',
+                '#607d8b',
+                '#00bfa5',
+                '#00b8d4',
+                '#0091ea',
+                '#0d47a1',
+                '#b71c1c',
+                '#1b5e20',
+                '#311b92',
+              ]}
               series={[
                 {
                   data: pastSalesByModel.map((sale, index) => ({

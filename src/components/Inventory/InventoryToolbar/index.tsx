@@ -68,6 +68,7 @@ const InventoryToolbar = ({
             disabled={!queryData}
             value={queryData?.search || ''}
             onChange={handleOnChangeSearch}
+            color="secondary"
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">

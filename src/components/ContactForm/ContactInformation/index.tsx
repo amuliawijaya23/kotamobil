@@ -34,6 +34,7 @@ const ContactInformation = () => {
           fullWidth
           size="small"
           variant="outlined"
+          color="secondary"
           error={touched.firstName && Boolean(errors.firstName)}
           helperText={<ErrorMessage name="firstName" />}
         />
@@ -46,6 +47,7 @@ const ContactInformation = () => {
           fullWidth
           size="small"
           variant="outlined"
+          color="secondary"
           error={touched.lastName && Boolean(errors.lastName)}
           helperText={<ErrorMessage name="lastName" />}
         />
@@ -58,6 +60,7 @@ const ContactInformation = () => {
           fullWidth
           size="small"
           variant="outlined"
+          color="secondary"
           error={touched.email && Boolean(errors.email)}
           helperText={<ErrorMessage name="email" />}
         />
@@ -70,6 +73,7 @@ const ContactInformation = () => {
           fullWidth
           size="small"
           variant="outlined"
+          color="secondary"
           error={touched.address && Boolean(errors.address)}
           helperText={<ErrorMessage name="address" />}
         />
@@ -115,6 +119,7 @@ const ContactInformation = () => {
               {...params}
               label="Country"
               size="small"
+              color="secondary"
               error={Boolean(touched.country && errors.country)}
               helperText={<ErrorMessage name="country" />}
               inputProps={{
@@ -137,6 +142,7 @@ const ContactInformation = () => {
           size="small"
           label="Mobile"
           placeholder="8170031958"
+          color="secondary"
           error={Boolean(touched.mobile && errors.mobile)}
           helperText={<ErrorMessage name="mobile" />}
         />

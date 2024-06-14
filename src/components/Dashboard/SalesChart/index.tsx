@@ -27,19 +27,21 @@ const SalesChart = () => {
         type: 'bar',
         stack: 'total',
         label: 'Current',
+        color: '#1565c0',
         data: salesPerMonth,
       },
       {
         type: 'bar',
         stack: 'total',
         label: 'Past',
+        color: '#607d8b',
         data: pastSalesPerMonth,
       },
     ] as BarSeriesType[];
   }, [totalSales, pastTotalSales, salesPerMonth, pastSalesPerMonth]);
 
   return (
-    <Card>
+    <Card sx={{ bgcolor: 'primary.light', color: 'secondary.main' }}>
       <CardHeader
         title="Monthly Sales"
         titleTypographyProps={{

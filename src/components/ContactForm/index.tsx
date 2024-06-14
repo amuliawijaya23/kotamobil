@@ -50,7 +50,7 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: { xs: 400, sm: 600 },
-  bgcolor: 'background.paper',
+  bgcolor: 'primary.light',
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
@@ -139,8 +139,15 @@ const ContactForm = ({ contact, open, onCloseForm }: ContactFormProps) => {
     },
   });
 
-  const { setValues, resetForm, handleSubmit, validateForm, isSubmitting } =
-    formik;
+  const {
+    setValues,
+    resetForm,
+    handleSubmit,
+    validateForm,
+    setTouched,
+    touched,
+    isSubmitting,
+  } = formik;
 
   const initializeForm = useCallback(() => {
     if (contact) {
@@ -188,11 +195,16 @@ const ContactForm = ({ contact, open, onCloseForm }: ContactFormProps) => {
   const handleOnValidate = useCallback(async () => {
     const isValid = await validateForm();
     if (Object.keys(isValid).length > 0) {
+      const touchedFields: { [key: string]: boolean } = {};
+      Object.keys(initialValues).forEach((key) => {
+        touchedFields[key] = true;
+      });
+      setTouched({ ...touched, ...touchedFields });
       dispatch(setAlert({ message: 'Missing parameters', severity: 'error' }));
       return;
     }
     handleOnOpenConfirmation();
-  }, [dispatch, validateForm, handleOnOpenConfirmation]);
+  }, [touched, setTouched, dispatch, validateForm, handleOnOpenConfirmation]);
 
   const onSave = useCallback(async () => {
     handleOnCloseConfirmation();

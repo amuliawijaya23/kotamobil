@@ -59,14 +59,26 @@ const Dashboard = () => {
   return (
     <>
       <Toolbar />
-      <Toolbar sx={{ mt: 2 }}>
-        <Grid container spacing={1}>
+      <Toolbar sx={{ mt: 2, p: 2 }}>
+        <Grid
+          container
+          columnSpacing={2}
+          rowSpacing={2}
+          display="flex"
+          justifyContent="center"
+        >
           <Grid xs={4}>
             <DatePicker
               onChange={handleOnChangeStartDate}
               value={startDate && JSON.parse(startDate)}
               label="Start Date"
-              slotProps={{ textField: { size: 'small' } }}
+              slotProps={{
+                textField: {
+                  size: 'small',
+                  color: 'secondary',
+                  fullWidth: true,
+                },
+              }}
               maxDate={(endDate && JSON.parse(endDate)) || new Date()}
             />
           </Grid>
@@ -75,20 +87,31 @@ const Dashboard = () => {
               onChange={handleOnChangeEndDate}
               value={endDate && JSON.parse(endDate)}
               label="End Date"
-              slotProps={{ textField: { size: 'small' } }}
+              slotProps={{
+                textField: {
+                  size: 'small',
+                  color: 'secondary',
+                  fullWidth: true,
+                },
+              }}
               minDate={startDate && JSON.parse(startDate)}
               maxDate={new Date()}
             />
           </Grid>
           <Grid xs={4}>
-            <FormControl size="small">
-              <InputLabel id="past-range-select-label">Past Range</InputLabel>
+            <FormControl fullWidth size="small">
+              <InputLabel id="past-range-select-label" color="secondary">
+                Past Range
+              </InputLabel>
               <Select
                 labelId="past-range-select-label"
                 value={pastRange.toString()}
                 label="Past Range"
                 onChange={handleOnChangePastRange}
-                sx={{ minWidth: 90 }}
+                color="secondary"
+                sx={{
+                  minWidth: 90,
+                }}
               >
                 <MenuItem value={1}>1 year</MenuItem>
                 <MenuItem value={2}>2 years</MenuItem>

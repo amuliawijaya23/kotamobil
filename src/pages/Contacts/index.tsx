@@ -163,7 +163,7 @@ const Contacts = () => {
     <>
       <Dialog open={isErrorOpen} onClose={handleCloseError}>
         <DialogTitle>
-          <Typography variant="body1" fontWeight="bold">
+          <Typography variant="body1" fontWeight="bold" color="error">
             Delete Contacts Failed
           </Typography>
           <Typography variant="body2">
@@ -183,7 +183,12 @@ const Contacts = () => {
                 component="div"
                 key={`associated-buyer-${buyer._id}`}
               >
-                <Typography variant="body2" fontWeight="bold" sx={{ mt: 2 }}>
+                <Typography
+                  variant="body2"
+                  fontWeight="bold"
+                  color="error"
+                  sx={{ mt: 2 }}
+                >
                   {`${buyer.firstName}`}
                   {`${buyer.lastName ? ` ${buyer.lastName}` : ''}:`}
                 </Typography>
@@ -249,7 +254,7 @@ const Contacts = () => {
                     >
                       <TableCell padding="checkbox">
                         <Checkbox
-                          color="primary"
+                          color="secondary"
                           checked={isItemSelected}
                           inputProps={{
                             'aria-labelledby': labelId,

@@ -69,6 +69,7 @@ const VehicleDetails = () => {
           fullWidth
           size="small"
           variant="outlined"
+          color="secondary"
           error={touched.vin && Boolean(errors.vin)}
           helperText={<ErrorMessage name="vin" />}
         />
@@ -102,6 +103,7 @@ const VehicleDetails = () => {
               name="make"
               label="Make"
               size="small"
+              color="secondary"
               fullWidth
               error={touched.make && Boolean(errors.make)}
               helperText={<ErrorMessage name="make" />}
@@ -133,6 +135,7 @@ const VehicleDetails = () => {
               name="model"
               label="Model"
               size="small"
+              color="secondary"
               fullWidth
               error={touched.model && Boolean(errors.model)}
               helperText={<ErrorMessage name="model" />}
@@ -156,6 +159,7 @@ const VehicleDetails = () => {
           fullWidth
           size="small"
           variant="outlined"
+          color="secondary"
           type="number"
           error={touched.year && Boolean(errors.year)}
           helperText={<ErrorMessage name="year" />}
@@ -169,6 +173,7 @@ const VehicleDetails = () => {
           fullWidth
           size="small"
           variant="outlined"
+          color="secondary"
           type="number"
           error={touched.odometer && Boolean(errors.odometer)}
           helperText={<ErrorMessage name="odometer" />}
@@ -182,6 +187,7 @@ const VehicleDetails = () => {
           fullWidth
           size="small"
           variant="outlined"
+          color="secondary"
           error={touched.color && Boolean(errors.color)}
           helperText={<ErrorMessage name="color" />}
         />
@@ -209,6 +215,7 @@ const VehicleDetails = () => {
           label="Description"
           fullWidth
           size="small"
+          color="secondary"
           multiline
           rows={3}
           helperText={50 - values.description.length}

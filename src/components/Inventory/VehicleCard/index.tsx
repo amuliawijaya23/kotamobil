@@ -24,7 +24,7 @@ const VehicleCard = ({ vehicle }: { vehicle: VehicleData }) => {
   const navigate = useNavigate();
 
   return (
-    <Card raised sx={{ position: 'relative' }}>
+    <Card raised sx={{ position: 'relative', bgcolor: 'primary.light' }}>
       <CardActionArea onClick={() => navigate(`/vehicle/${vehicle._id}`)}>
         <CardMedia
           component="img"
@@ -61,6 +61,7 @@ const VehicleCard = ({ vehicle }: { vehicle: VehicleData }) => {
             >
               <NumericFormat
                 displayType="text"
+                style={{ fontWeight: 'bold' }}
                 value={vehicle.price}
                 thousandSeparator="."
                 decimalSeparator=","

@@ -84,6 +84,7 @@ const VehicleSpecifications = () => {
                   <FormControl size="small" fullWidth>
                     <InputLabel
                       htmlFor={`outlined-vehicle-specification-${index}`}
+                      color="secondary"
                     >
                       Specification
                     </InputLabel>
@@ -94,6 +95,7 @@ const VehicleSpecifications = () => {
                       }
                       type="text"
                       label="Specification"
+                      color="secondary"
                       id={`outlined-vehicle-specification-${index}`}
                     />
                   </FormControl>

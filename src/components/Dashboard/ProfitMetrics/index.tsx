@@ -41,11 +41,16 @@ const ProfitMetrics = () => {
   }, [profitDelta]);
 
   return (
-    <Card sx={{ mt: { md: 2 } }}>
+    <Card sx={{ mt: { md: 2 }, bgcolor: 'primary.light' }}>
       <CardContent>
         <Grid container spacing={3} sx={{ justifyContent: 'space-between' }}>
           <Grid>
-            <Typography color="inherit" variant="overline" gutterBottom>
+            <Typography
+              color="secondary"
+              fontWeight="bold"
+              variant="overline"
+              gutterBottom
+            >
               Current Profit
             </Typography>
             <Typography variant="subtitle2" fontWeight="bold">
@@ -68,7 +73,8 @@ const ProfitMetrics = () => {
               )}
             </Typography>
             <Typography
-              color="inherit"
+              color="secondary"
+              fontWeight="bold"
               variant="overline"
               gutterBottom
               sx={{ mt: 2 }}
