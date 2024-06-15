@@ -19,7 +19,7 @@ import {
   updateTransmissionSelections,
   selectAllTransmission,
 } from '~/redux/reducers/inventorySlice';
-import { transmission } from '~/helpers/AutocompleteAndSelectData';
+import { transmission } from '~/helpers/optionsData';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;

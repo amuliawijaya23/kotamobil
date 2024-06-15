@@ -19,7 +19,7 @@ import {
   updateFuelTypeSelections,
   selectAllFuelType,
 } from '~/redux/reducers/inventorySlice';
-import { fuelType } from '~/helpers/AutocompleteAndSelectData';
+import { fuelType } from '~/helpers/optionsData';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;

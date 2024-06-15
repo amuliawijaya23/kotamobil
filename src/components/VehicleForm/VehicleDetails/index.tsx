@@ -14,7 +14,7 @@ import {
   assembly,
   fuelType,
   transmission,
-} from '~/helpers/AutocompleteAndSelectData';
+} from '~/helpers/optionsData';
 
 interface VehicleDetailsValues {
   vin: string;

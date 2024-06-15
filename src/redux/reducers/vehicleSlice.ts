@@ -74,14 +74,6 @@ export const vehicleSlice = createSlice({
     setVehicleData: (state, action: PayloadAction<VehicleData>) => {
       state.data = action.payload;
     },
-    setVehicleImages: (
-      state,
-      action: PayloadAction<{ key: string; url: string }[]>,
-    ) => {
-      if (state.data) {
-        state.data.images = action.payload;
-      }
-    },
     resetVehicleData: () => initialState,
   },
   extraReducers: (builder) => {
@@ -104,12 +96,8 @@ export const vehicleSlice = createSlice({
   },
 });
 
-export const {
-  setVehicleLoading,
-  setVehicleData,
-  setVehicleImages,
-  resetVehicleData,
-} = vehicleSlice.actions;
+export const { setVehicleLoading, setVehicleData, resetVehicleData } =
+  vehicleSlice.actions;
 export const getVehicleData = (state: RootState) => state.vehicle.data;
 export const getVehicleStatus = (state: RootState) => state.vehicle.status;
 export default vehicleSlice.reducer;

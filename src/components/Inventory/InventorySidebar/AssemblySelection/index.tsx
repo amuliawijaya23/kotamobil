@@ -19,7 +19,7 @@ import {
   updateAssemblySelections,
   selectAllAssembly,
 } from '~/redux/reducers/inventorySlice';
-import { assembly } from '~/helpers/AutocompleteAndSelectData';
+import { assembly } from '~/helpers/optionsData';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;

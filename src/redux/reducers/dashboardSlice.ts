@@ -196,48 +196,6 @@ export const dashboardSlice = createSlice({
     setMonthsOfInterval: (state, action: PayloadAction<string>) => {
       state.monthsOfInterval = action.payload;
     },
-    setSalesByModel: (
-      state,
-      action: PayloadAction<{ model: string; sale: number }[]>,
-    ) => {
-      state.salesByModel = action.payload;
-    },
-    setPastSalesByModel: (
-      state,
-      action: PayloadAction<{ model: string; sale: number }[]>,
-    ) => {
-      state.pastSalesByModel = action.payload;
-    },
-    setTotalSales: (state, action: PayloadAction<number>) => {
-      state.totalSales = action.payload;
-    },
-    setPastTotalSales: (state, action: PayloadAction<number>) => {
-      state.pastTotalSales = action.payload;
-    },
-    setTotalProfit: (state, action: PayloadAction<number>) => {
-      state.totalProfit = action.payload;
-    },
-    setPastTotalProfit: (state, action: PayloadAction<number>) => {
-      state.pastTotalProfit = action.payload;
-    },
-    setPastSales: (state, action: PayloadAction<VehicleData[]>) => {
-      state.pastSales = action.payload;
-    },
-    setSales: (state, action: PayloadAction<VehicleData[]>) => {
-      state.sales = action.payload;
-    },
-    setPastSalesPerMonth: (state, action: PayloadAction<number[]>) => {
-      state.pastSalesPerMonth = action.payload;
-    },
-    setSalesPerMonth: (state, action: PayloadAction<number[]>) => {
-      state.salesPerMonth = action.payload;
-    },
-    setPastProfitPerMonth: (state, action: PayloadAction<number[]>) => {
-      state.pastProfitPerMonth = action.payload;
-    },
-    setProfitPerMonth: (state, action: PayloadAction<number[]>) => {
-      state.profitPerMonth = action.payload;
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -327,18 +285,6 @@ export const {
   setEndDate,
   setPastRange,
   setMonthsOfInterval,
-  setSalesByModel,
-  setPastSalesByModel,
-  setTotalSales,
-  setPastTotalSales,
-  setTotalProfit,
-  setPastTotalProfit,
-  setPastSales,
-  setSales,
-  setPastSalesPerMonth,
-  setSalesPerMonth,
-  setPastProfitPerMonth,
-  setProfitPerMonth,
 } = dashboardSlice.actions;
 export const getDashboardStatus = (state: RootState) => state.dashboard.status;
 export const getStartDate = (state: RootState) => state.dashboard.startDate;

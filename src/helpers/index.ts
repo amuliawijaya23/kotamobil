@@ -7,7 +7,7 @@ import {
   fuelType,
   transmission,
   status,
-} from './AutocompleteAndSelectData';
+} from './optionsData';
 
 export type Order = 'asc' | 'desc';
 

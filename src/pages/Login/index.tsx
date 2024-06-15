@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
+import { LoginFormSchema } from '~/helpers/formSchema';
 import PasswordField from '~/components/Authentication/PasswordField';
 import ErrorAlert from '~/components/Authentication/ErrorAlert';
 import { useAppSelector, useAppDispatch } from '~/redux/store';
@@ -22,11 +22,6 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const theme = useAppSelector(getTheme);
-
-  const validationSchema = Yup.object({
-    email: Yup.string().email('Invalid email address').required('Required'),
-    password: Yup.string().required('Required'),
-  });
 
   const handleCancel = useCallback(() => {
     navigate('/');
@@ -47,7 +42,7 @@ const Login = () => {
       <Grid xs={12} display="flex" justifyContent="center">
         <Formik
           initialValues={{ email: '', password: '' }}
-          validationSchema={validationSchema}
+          validationSchema={LoginFormSchema}
           onSubmit={async (values, { setSubmitting }) => {
             await dispatch(loginUser(values));
             setSubmitting(false);
@@ -70,6 +65,7 @@ const Login = () => {
                 container
                 component={Paper}
                 variant="outlined"
+                bgcolor="primary.light"
                 spacing={1}
                 p={2}
               >
@@ -103,6 +99,7 @@ const Login = () => {
                     name="email"
                     label="Email"
                     type="email"
+                    color="secondary"
                     error={touched.email && errors.email}
                     helperText={<ErrorMessage name="email" />}
                     sx={{ mb: 1 }}
@@ -113,6 +110,7 @@ const Login = () => {
                     size="small"
                     name="password"
                     label="Password"
+                    color="secondary"
                     sx={{ mb: 1 }}
                   />
                 </Grid>

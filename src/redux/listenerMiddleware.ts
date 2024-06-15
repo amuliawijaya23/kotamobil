@@ -89,7 +89,7 @@ let dashboardSearchRequest: CancelTokenSource;
 listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
   predicate: (_action, currentState, previousState) => {
     return (
-      (currentState.app.isAuthenticated &&
+      (currentState.user.data !== null &&
         previousState.dashboard.startDate !== null &&
         previousState.dashboard.startDate !==
           currentState.dashboard.startDate) ||

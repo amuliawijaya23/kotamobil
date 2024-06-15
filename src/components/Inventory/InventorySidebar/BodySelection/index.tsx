@@ -19,7 +19,7 @@ import {
   updateBodyTypeSelections,
   selectAllBodyType,
 } from '~/redux/reducers/inventorySlice';
-import { bodyType } from '~/helpers/AutocompleteAndSelectData';
+import { bodyType } from '~/helpers/optionsData';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;

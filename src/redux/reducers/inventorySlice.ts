@@ -17,7 +17,7 @@ import {
   assembly,
   fuelType,
   transmission,
-} from '~/helpers/AutocompleteAndSelectData';
+} from '~/helpers/optionsData';
 import { transformVehicleData } from '~/helpers';
 
 export interface QueryData {
@@ -161,12 +161,6 @@ export const inventorySlice = createSlice({
       action: PayloadAction<'idle' | 'loading' | 'succeeded' | 'failed'>,
     ) => {
       state.status = action.payload;
-    },
-    setInventoryVehicles: (state, action: PayloadAction<VehicleData[]>) => {
-      state.vehicles = action.payload;
-    },
-    setQueryData: (state, action: PayloadAction<QueryData>) => {
-      state.queryData = action.payload;
     },
     setSearch: (state, action: PayloadAction<string>) => {
       if (state.queryData) {
@@ -510,8 +504,6 @@ export const inventorySlice = createSlice({
 
 export const {
   setInventoryStatus,
-  setInventoryVehicles,
-  setQueryData,
   setSearch,
   updatePriceRange,
   updateYearRange,

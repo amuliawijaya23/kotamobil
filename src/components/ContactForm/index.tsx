@@ -21,7 +21,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import ContactInformation from './ContactInformation';
 import ContactSocials from './ContactSocials';
 import { FormikProvider, useFormik, Form } from 'formik';
-import * as Yup from 'yup';
+import { ContactFormSchema } from '~/helpers/formSchema';
 import { useAppDispatch } from '~/redux/store';
 import { setAlert } from '~/redux/reducers/appSlice';
 
@@ -56,20 +56,6 @@ const style = {
   p: 4,
 };
 
-const validationSchema = Yup.object().shape({
-  firstName: Yup.string().required('Required'),
-  lastName: Yup.string().optional(),
-  country: Yup.string().required('Required'),
-  mobile: Yup.string().required('Required'),
-  email: Yup.string().email('Invalid email address').optional(),
-  address: Yup.string().optional(),
-  instagram: Yup.string().url('Invalid Url').optional(),
-  facebook: Yup.string().url('Invalid Url').optional(),
-  linkedIn: Yup.string().url('Invalid Url').optional(),
-  twitter: Yup.string().url('Invalid Url').optional(),
-  updateId: Yup.string().url('Invalid Url').optional(),
-});
-
 const initialValues: ContactFormValues = {
   firstName: '',
   lastName: '',
@@ -102,7 +88,7 @@ const ContactForm = ({ contact, open, onCloseForm }: ContactFormProps) => {
 
   const formik = useFormik({
     initialValues,
-    validationSchema,
+    validationSchema: ContactFormSchema,
     onSubmit: async (values, { setSubmitting }) => {
       try {
         const { country, mobile, ...data } = values;

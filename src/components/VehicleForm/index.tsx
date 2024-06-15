@@ -20,7 +20,7 @@ import { useAppSelector, useAppDispatch } from '~/redux/store';
 import { getVehicleData } from '~/redux/reducers/vehicleSlice';
 import { setAlert, resetAlert } from '~/redux/reducers/appSlice';
 import { FormikProvider, useFormik } from 'formik';
-import * as Yup from 'yup';
+import { VehicleFormStepSchema } from '~/helpers/formSchema';
 import { addVehicle, updateVehicle } from '~/redux/reducers/inventorySlice';
 
 interface VehicleFormValues {
@@ -57,63 +57,6 @@ interface DataToSend
   images?: { key: string; url: string }[];
 }
 
-const stepValidationSchema = [
-  Yup.object().shape({
-    name: Yup.string().required('Required'),
-    status: Yup.string().required('Required'),
-    dateAdded: Yup.date().required('Required').nullable(),
-    dateSold: Yup.date().when('status', {
-      is: (value: string) => value === 'Sold',
-      then: () => Yup.date().required('Required').nullable(),
-      otherwise: () => Yup.date().nullable(),
-    }),
-    buyerId: Yup.string().when('status', {
-      is: (value: string) => value === 'Sold',
-      then: () => Yup.string().required('Required'),
-      otherwise: () => Yup.string().nullable(),
-    }),
-    price: Yup.number().required('Required'),
-    marketPrice: Yup.number().optional().nullable(),
-    purchasePrice: Yup.number().optional().nullable(),
-    soldPrice: Yup.number().when('status', {
-      is: (value: string) => value === 'Sold',
-      then: () => Yup.number().required('Sold price is required'),
-      otherwise: () => Yup.string().optional().nullable(),
-    }),
-    condition: Yup.string().required('Required'),
-    plateNumber: Yup.string().when('condition', {
-      is: (value: string) => value === 'Used',
-      then: () => Yup.string().required('Required'),
-      otherwise: () => Yup.string().nullable(),
-    }),
-    taxDate: Yup.date().when('condition', {
-      is: (value: string) => value === 'Used',
-      then: () => Yup.date().required('Required').nullable(),
-      otherwise: () => Yup.date().nullable(),
-    }),
-  }),
-  Yup.object().shape({
-    vin: Yup.string().required('Required'),
-    make: Yup.string().required('Required'),
-    model: Yup.string().required('Required'),
-    bodyType: Yup.string().required('Required'),
-    assembly: Yup.string().required('Required'),
-    year: Yup.number().required('Required').nullable(),
-    odometer: Yup.number().required('Required').nullable(),
-    color: Yup.string().required('Required'),
-    transmission: Yup.string().required('Required'),
-    fuelType: Yup.string().required('Required'),
-    description: Yup.string().optional(),
-  }),
-  Yup.object().shape({
-    images: Yup.array().of(Yup.mixed()),
-    removeImages: Yup.array().of(Yup.mixed()),
-  }),
-  Yup.object().shape({
-    specification: Yup.array().of(Yup.string()),
-  }),
-];
-
 const initialValues: VehicleFormValues = {
   name: '',
   status: 'Available',
@@ -144,9 +87,9 @@ const initialValues: VehicleFormValues = {
 };
 
 const validateAllSteps = async (values: VehicleFormValues) => {
-  for (let i = 0; i < stepValidationSchema.length; i++) {
+  for (let i = 0; i < VehicleFormStepSchema.length; i++) {
     try {
-      await stepValidationSchema[i].validate(values, { abortEarly: false });
+      await VehicleFormStepSchema[i].validate(values, { abortEarly: false });
     } catch (err) {
       return err;
     }
@@ -180,7 +123,7 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
 
   const formik = useFormik<VehicleFormValues>({
     initialValues,
-    validationSchema: stepValidationSchema[step],
+    validationSchema: VehicleFormStepSchema[step],
     onSubmit: async (values, { setSubmitting }) => {
       try {
         const formData = new FormData();

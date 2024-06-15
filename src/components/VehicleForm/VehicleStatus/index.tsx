@@ -19,7 +19,7 @@ import ContactForm from '~/components/ContactForm';
 import { useFormikContext, Field, ErrorMessage } from 'formik';
 import { useAppSelector } from '~/redux/store';
 import { getContactsData } from '~/redux/reducers/contactsSlice';
-import { condition, status } from '~/helpers/AutocompleteAndSelectData';
+import { condition, status } from '~/helpers/optionsData';
 
 interface VehicleStatusValues {
   name: string;

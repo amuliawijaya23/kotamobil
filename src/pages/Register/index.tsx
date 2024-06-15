@@ -9,7 +9,7 @@ import {
   TextField,
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
-import * as Yup from 'yup';
+import { RegisterFormSchema } from '~/helpers/formSchema';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import ErrorAlert from '~/components/Authentication/ErrorAlert';
 import PasswordField from '~/components/Authentication/PasswordField';
@@ -18,28 +18,18 @@ import { getTheme } from '~/redux/reducers/themeSlice';
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from '~/redux/reducers/userSlice';
 
+const initialValues = {
+  firstName: '',
+  lastName: '',
+  email: '',
+  password: '',
+  confirmPassword: '',
+};
+
 const Register = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const theme = useAppSelector(getTheme);
-
-  const initialValues = {
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-  };
-
-  const validationSchema = Yup.object({
-    firstName: Yup.string().required('Required'),
-    lastName: Yup.string().optional(),
-    email: Yup.string().email('Invalid email address').required('Required'),
-    password: Yup.string().required('Required'),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref('password')], 'Passwords does not match')
-      .required('Required'),
-  });
 
   const handleCancel = useCallback(() => {
     navigate('/');
@@ -59,7 +49,7 @@ const Register = () => {
       <Grid xs={12} display="flex" justifyContent="center">
         <Formik
           initialValues={initialValues}
-          validationSchema={validationSchema}
+          validationSchema={RegisterFormSchema}
           onSubmit={async (values, { setSubmitting }) => {
             await dispatch(registerUser(values));
             setSubmitting(false);
@@ -81,6 +71,7 @@ const Register = () => {
               <Grid
                 container
                 component={Paper}
+                bgcolor="primary.light"
                 variant="outlined"
                 spacing={1}
                 p={2}
@@ -115,6 +106,7 @@ const Register = () => {
                     name="firstName"
                     label="First Name"
                     type="text"
+                    color="secondary"
                     error={touched.firstName && errors.firstName}
                     helperText={<ErrorMessage name="firstName" />}
                     sx={{ mb: 1 }}
@@ -126,6 +118,7 @@ const Register = () => {
                     name="lastName"
                     label="Last Name"
                     type="text"
+                    color="secondary"
                     error={touched.lastName && errors.lastName}
                     helperText={<ErrorMessage name="lastName" />}
                     sx={{ mb: 1 }}
@@ -137,6 +130,7 @@ const Register = () => {
                     name="email"
                     label="Email"
                     type="email"
+                    color="secondary"
                     error={touched.email && errors.email}
                     helperText={<ErrorMessage name="email" />}
                     sx={{ mb: 1 }}
@@ -147,6 +141,7 @@ const Register = () => {
                     size="small"
                     name="password"
                     label="Password"
+                    color="secondary"
                     sx={{ mb: 1 }}
                   />
                   <Field
@@ -155,6 +150,7 @@ const Register = () => {
                     size="small"
                     name="confirmPassword"
                     label="Confirm Password"
+                    color="secondary"
                     sx={{ mb: 1 }}
                   />
                 </Grid>
