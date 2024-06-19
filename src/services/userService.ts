@@ -1,5 +1,5 @@
 import type { UserData } from '~/redux/reducers/userSlice';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 const API_URL = '/api/auth';
 
@@ -16,6 +16,18 @@ export const registerService = async (
 ): Promise<UserData> => {
   const response = await axios.post(`${API_URL}/register`, userData);
   return response.data;
+};
+
+export const verifyService = async (id: string): Promise<UserData> => {
+  const response = await axios.get(`${API_URL}/verify/${id}`);
+  return response.data;
+};
+
+export const resendVerificationLinkService = async (
+  userId: string,
+): Promise<AxiosResponse> => {
+  const response = await axios.post(`${API_URL}/send-verification`, { userId });
+  return response;
 };
 
 export const logoutService = async (): Promise<void> => {

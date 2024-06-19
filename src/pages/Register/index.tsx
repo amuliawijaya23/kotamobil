@@ -36,154 +36,161 @@ const Register = () => {
   }, [navigate]);
 
   return (
-    <Grid
-      container
-      component={Box}
+    <Box
       sx={{
         height: '100vh',
         width: '100vw',
+        display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
       }}
     >
-      <Grid xs={12} display="flex" justifyContent="center">
-        <Formik
-          initialValues={initialValues}
-          validationSchema={RegisterFormSchema}
-          onSubmit={async (values, { setSubmitting }) => {
-            await dispatch(registerUser(values));
+      <Formik
+        initialValues={initialValues}
+        validationSchema={RegisterFormSchema}
+        onSubmit={async (values, { setSubmitting, resetForm }) => {
+          const response = await dispatch(registerUser(values));
+          if (response.meta.requestStatus === 'fulfilled') {
+            resetForm();
             setSubmitting(false);
-          }}
-        >
-          {({ isSubmitting, isValid, errors, touched }) => (
-            <Box
-              component={Form}
-              sx={{
-                width: {
-                  xs: '70%',
-                  sm: '45%',
-                  md: '35%',
-                  lg: '25%',
-                  xl: '15%',
-                },
-              }}
+            navigate('/dashboard');
+          }
+        }}
+      >
+        {({ isSubmitting, isValid, errors, touched }) => (
+          <Box
+            component={Form}
+            sx={{
+              width: {
+                xs: '70%',
+                sm: '45%',
+                md: '35%',
+                lg: '25%',
+                xl: '15%',
+              },
+            }}
+          >
+            <Grid
+              container
+              component={Paper}
+              bgcolor="primary.light"
+              variant="outlined"
+              spacing={1}
+              p={2}
             >
               <Grid
-                container
-                component={Paper}
-                bgcolor="primary.light"
-                variant="outlined"
-                spacing={1}
-                p={2}
+                xs={12}
+                display="flex"
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+                mt={1}
               >
-                <Grid
-                  xs={12}
-                  display="flex"
-                  flexDirection="column"
-                  justifyContent="center"
-                  alignItems="center"
-                  mt={1}
-                >
-                  <img
-                    src={
-                      theme === 'light'
-                        ? '/src/assets/gudangmobil-logo-dark.png'
-                        : '/src/assets/gudangmobil-logo-light.png'
-                    }
-                    alt="logo"
-                    style={{ width: 150, height: 60 }}
-                  />
-                  <Typography variant="h4" component="h1" sx={{ mt: 2 }}>
-                    Sign Up
-                  </Typography>
-                  <ErrorAlert />
-                </Grid>
-                <Grid xs={12}>
-                  <Field
-                    as={TextField}
-                    fullWidth
-                    size="small"
-                    name="firstName"
-                    label="First Name"
-                    type="text"
-                    color="secondary"
-                    error={touched.firstName && errors.firstName}
-                    helperText={<ErrorMessage name="firstName" />}
-                    sx={{ mb: 1 }}
-                  />
-                  <Field
-                    as={TextField}
-                    fullWidth
-                    size="small"
-                    name="lastName"
-                    label="Last Name"
-                    type="text"
-                    color="secondary"
-                    error={touched.lastName && errors.lastName}
-                    helperText={<ErrorMessage name="lastName" />}
-                    sx={{ mb: 1 }}
-                  />
-                  <Field
-                    as={TextField}
-                    fullWidth
-                    size="small"
-                    name="email"
-                    label="Email"
-                    type="email"
-                    color="secondary"
-                    error={touched.email && errors.email}
-                    helperText={<ErrorMessage name="email" />}
-                    sx={{ mb: 1 }}
-                  />
-                  <Field
-                    as={PasswordField}
-                    fullWidth
-                    size="small"
-                    name="password"
-                    label="Password"
-                    color="secondary"
-                    sx={{ mb: 1 }}
-                  />
-                  <Field
-                    as={PasswordField}
-                    fullWidth
-                    size="small"
-                    name="confirmPassword"
-                    label="Confirm Password"
-                    color="secondary"
-                    sx={{ mb: 1 }}
-                  />
-                </Grid>
-                <Grid xs={6}>
-                  <Button fullWidth variant="contained" onClick={handleCancel}>
-                    Cancel
-                  </Button>
-                </Grid>
-                <Grid xs={6}>
-                  <LoadingButton
-                    fullWidth
-                    variant="contained"
-                    type="submit"
-                    loading={isSubmitting}
-                    disabled={isSubmitting || !isValid}
-                  >
-                    Sign Up
-                  </LoadingButton>
-                </Grid>
-                <Grid xs={12} mb={1}>
-                  <Typography variant="subtitle1">
-                    Already have an account?{' '}
-                    <Link color="inherit" href="/login">
-                      <b>Sign In</b>
-                    </Link>
-                  </Typography>
-                </Grid>
+                <img
+                  src={
+                    theme === 'light'
+                      ? '/src/assets/gudangmobil-logo-dark.png'
+                      : '/src/assets/gudangmobil-logo-light.png'
+                  }
+                  alt="logo"
+                  style={{ width: 150, height: 60 }}
+                />
+                <Typography variant="h4" component="h1" sx={{ mt: 2 }}>
+                  Sign Up
+                </Typography>
+                <ErrorAlert />
               </Grid>
-            </Box>
-          )}
-        </Formik>
-      </Grid>
-    </Grid>
+              <Grid xs={12}>
+                <Field
+                  as={TextField}
+                  fullWidth
+                  size="small"
+                  name="firstName"
+                  label="First Name"
+                  type="text"
+                  color="secondary"
+                  error={touched.firstName && errors.firstName}
+                  helperText={<ErrorMessage name="firstName" />}
+                  sx={{ mb: 1 }}
+                />
+                <Field
+                  as={TextField}
+                  fullWidth
+                  size="small"
+                  name="lastName"
+                  label="Last Name"
+                  type="text"
+                  color="secondary"
+                  error={touched.lastName && errors.lastName}
+                  helperText={<ErrorMessage name="lastName" />}
+                  sx={{ mb: 1 }}
+                />
+                <Field
+                  as={TextField}
+                  fullWidth
+                  size="small"
+                  name="email"
+                  label="Email"
+                  type="email"
+                  color="secondary"
+                  error={touched.email && errors.email}
+                  helperText={<ErrorMessage name="email" />}
+                  sx={{ mb: 1 }}
+                />
+                <Field
+                  as={PasswordField}
+                  fullWidth
+                  size="small"
+                  name="password"
+                  label="Password"
+                  color="secondary"
+                  sx={{ mb: 1 }}
+                />
+                <Field
+                  as={PasswordField}
+                  fullWidth
+                  size="small"
+                  name="confirmPassword"
+                  label="Confirm Password"
+                  color="secondary"
+                  sx={{ mb: 1 }}
+                />
+              </Grid>
+              <Grid xs={6}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="secondary"
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </Button>
+              </Grid>
+              <Grid xs={6}>
+                <LoadingButton
+                  fullWidth
+                  variant="contained"
+                  type="submit"
+                  color="secondary"
+                  loading={isSubmitting}
+                  disabled={isSubmitting || !isValid}
+                >
+                  Sign Up
+                </LoadingButton>
+              </Grid>
+              <Grid xs={12} mb={1}>
+                <Typography variant="subtitle1">
+                  Already have an account?{' '}
+                  <Link color="inherit" href="/login">
+                    <b>Sign In</b>
+                  </Link>
+                </Typography>
+              </Grid>
+            </Grid>
+          </Box>
+        )}
+      </Formik>
+    </Box>
   );
 };
 

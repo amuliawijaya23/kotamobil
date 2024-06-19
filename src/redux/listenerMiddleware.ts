@@ -2,7 +2,7 @@ import type { VehicleSearchParams } from './reducers/inventorySlice';
 import axios, { AxiosError, CancelTokenSource } from 'axios';
 import { createListenerMiddleware } from '@reduxjs/toolkit';
 import { startOfYear, eachMonthOfInterval, subYears } from 'date-fns';
-import { setAlert, setLoading } from './reducers/appSlice';
+import { setAlert, setAppStatus } from './reducers/appSlice';
 import { getContacts, searchContacts } from './reducers/contactsSlice';
 import { searchVehicles, getVehicles } from './reducers/inventorySlice';
 import { getVehicleImages } from './reducers/vehicleSlice';
@@ -21,10 +21,22 @@ import { clearUserData } from './reducers/userSlice';
 const listenerMiddleware = createListenerMiddleware();
 
 listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
-  predicate: (_action, currentState, previousState) =>
-    !previousState.user.data && currentState.user.data !== null,
+  predicate: (_action, currentState, previousState) => {
+    const prevUser = previousState.user.data;
+    const currentUser = currentState.user.data;
+
+    const notAuthenticated =
+      !prevUser && currentUser !== null && currentUser.isVerified;
+    const notVerified =
+      prevUser !== null &&
+      !prevUser.isVerified &&
+      currentUser !== null &&
+      currentUser.isVerified;
+
+    return notAuthenticated || notVerified;
+  },
   effect: async (_action, listenerApi) => {
-    listenerApi.dispatch(setLoading(true));
+    listenerApi.dispatch(setAppStatus('loading'));
     const start = startOfYear(new Date());
     const end = new Date();
     const pastStart = subYears(start, 1);
@@ -65,6 +77,7 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
       listenerApi.dispatch(
         setMonthsOfInterval(JSON.stringify(monthsOfInterval)),
       );
+      listenerApi.dispatch(setAppStatus('succeeded'));
     } catch (error) {
       console.error('Failed to fetch vehicles and contacts', error);
       if (error instanceof AxiosError) {
@@ -79,8 +92,7 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
           );
         }
       }
-    } finally {
-      listenerApi.dispatch(setLoading(false));
+      listenerApi.dispatch(setAppStatus('failed'));
     }
   },
 });

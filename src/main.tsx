@@ -19,6 +19,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         </LocalizationProvider>
       </ThemeRegistry>
     </Provider>
-    ,
   </React.StrictMode>,
 );

@@ -11,16 +11,17 @@ import Dashboard from './pages/Dashboard';
 import Inventory from './pages/Inventory';
 import Contacts from './pages/Contacts';
 import Vehicle from './pages/Vehicle';
+import VerifyUser from './pages/VerifyUser';
 import PageNotFound from './pages/PageNotFound';
 import useAuthentication from './hooks/useAuthentication';
 import { useAppSelector } from './redux/store';
 import { getAppStatus } from './redux/reducers/appSlice';
 
 function App() {
-  const { isLoading } = useAppSelector(getAppStatus);
+  const status = useAppSelector(getAppStatus);
   useAuthentication();
 
-  if (isLoading) {
+  if (status === 'loading') {
     return (
       <Box
         sx={{
@@ -39,24 +40,24 @@ function App() {
   return (
     <Router>
       <Routes>
+        <Route
+          path="/login"
+          element={
+            <UnauthenticatedRoute>
+              <Login />
+            </UnauthenticatedRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <UnauthenticatedRoute>
+              <Register />
+            </UnauthenticatedRoute>
+          }
+        />
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
-          <Route
-            path="/login"
-            element={
-              <UnauthenticatedRoute>
-                <Login />
-              </UnauthenticatedRoute>
-            }
-          />
-          <Route
-            path="/register"
-            element={
-              <UnauthenticatedRoute>
-                <Register />
-              </UnauthenticatedRoute>
-            }
-          />
           <Route
             path="/dashboard"
             element={
@@ -88,6 +89,10 @@ function App() {
                 <Contacts />
               </AuthenticatedRoute>
             }
+          />
+          <Route
+            path="/verify/:userId/:verificationId"
+            element={<VerifyUser />}
           />
         </Route>
         <Route path="/404" element={<PageNotFound />} />

@@ -5,6 +5,7 @@ import {
   loginService,
   registerService,
   logoutService,
+  verifyService,
 } from '~/services/userService';
 
 const LC_USER_DATA = 'LC_USER_DATA';
@@ -15,6 +16,8 @@ export interface UserData {
   lastName?: string;
   email: string;
   picture?: string;
+  isVerified: boolean;
+  verificationToken?: string;
 }
 
 export interface UserState {
@@ -62,6 +65,21 @@ export const registerUser = createAsyncThunk(
   },
 );
 
+export const verifyUser = createAsyncThunk(
+  'user/verify',
+  async (id: string, thunkAPI) => {
+    try {
+      const user = await verifyService(id);
+      return user;
+    } catch (error) {
+      if (isAxiosError(error) && error.response) {
+        return thunkAPI.rejectWithValue(error.response.data.message);
+      }
+      return thunkAPI.rejectWithValue('An unknown error occured');
+    }
+  },
+);
+
 export const logoutUser = createAsyncThunk(
   'user/logout',
   async (_, thunkAPI) => {
@@ -96,6 +114,7 @@ export const userSlice = createSlice({
       state.data = null;
     },
     clearUserError: (state) => {
+      state.status = 'idle';
       state.error = null;
     },
   },
@@ -124,13 +143,27 @@ export const userSlice = createSlice({
       .addCase(
         registerUser.fulfilled,
         (state, action: PayloadAction<UserData>) => {
-          console.log('Succeeds!');
           state.status = 'succeeded';
           state.data = action.payload;
           localStorage.setItem(LC_USER_DATA, JSON.stringify(action.payload));
         },
       )
       .addCase(registerUser.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload as string;
+      })
+      .addCase(verifyUser.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(
+        verifyUser.fulfilled,
+        (state, action: PayloadAction<UserData>) => {
+          state.status = 'succeeded';
+          state.data = action.payload;
+          localStorage.setItem(LC_USER_DATA, JSON.stringify(action.payload));
+        },
+      )
+      .addCase(verifyUser.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload as string;
       })

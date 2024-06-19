@@ -42,7 +42,7 @@ const paletteOptions = {
     light: '#fe7049',
     main: '#fe4d1c',
     dark: '#b13513',
-    contrastText: '#9e9e9e',
+    contrastText: '#eeeeee',
   },
   success: {
     light: '#4caf50',
@@ -87,7 +87,7 @@ const darkPaletteOptions = {
     light: '#fe7049',
     main: '#fe4d1c',
     dark: '#b13513',
-    contrastText: '#9e9e9e',
+    contrastText: '#eeeeee',
   },
   success: {
     light: '#4caf50',

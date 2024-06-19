@@ -7,21 +7,28 @@ export interface Alert {
 }
 
 export interface AppState {
-  isLoading: boolean;
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  isVerified: boolean;
   alert: Alert | null;
+  error: string | null;
 }
 
 const initialState: AppState = {
-  isLoading: false,
+  status: 'idle',
+  isVerified: false,
   alert: null,
+  error: null,
 };
 
 export const appSlice = createSlice({
   name: 'app',
   initialState,
   reducers: {
-    setLoading: (state, action: PayloadAction<boolean>) => {
-      state.isLoading = action.payload;
+    setAppStatus: (
+      state,
+      action: PayloadAction<'idle' | 'loading' | 'succeeded' | 'failed'>,
+    ) => {
+      state.status = action.payload;
     },
     resetAlert: (state) => {
       state.alert = initialState.alert;
@@ -35,7 +42,9 @@ export const appSlice = createSlice({
   },
 });
 
-export const { setLoading, setAlert, resetAlert } = appSlice.actions;
-export const getAppStatus = (state: RootState) => state.app;
+export const { setAppStatus, setAlert, resetAlert } = appSlice.actions;
+export const getAppStatus = (state: RootState) => state.app.status;
+export const getAppVerification = (state: RootState) => state.app.isVerified;
+export const getAppError = (state: RootState) => state.app.error;
 export const getAppAlert = (state: RootState) => state.app.alert;
 export default appSlice.reducer;
