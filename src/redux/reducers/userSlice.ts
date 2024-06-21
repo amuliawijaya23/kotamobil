@@ -171,9 +171,11 @@ export const userSlice = createSlice({
       .addCase(checkSession.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload as string;
-        state.data = null;
-        state.isAuthenticated = false;
-        localStorage.removeItem(LC_USER_DATA);
+        if (action.payload === 'Unauthorized') {
+          state.data = null;
+          state.isAuthenticated = false;
+          localStorage.removeItem(LC_USER_DATA);
+        }
       })
       .addCase(loginUser.pending, (state) => {
         state.status = 'loading';
