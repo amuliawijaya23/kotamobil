@@ -27,6 +27,7 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
 
     const notAuthenticated =
       !prevUser && currentUser !== null && currentUser.isVerified;
+
     const notVerified =
       prevUser !== null &&
       !prevUser.isVerified &&

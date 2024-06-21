@@ -1,4 +1,3 @@
-import { AxiosError } from 'axios';
 import { useCallback, useEffect, useRef } from 'react';
 import { Box, Toolbar, Paper, Typography, Avatar, Button } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -10,9 +9,9 @@ import {
   verifyUser,
   getUserStatus,
   getUserError,
+  resendVerificationLink,
 } from '~/redux/reducers/userSlice';
 import { setAlert } from '~/redux/reducers/appSlice';
-import { resendVerificationLinkService } from '~/services/userService';
 
 const VerifyUser = () => {
   const { userId, verificationId } = useParams();
@@ -45,10 +44,10 @@ const VerifyUser = () => {
   }, [verificationId, verifyEmail]);
 
   const handleResendVerificationLink = useCallback(async () => {
-    if (userId) {
-      try {
-        const response = await resendVerificationLinkService(userId);
-        if (response.status === 200) {
+    try {
+      if (userId) {
+        const response = await dispatch(resendVerificationLink(userId));
+        if (response.meta.requestStatus === 'fulfilled') {
           dispatch(
             setAlert({
               message:
@@ -57,19 +56,20 @@ const VerifyUser = () => {
             }),
           );
         }
-      } catch (error) {
-        console.error(`Error sending new verification link: ${error}`);
-        if (error instanceof AxiosError) {
+
+        if (response.meta.requestStatus === 'rejected') {
           dispatch(
             setAlert({
-              message: error.response?.data.message,
+              message: response.payload as string,
               severity: 'error',
             }),
           );
         }
       }
+    } catch (error) {
+      console.error(`Error requesting verification link: ${error}`);
     }
-  }, [userId, dispatch]);
+  }, [dispatch, userId]);
 
   return (
     <Box

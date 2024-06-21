@@ -1,12 +1,16 @@
+import { useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { AxiosError } from 'axios';
 import { useCallback } from 'react';
 import { Box, Toolbar, Paper, Button, Typography, Avatar } from '@mui/material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { useAppSelector, useAppDispatch } from '~/redux/store';
-import { getUserData } from '~/redux/reducers/userSlice';
+import {
+  getUserData,
+  checkSession,
+  clearUserData,
+} from '~/redux/reducers/userSlice';
 import { Navigate } from 'react-router-dom';
-import { clearUserData } from '~/redux/reducers/userSlice';
 import { setAlert } from '~/redux/reducers/appSlice';
 import { resendVerificationLinkService } from '~/services/userService';
 
@@ -16,6 +20,10 @@ const AuthenticatedRoute = ({ children }: { children: React.ReactNode }) => {
   const AppCookie = Cookies.get(COOKIE_NAME);
   const dispatch = useAppDispatch();
   const user = useAppSelector(getUserData);
+
+  useEffect(() => {
+    dispatch(checkSession());
+  }, [dispatch]);
 
   const handleResendVerificationLink = useCallback(async () => {
     if (user) {
@@ -47,7 +55,7 @@ const AuthenticatedRoute = ({ children }: { children: React.ReactNode }) => {
     return <Navigate to="/login" />;
   }
 
-  if (!user?.isVerified) {
+  if (user && !user.isVerified) {
     return (
       <Box
         sx={{

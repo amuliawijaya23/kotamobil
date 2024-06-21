@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Box } from '@mui/material';
 import AuthenticatedRoute from './components/RouteProtection/AuthenticatedRoute';
@@ -13,13 +14,17 @@ import Contacts from './pages/Contacts';
 import Vehicle from './pages/Vehicle';
 import VerifyUser from './pages/VerifyUser';
 import PageNotFound from './pages/PageNotFound';
-import useAuthentication from './hooks/useAuthentication';
-import { useAppSelector } from './redux/store';
+import { useAppDispatch, useAppSelector } from './redux/store';
 import { getAppStatus } from './redux/reducers/appSlice';
+import { initializeUser } from './redux/reducers/userSlice';
 
 function App() {
   const status = useAppSelector(getAppStatus);
-  useAuthentication();
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(initializeUser());
+  }, [dispatch]);
 
   if (status === 'loading') {
     return (

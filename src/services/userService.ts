@@ -23,6 +23,11 @@ export const verifyService = async (id: string): Promise<UserData> => {
   return response.data;
 };
 
+export const checkSessionService = async (): Promise<UserData> => {
+  const response = await axios.get(`${API_URL}/verify-session`);
+  return response.data;
+};
+
 export const resendVerificationLinkService = async (
   userId: string,
 ): Promise<AxiosResponse> => {
