@@ -1,47 +1,17 @@
-import { useCallback } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Box, Snackbar, Alert, IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import { Box } from '@mui/material';
 import NavBar from '~/components/Navigation';
-import { useAppSelector, useAppDispatch } from '~/redux/store';
-import { getAppAlert, resetAlert } from '~/redux/reducers/appSlice';
 
 const Layout = () => {
-  const dispatch = useAppDispatch();
-  const alert = useAppSelector(getAppAlert);
-
-  const handleClearAlert = useCallback(() => {
-    dispatch(resetAlert());
-  }, [dispatch]);
-
   return (
-    <>
-      <Snackbar
-        open={Boolean(alert)}
-        autoHideDuration={6000}
-        onClose={handleClearAlert}
-        action={
-          <IconButton size="small" color="inherit" onClick={handleClearAlert}>
-            <CloseIcon />
-          </IconButton>
-        }
-      >
-        <Alert
-          onClose={handleClearAlert}
-          severity={alert?.severity === 'error' ? 'error' : 'success'}
-        >
-          {alert?.message}
-        </Alert>
-      </Snackbar>
-      <Box>
-        <Box component={'header'}>
-          <NavBar />
-        </Box>
-        <Box component="main">
-          <Outlet />
-        </Box>
+    <Box>
+      <Box component={'header'}>
+        <NavBar />
       </Box>
-    </>
+      <Box component="main">
+        <Outlet />
+      </Box>
+    </Box>
   );
 };
 

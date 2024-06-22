@@ -18,6 +18,16 @@ export const registerService = async (
   return response.data;
 };
 
+export const resetPasswordService = async (
+  token: string,
+  password: string,
+): Promise<UserData> => {
+  const response = await axios.post(`${API_URL}/reset-password/${token}`, {
+    password,
+  });
+  return response.data;
+};
+
 export const verifyService = async (id: string): Promise<UserData> => {
   const response = await axios.get(`${API_URL}/verify/${id}`);
   return response.data;
@@ -26,6 +36,15 @@ export const verifyService = async (id: string): Promise<UserData> => {
 export const checkSessionService = async (): Promise<UserData> => {
   const response = await axios.get(`${API_URL}/verify-session`);
   return response.data;
+};
+
+export const sendPasswordResetLinkService = async (
+  email: string,
+): Promise<AxiosResponse> => {
+  const response = await axios.post(`${API_URL}/send-password-reset`, {
+    email,
+  });
+  return response;
 };
 
 export const resendVerificationLinkService = async (

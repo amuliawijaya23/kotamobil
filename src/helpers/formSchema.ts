@@ -15,6 +15,17 @@ export const RegisterFormSchema = Yup.object({
     .required('Required'),
 });
 
+export const ForgotPasswordFormSchema = Yup.object({
+  email: Yup.string().email('Invalid email address').required('Required'),
+});
+
+export const ResetPasswordFormSchema = Yup.object({
+  password: Yup.string().required('Required'),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref('password')], 'Passwords does not match')
+    .required('Required'),
+});
+
 export const VehicleFormStepSchema = [
   Yup.object().shape({
     name: Yup.string().required('Required'),

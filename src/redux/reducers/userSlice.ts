@@ -8,6 +8,8 @@ import {
   verifyService,
   checkSessionService,
   resendVerificationLinkService,
+  sendPasswordResetLinkService,
+  resetPasswordService,
 } from '~/services/userService';
 
 const LC_USER_DATA = 'LC_USER_DATA';
@@ -84,12 +86,45 @@ export const registerUser = createAsyncThunk(
   },
 );
 
+export const resetPassword = createAsyncThunk(
+  'user/resetPassword',
+  async (
+    { token, password }: { token: string; password: string },
+    thunkAPI,
+  ) => {
+    try {
+      const user = await resetPasswordService(token, password);
+      return user;
+    } catch (error) {
+      if (isAxiosError(error) && error.response) {
+        return thunkAPI.rejectWithValue(error.response.data.message);
+      }
+      return thunkAPI.rejectWithValue('An unknown error occured');
+    }
+  },
+);
+
 export const verifyUser = createAsyncThunk(
   'user/verify',
   async (id: string, thunkAPI) => {
     try {
       const user = await verifyService(id);
       return user;
+    } catch (error) {
+      if (isAxiosError(error) && error.response) {
+        return thunkAPI.rejectWithValue(error.response.data.message);
+      }
+      return thunkAPI.rejectWithValue('An unknown error occured');
+    }
+  },
+);
+
+export const sendPasswordResetLink = createAsyncThunk(
+  'user/sendPasswordResetLink',
+  async (email: string, thunkAPI) => {
+    try {
+      const data = sendPasswordResetLinkService(email);
+      return data;
     } catch (error) {
       if (isAxiosError(error) && error.response) {
         return thunkAPI.rejectWithValue(error.response.data.message);
@@ -171,9 +206,11 @@ export const userSlice = createSlice({
       .addCase(checkSession.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload as string;
-        state.data = null;
-        state.isAuthenticated = false;
-        localStorage.removeItem(LC_USER_DATA);
+        if (action.payload === 'Unauthorized') {
+          state.data = null;
+          state.isAuthenticated = false;
+          localStorage.removeItem(LC_USER_DATA);
+        }
       })
       .addCase(loginUser.pending, (state) => {
         state.status = 'loading';
@@ -209,6 +246,17 @@ export const userSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload as string;
       })
+      .addCase(sendPasswordResetLink.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(sendPasswordResetLink.fulfilled, (state) => {
+        state.status = 'succeeded';
+        state.error = null;
+      })
+      .addCase(sendPasswordResetLink.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload as string;
+      })
       .addCase(resendVerificationLink.pending, (state) => {
         state.status = 'loading';
       })
@@ -217,6 +265,16 @@ export const userSlice = createSlice({
         state.error = null;
       })
       .addCase(resendVerificationLink.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload as string;
+      })
+      .addCase(resetPassword.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(resetPassword.fulfilled, (state) => {
+        (state.status = 'succeeded'), (state.error = null);
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload as string;
       })

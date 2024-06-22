@@ -1,26 +1,27 @@
 import { useCallback } from 'react';
 import {
-  Unstable_Grid2 as Grid,
   Box,
+  Unstable_Grid2 as Grid,
   Paper,
-  Button,
   Typography,
-  TextField,
+  Button,
   Link,
 } from '@mui/material';
-import LoadingButton from '@mui/lab/LoadingButton';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
-import { LoginFormSchema } from '~/helpers/formSchema';
-import PasswordField from '~/components/Authentication/PasswordField';
+import { Formik, Form, Field } from 'formik';
 import ErrorAlert from '~/components/Authentication/ErrorAlert';
+import PasswordField from '~/components/Authentication/PasswordField';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ResetPasswordFormSchema } from '~/helpers/formSchema';
+import { LoadingButton } from '@mui/lab';
 import { useAppSelector, useAppDispatch } from '~/redux/store';
+import { resetPassword } from '~/redux/reducers/userSlice';
 import { getTheme } from '~/redux/reducers/themeSlice';
-import { loginUser } from '~/redux/reducers/userSlice';
-import { useNavigate } from 'react-router-dom';
+import { setAlert } from '~/redux/reducers/appSlice';
 
-const Login = () => {
-  const navigate = useNavigate();
+const ResetPassword = () => {
+  const { token } = useParams();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const theme = useAppSelector(getTheme);
 
   const handleCancel = useCallback(() => {
@@ -30,26 +31,49 @@ const Login = () => {
   return (
     <Box
       sx={{
-        height: '100vh',
         width: '100vw',
+        height: '100vh',
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
       }}
     >
       <Formik
-        initialValues={{ email: '', password: '' }}
-        validationSchema={LoginFormSchema}
+        initialValues={{
+          password: '',
+          confirmPassword: '',
+        }}
+        validationSchema={ResetPasswordFormSchema}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
-          const response = await dispatch(loginUser(values));
+          const response = await dispatch(
+            resetPassword({
+              token: token as string,
+              password: values.password,
+            }),
+          );
           if (response.meta.requestStatus === 'fulfilled') {
             resetForm();
-            navigate('/dashboard');
+            navigate('/login');
+            dispatch(
+              setAlert({
+                message: 'Password updated. Please sign in to Kota Mobil.',
+                severity: 'success',
+              }),
+            );
+          }
+          if (response.meta.requestStatus === 'rejected') {
+            dispatch(
+              setAlert({
+                message: response.payload as string,
+                severity: 'error',
+              }),
+            );
           }
           setSubmitting(false);
         }}
       >
-        {({ isSubmitting, isValid, errors, touched }) => (
+        {({ isSubmitting, isValid }) => (
           <Box
             component={Form}
             sx={{
@@ -88,23 +112,11 @@ const Login = () => {
                   style={{ width: 150, height: 60 }}
                 />
                 <Typography variant="h4" component="h1" sx={{ mt: 2 }}>
-                  Sign In
+                  Reset Password
                 </Typography>
                 <ErrorAlert />
               </Grid>
               <Grid xs={12}>
-                <Field
-                  as={TextField}
-                  fullWidth
-                  size="small"
-                  name="email"
-                  label="Email"
-                  type="email"
-                  color="secondary"
-                  error={touched.email && errors.email}
-                  helperText={<ErrorMessage name="email" />}
-                  sx={{ mb: 1 }}
-                />
                 <Field
                   as={PasswordField}
                   fullWidth
@@ -112,14 +124,17 @@ const Login = () => {
                   name="password"
                   label="Password"
                   color="secondary"
+                  sx={{ mb: 1 }}
                 />
-              </Grid>
-              <Grid xs={12}>
-                <Typography variant="subtitle1" align="left">
-                  <Link color="inherit" href="/forgot-password">
-                    <b>Forgot Password?</b>
-                  </Link>
-                </Typography>
+                <Field
+                  as={PasswordField}
+                  fullWidth
+                  size="small"
+                  name="confirmPassword"
+                  label="Confirm Password"
+                  color="secondary"
+                  sx={{ mb: 1 }}
+                />
               </Grid>
               <Grid xs={6}>
                 <Button
@@ -140,14 +155,14 @@ const Login = () => {
                   disabled={isSubmitting || !isValid}
                   loading={isSubmitting}
                 >
-                  Sign In
+                  Reset Password
                 </LoadingButton>
               </Grid>
               <Grid xs={12} mb={1}>
                 <Typography variant="subtitle1">
-                  Not a member?{' '}
-                  <Link color="inherit" href="/register">
-                    <b>Sign Up</b>
+                  Already have an account?{' '}
+                  <Link color="inherit" href="/login">
+                    <b>Sign In</b>
                   </Link>
                 </Typography>
               </Grid>
@@ -159,4 +174,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ResetPassword;
