@@ -10,15 +10,15 @@ import {
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
-import { LoginFormSchema } from '~/helpers/formSchema';
-import PasswordField from '~/components/Authentication/PasswordField';
 import ErrorAlert from '~/components/Authentication/ErrorAlert';
-import { useAppSelector, useAppDispatch } from '~/redux/store';
 import { getTheme } from '~/redux/reducers/themeSlice';
-import { loginUser } from '~/redux/reducers/userSlice';
+import { ForgotPasswordFormSchema } from '~/helpers/formSchema';
+import { useAppSelector, useAppDispatch } from '~/redux/store';
 import { useNavigate } from 'react-router-dom';
+import { sendPasswordResetLink } from '~/redux/reducers/userSlice';
+import { setAlert } from '~/redux/reducers/appSlice';
 
-const Login = () => {
+const ForgotPassword = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const theme = useAppSelector(getTheme);
@@ -38,13 +38,28 @@ const Login = () => {
       }}
     >
       <Formik
-        initialValues={{ email: '', password: '' }}
-        validationSchema={LoginFormSchema}
+        initialValues={{ email: '' }}
+        validationSchema={ForgotPasswordFormSchema}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
-          const response = await dispatch(loginUser(values));
+          const response = await dispatch(sendPasswordResetLink(values.email));
           if (response.meta.requestStatus === 'fulfilled') {
             resetForm();
-            navigate('/dashboard');
+            dispatch(
+              setAlert({
+                message:
+                  'Password reset instruction sent, check your email to reset your password.',
+                severity: 'success',
+              }),
+            );
+            navigate('/login');
+          }
+          if (response.meta.requestStatus === 'rejected') {
+            dispatch(
+              setAlert({
+                message: response.payload as string,
+                severity: 'error',
+              }),
+            );
           }
           setSubmitting(false);
         }}
@@ -88,7 +103,7 @@ const Login = () => {
                   style={{ width: 150, height: 60 }}
                 />
                 <Typography variant="h4" component="h1" sx={{ mt: 2 }}>
-                  Sign In
+                  Forgot Password
                 </Typography>
                 <ErrorAlert />
               </Grid>
@@ -105,21 +120,6 @@ const Login = () => {
                   helperText={<ErrorMessage name="email" />}
                   sx={{ mb: 1 }}
                 />
-                <Field
-                  as={PasswordField}
-                  fullWidth
-                  size="small"
-                  name="password"
-                  label="Password"
-                  color="secondary"
-                />
-              </Grid>
-              <Grid xs={12}>
-                <Typography variant="subtitle1" align="left">
-                  <Link color="inherit" href="/forgot-password">
-                    <b>Forgot Password?</b>
-                  </Link>
-                </Typography>
               </Grid>
               <Grid xs={6}>
                 <Button
@@ -140,14 +140,14 @@ const Login = () => {
                   disabled={isSubmitting || !isValid}
                   loading={isSubmitting}
                 >
-                  Sign In
+                  Confirm
                 </LoadingButton>
               </Grid>
               <Grid xs={12} mb={1}>
                 <Typography variant="subtitle1">
-                  Not a member?{' '}
-                  <Link color="inherit" href="/register">
-                    <b>Sign Up</b>
+                  Already have an account?{' '}
+                  <Link color="inherit" href="/login">
+                    <b>Sign In</b>
                   </Link>
                 </Typography>
               </Grid>
@@ -159,4 +159,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgotPassword;
