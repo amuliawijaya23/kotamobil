@@ -18,6 +18,8 @@ import Dashboard from './pages/Dashboard';
 import Inventory from './pages/Inventory';
 import Contacts from './pages/Contacts';
 import Vehicle from './pages/Vehicle';
+import VehicleForm from './components/VehicleForm';
+import ContactForm from './components/ContactForm';
 import { useAppDispatch, useAppSelector } from './redux/store';
 import {
   getAppStatus,
@@ -25,11 +27,21 @@ import {
   resetAlert,
 } from './redux/reducers/appSlice';
 import { initializeUser } from './redux/reducers/userSlice';
+import useForms from './hooks/useForms';
+import { setTheme } from './redux/reducers/themeSlice';
+
+const LC_USER_THEME = 'LC_USER_THEME';
 
 function App() {
   const status = useAppSelector(getAppStatus);
   const alert = useAppSelector(getAppAlert);
   const dispatch = useAppDispatch();
+  const {
+    openVehicleForm,
+    openContactForm,
+    handleCloseVehicleForm,
+    handleCloseContactForm,
+  } = useForms();
 
   const handleClearAlert = useCallback(() => {
     dispatch(resetAlert());
@@ -37,6 +49,10 @@ function App() {
 
   useEffect(() => {
     dispatch(initializeUser());
+    const userTheme = localStorage.getItem(LC_USER_THEME);
+    if (userTheme) {
+      dispatch(setTheme(userTheme as 'light' | 'dark'));
+    }
   }, [dispatch]);
 
   if (status === 'loading') {
@@ -74,6 +90,14 @@ function App() {
           {alert?.message}
         </Alert>
       </Snackbar>
+      <VehicleForm
+        open={openVehicleForm}
+        onCloseForm={handleCloseVehicleForm}
+      />
+      <ContactForm
+        open={openContactForm}
+        onCloseForm={handleCloseContactForm}
+      />
       <Router>
         <Routes>
           <Route path="/" element={<Layout />}>

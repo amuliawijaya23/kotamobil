@@ -56,8 +56,9 @@ const VehicleDetails = () => {
           variant="body1"
           component="p"
           fontWeight="bold"
+          color="secondary"
         >
-          Vehicle Details
+          Details
         </Typography>
         <Divider />
       </Grid>

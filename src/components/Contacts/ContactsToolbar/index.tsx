@@ -153,6 +153,7 @@ const ContactsToolbar = ({ numSelected, onOpenForm }: ContactsToolbar) => {
             fontWeight="bold"
             id="tableTitle"
             component="div"
+            color="secondary"
           >
             Contacts
           </Typography>

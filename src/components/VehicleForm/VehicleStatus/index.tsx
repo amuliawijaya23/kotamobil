@@ -1,5 +1,4 @@
 import type { ContactData } from '~/redux/reducers/contactsSlice';
-import { useState, useCallback } from 'react';
 import {
   Divider,
   Autocomplete,
@@ -15,11 +14,11 @@ import { DatePicker } from '@mui/x-date-pickers';
 import { NumericFormat } from 'react-number-format';
 import AddIcon from '@mui/icons-material/Add';
 import SelectField from '../SelectField';
-import ContactForm from '~/components/ContactForm';
 import { useFormikContext, Field, ErrorMessage } from 'formik';
 import { useAppSelector } from '~/redux/store';
 import { getContactsData } from '~/redux/reducers/contactsSlice';
 import { condition, status } from '~/helpers/optionsData';
+import useForms from '~/hooks/useForms';
 
 interface VehicleStatusValues {
   name: string;
@@ -40,30 +39,19 @@ const VehicleStatus = () => {
   const { setFieldValue, values, touched, errors } =
     useFormikContext<VehicleStatusValues>();
   const contacts = useAppSelector(getContactsData);
-  const [openContactForm, setOpenContactForm] = useState<boolean>(false);
-
-  const handleOpenContactForm = useCallback(() => {
-    setOpenContactForm(true);
-  }, []);
-
-  const handleCloseContactForm = useCallback(() => {
-    setOpenContactForm(false);
-  }, []);
+  const { handleToggleContactForm } = useForms();
 
   return (
     <>
-      <ContactForm
-        open={openContactForm}
-        onCloseForm={handleCloseContactForm}
-      />
       <Grid xs={12}>
         <Typography
           gutterBottom
           variant="body1"
           component="p"
           fontWeight="bold"
+          color="secondary"
         >
-          Vehicle Status
+          Status
         </Typography>
         <Divider />
       </Grid>
@@ -128,8 +116,9 @@ const VehicleStatus = () => {
               autoHighlight
               options={contacts}
               value={
-                contacts.find((contact) => contact._id === values.buyerId) ||
-                null
+                contacts.find(
+                  (contact: ContactData) => contact._id === values.buyerId,
+                ) || null
               }
               getOptionLabel={(option) =>
                 `${option.firstName}${
@@ -166,7 +155,7 @@ const VehicleStatus = () => {
           </Grid>
           <Grid xs={6} ml={-2} sx={{ display: { xs: 'none', sm: 'flex' } }}>
             <Tooltip title="Add Contact">
-              <IconButton onClick={handleOpenContactForm} size="small">
+              <IconButton onClick={handleToggleContactForm} size="small">
                 <AddIcon />
               </IconButton>
             </Tooltip>
@@ -175,7 +164,9 @@ const VehicleStatus = () => {
             xs={12}
             sx={{ display: { xs: 'flex', sm: 'none' }, justifyContent: 'end' }}
           >
-            <Button onClick={handleOpenContactForm}>Add Contact</Button>
+            <Button color="inherit" onClick={handleToggleContactForm}>
+              Add Contact
+            </Button>
           </Grid>
         </>
       )}
@@ -185,8 +176,9 @@ const VehicleStatus = () => {
           variant="body1"
           component="p"
           fontWeight="bold"
+          color="secondary"
         >
-          Vehicle Pricing
+          Pricing
         </Typography>
         <Divider />
       </Grid>
@@ -286,8 +278,9 @@ const VehicleStatus = () => {
           variant="body1"
           component="p"
           fontWeight="bold"
+          color="secondary"
         >
-          Vehicle Condition
+          Condition
         </Typography>
         <Divider />
       </Grid>

@@ -94,8 +94,9 @@ const VehicleImages = ({
           variant="body1"
           component="p"
           fontWeight="bold"
+          color="secondary"
         >
-          Vehicle Images
+          Images
         </Typography>
 
         <Divider />
@@ -119,6 +120,7 @@ const VehicleImages = ({
                   style={{ height: 120 }}
                 />
                 <IconButton
+                  color="secondary"
                   onClick={() => onRemoveCurrentImages(index)}
                   sx={{ position: 'absolute', top: '1px', right: '1px' }}
                 >
@@ -153,6 +155,7 @@ const VehicleImages = ({
                 />
                 <IconButton
                   onClick={() => onRemoveUploadedImages(index)}
+                  color="secondary"
                   sx={{ position: 'absolute', top: '1px', right: '1px' }}
                 >
                   <RemoveCircleIcon />
@@ -168,12 +171,14 @@ const VehicleImages = ({
           component="p"
           sx={{ mb: 1 }}
         >
-          You can upload 10 images up to 10mb each.
+          You can upload up to 10 images, each with a maximum size of 10MB. For
+          optimal results, please use images with a 3:4 aspect ratio.
         </Typography>
         <Paper
           {...getRootProps()}
           sx={{
             height: 100,
+            bgcolor: 'primary.light',
             display: { xs: 'none', lg: 'flex' },
             flexDirection: 'column',
             justifyContent: 'center',
@@ -188,7 +193,7 @@ const VehicleImages = ({
           ) : (
             <>
               <Typography variant="subtitle2" component="p" textAlign="center">
-                Drag photo here
+                Drag image here
                 <br />
                 - or -
                 <br />
@@ -198,6 +203,7 @@ const VehicleImages = ({
                 component="label"
                 tabIndex={-1}
                 variant="outlined"
+                color="inherit"
                 onClick={open}
                 startIcon={<CloudUploadIcon />}
                 sx={{ mt: 0.5 }}

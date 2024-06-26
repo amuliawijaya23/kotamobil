@@ -10,7 +10,7 @@ const Loading = () => {
         width: '100%',
       }}
     >
-      <CircularProgress />
+      <CircularProgress color="inherit" />
     </Box>
   );
 };

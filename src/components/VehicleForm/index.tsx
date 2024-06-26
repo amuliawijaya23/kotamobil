@@ -119,7 +119,13 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
   const [openConfirmation, setOpenConfirmation] = useState<boolean>(false);
   const [currentImages, setCurrentImages] = useState<
     { key: string; url: string }[] | null
-  >(vehicle?.images || null);
+  >(null);
+
+  useEffect(() => {
+    if (vehicle && vehicle.images) {
+      setCurrentImages(vehicle.images);
+    }
+  }, [vehicle]);
 
   const formik = useFormik<VehicleFormValues>({
     initialValues,
@@ -136,7 +142,10 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
           });
         }
 
-        const dataToSend: Partial<DataToSend> = filterObject(data);
+        const dataToSend: Partial<DataToSend> = filterObject({
+          ...data,
+          specification: data.specification.filter((el) => el),
+        });
 
         if (removedImages && removedImages.length > 0) {
           dataToSend.images = removedImages;
@@ -155,7 +164,7 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
               severity: 'success',
             }),
           );
-          formik.resetForm();
+          vehicle ? initializeForm() : formik.resetForm();
           setStep(0);
           onCloseForm();
         }
