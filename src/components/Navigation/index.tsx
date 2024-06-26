@@ -113,8 +113,8 @@ const NavBar = () => {
                 loading="lazy"
                 src={
                   theme === 'light'
-                    ? '/public/kotamobil-light.png'
-                    : '/public/kotamobil-dark.png'
+                    ? '/kotamobil-light.png'
+                    : '/kotamobil-dark.png'
                 }
                 style={{ height: 50, marginRight: 10, cursor: 'pointer' }}
               />

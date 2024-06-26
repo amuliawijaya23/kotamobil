@@ -134,8 +134,8 @@ const VehicleImages = ({
                 <img
                   loading="lazy"
                   alt="img-placeholder"
-                  srcSet={`../public/placeholder-image.png`}
-                  src={'../public/placeholder-image.png'}
+                  srcSet={`/placeholder-image.png`}
+                  src={'/placeholder-image.png'}
                   style={{ height: 120 }}
                 />
               </ImageListItem>

@@ -105,8 +105,8 @@ const ResetPassword = () => {
                 <img
                   src={
                     theme === 'light'
-                      ? '/public/kotamobil-light.png'
-                      : '/public/kotamobil-dark.png'
+                      ? '/kotamobil-light.png'
+                      : '/kotamobil-dark.png'
                   }
                   alt="logo"
                   style={{ width: 150, height: 90 }}

@@ -33,7 +33,7 @@ const PageNotFound = () => {
                   }}
                 >
                   <ImageListItem sx={{ width: 400 }}>
-                    <img src="/public/404.png" alt="404" />
+                    <img src="/404.png" alt="404" />
                   </ImageListItem>
                 </ImageList>
               </Grid>
