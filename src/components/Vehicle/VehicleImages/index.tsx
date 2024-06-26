@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import {
   Unstable_Grid2 as Grid,
-  Box,
+  Paper,
   Typography,
   ImageList,
   ImageListItem,
@@ -18,38 +18,27 @@ interface VehicleImagesProps {
 const VehicleImages = ({ onOpenImages }: VehicleImagesProps) => {
   const vehicle = useAppSelector(getVehicleData);
   const theme = useTheme();
-  const isUltraUp = useMediaQuery(theme.breakpoints.up('ultra'));
-  const isXlUp = useMediaQuery(theme.breakpoints.up('xl'));
-  const isLgUp = useMediaQuery(theme.breakpoints.up('lg'));
   const isSmUp = useMediaQuery(theme.breakpoints.up('sm'));
 
   const imageListCol = useMemo(() => {
-    let col = 1;
-    if (isUltraUp) {
+    let col = 2;
+    if (isSmUp) {
       col = 5;
-    } else if (isXlUp) {
-      col = 5;
-    } else if (isLgUp) {
-      col = 5;
-    } else if (isSmUp) {
-      col = 2;
     }
     return col;
-  }, [isUltraUp, isXlUp, isLgUp, isSmUp]);
+  }, [isSmUp]);
 
   return (
-    <>
-      {vehicle?.images && vehicle.images.length > 0 ? (
-        <>
-          <Grid xs={12}>
-            <ImageList
-              cols={imageListCol}
-              rowHeight={250}
-              sx={{
-                minHeight: 250,
-                maxHeight: 505,
-              }}
-            >
+    <Paper sx={{ bgcolor: 'primary.light', mt: 5, width: '100%' }}>
+      <Grid container p={1} spacing={2}>
+        <Grid xs={12}>
+          <Typography variant="h6" component="h6" color="secondary">
+            Images
+          </Typography>
+        </Grid>
+        <Grid xs={12}>
+          {vehicle?.images && vehicle.images.length > 0 ? (
+            <ImageList cols={imageListCol}>
               {vehicle?.images.map((image, index) => (
                 <ImageListItem
                   key={`vehicle-display-image-${index}`}
@@ -62,7 +51,6 @@ const VehicleImages = ({ onOpenImages }: VehicleImagesProps) => {
                     srcSet={`${image.url}`}
                     src={`${image.url}`}
                     style={{
-                      height: 245,
                       border: 'solid 1px',
                       objectFit: 'cover',
                     }}
@@ -70,26 +58,15 @@ const VehicleImages = ({ onOpenImages }: VehicleImagesProps) => {
                 </ImageListItem>
               ))}
             </ImageList>
-          </Grid>
-        </>
-      ) : (
-        <Grid xs={12}>
-          <Box
-            sx={{
-              height: 50,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <Typography variant="body1" component="p" textAlign="center">
+          ) : (
+            <Typography variant="body1" component="p" color="inherit">
               This vehicle currently has no images. You can upload images using
               the form provided by clicking the Update button.
             </Typography>
-          </Box>
+          )}
         </Grid>
-      )}
-    </>
+      </Grid>
+    </Paper>
   );
 };
 

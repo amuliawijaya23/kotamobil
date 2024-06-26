@@ -26,7 +26,7 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: { xs: 400, sm: 500, md: 700, xl: 1000, ultra: 1500 },
+  width: { xs: 300, sm: 375, md: 420, lg: 450, xl: 600, ultra: 750 },
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
@@ -45,7 +45,7 @@ const VehicleImageStepper = ({
   return (
     <Modal open={open} onClose={onClose}>
       <Box sx={style}>
-        {vehicle?.images && (
+        {vehicle?.images && vehicle.images.length > 0 && (
           <>
             <Card raised>
               <CardMedia
@@ -54,11 +54,12 @@ const VehicleImageStepper = ({
                 srcSet={vehicle?.images[activeStep].url}
                 sx={{
                   height: {
-                    xs: 320,
-                    sm: 400,
+                    xs: 400,
+                    sm: 500,
                     md: 560,
+                    lg: 600,
                     xl: 800,
-                    ultra: 1200,
+                    ultra: 1000,
                   },
                 }}
               />
@@ -71,6 +72,7 @@ const VehicleImageStepper = ({
               nextButton={
                 <Button
                   size="small"
+                  color="inherit"
                   disabled={Boolean(
                     vehicle &&
                       vehicle.images?.length &&
@@ -84,6 +86,7 @@ const VehicleImageStepper = ({
               backButton={
                 <Button
                   size="small"
+                  color="inherit"
                   disabled={activeStep === 0}
                   onClick={onPrev}
                 >

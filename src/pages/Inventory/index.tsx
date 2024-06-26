@@ -14,7 +14,6 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import InventoryToolbar from '~/components/Inventory/InventoryToolbar';
 import InventorySidebar from '~/components/Inventory/InventorySidebar';
-import VehicleForm from '~/components/VehicleForm';
 import VehicleCard from '~/components/Inventory/VehicleCard';
 import { useAppSelector } from '~/redux/store';
 import {
@@ -52,7 +51,6 @@ const Inventory = () => {
   const isUltraUp = useMediaQuery(theme.breakpoints.up('ultra'));
   const inventory = useAppSelector(getInventory);
   const [openFilter, setOpenFilter] = useState<boolean>(false);
-  const [openForm, setOpenForm] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
   const status = useAppSelector(getInventoryStatus);
 
@@ -96,14 +94,6 @@ const Inventory = () => {
 
   const handleCloseFilter = useCallback(() => {
     setOpenFilter(false);
-  }, []);
-
-  const handleToggleForm = useCallback(() => {
-    setOpenForm((open) => !open);
-  }, []);
-
-  const handleCloseForm = useCallback(() => {
-    setOpenForm(false);
   }, []);
 
   const handleChangePage = useCallback(
@@ -157,10 +147,7 @@ const Inventory = () => {
           }}
         >
           <Toolbar />
-          <InventoryToolbar
-            onToggleFilter={handleToggleFilter}
-            onToggleForm={handleToggleForm}
-          />
+          <InventoryToolbar onToggleFilter={handleToggleFilter} />
           <Divider />
           <Grid container component={Box} p={2} spacing={2}>
             {status === 'loading' && (
@@ -176,7 +163,7 @@ const Inventory = () => {
                 <Loading />
               </Box>
             )}
-            {status !== 'loading' &&
+            {status === 'succeeded' &&
               visibleItems.map((vehicle: VehicleData, index: number) => (
                 <Grid
                   key={`${vehicle.name}-card-${index}`}
@@ -189,7 +176,7 @@ const Inventory = () => {
                   <VehicleCard vehicle={vehicle} />
                 </Grid>
               ))}
-            {status !== 'loading' && visibleItems.length === 0 && (
+            {status === 'succeeded' && visibleItems.length === 0 && (
               <Grid
                 xs={12}
                 sx={{
@@ -205,7 +192,7 @@ const Inventory = () => {
                 </Typography>
               </Grid>
             )}
-            {status !== 'loading' && paginationCount > 1 && (
+            {status === 'succeeded' && paginationCount > 1 && (
               <Grid xs={12} mt={2}>
                 <Toolbar
                   sx={{
@@ -237,10 +224,7 @@ const Inventory = () => {
           <Grid container component={Box} p={2} spacing={2} mt={1}>
             <Toolbar />
             <Grid xs={12}>
-              <InventoryToolbar
-                onToggleFilter={handleToggleFilter}
-                onToggleForm={handleToggleForm}
-              />
+              <InventoryToolbar onToggleFilter={handleToggleFilter} />
               <Divider />
             </Grid>
             {status === 'loading' && (
@@ -256,7 +240,7 @@ const Inventory = () => {
                 <Loading />
               </Box>
             )}
-            {status !== 'loading' &&
+            {status === 'succeeded' &&
               visibleItems.map((vehicle: VehicleData, index: number) => (
                 <Grid
                   key={`${vehicle.name}-card-${index}`}
@@ -267,7 +251,7 @@ const Inventory = () => {
                   <VehicleCard vehicle={vehicle} />
                 </Grid>
               ))}
-            {visibleItems.length === 0 && status !== 'loading' && (
+            {status === 'succeeded' && visibleItems.length === 0 && (
               <Grid
                 xs={12}
                 sx={{
@@ -283,7 +267,7 @@ const Inventory = () => {
                 </Typography>
               </Grid>
             )}
-            {status !== 'loading' && paginationCount > 1 && (
+            {status === 'succeeded' && paginationCount > 1 && (
               <Grid xs={12} mt={2}>
                 <Toolbar
                   sx={{
@@ -306,7 +290,6 @@ const Inventory = () => {
           </Grid>
         </Box>
       )}
-      <VehicleForm open={openForm} onCloseForm={handleCloseForm} />
     </Box>
   );
 };

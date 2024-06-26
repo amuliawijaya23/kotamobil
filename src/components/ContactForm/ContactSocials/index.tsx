@@ -21,6 +21,7 @@ const ContactSocials = () => {
           variant="body1"
           component="p"
           fontWeight="bold"
+          color="secondary"
           gutterBottom
         >
           Social Profile

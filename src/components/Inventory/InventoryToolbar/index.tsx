@@ -18,19 +18,18 @@ import {
   getQueryData,
   setSearch,
 } from '~/redux/reducers/inventorySlice';
+import useForms from '~/hooks/useForms';
 
 interface InventoryToolbarProps {
   onToggleFilter: () => void;
-  onToggleForm: () => void;
 }
 
-const InventoryToolbar = ({
-  onToggleFilter,
-  onToggleForm,
-}: InventoryToolbarProps) => {
+const InventoryToolbar = ({ onToggleFilter }: InventoryToolbarProps) => {
   const dispatch = useAppDispatch();
   const inventory = useAppSelector(getInventory);
   const queryData = useAppSelector(getQueryData);
+
+  const { handleToggleVehicleForm } = useForms();
 
   const handleMouseDown = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -99,7 +98,10 @@ const InventoryToolbar = ({
               </span>
             </Tooltip>
             <Tooltip title="Add listing">
-              <IconButton onClick={onToggleForm} onMouseDown={handleMouseDown}>
+              <IconButton
+                onClick={handleToggleVehicleForm}
+                onMouseDown={handleMouseDown}
+              >
                 <AddIcon />
               </IconButton>
             </Tooltip>

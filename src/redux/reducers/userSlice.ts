@@ -13,6 +13,7 @@ import {
 } from '~/services/userService';
 
 const LC_USER_DATA = 'LC_USER_DATA';
+const LC_USER_THEME = 'LC_USER_THEME';
 
 export interface UserData {
   _id: string;
@@ -302,6 +303,7 @@ export const userSlice = createSlice({
         state.status = 'succeeded';
         state.data = null;
         localStorage.removeItem(LC_USER_DATA);
+        localStorage.removeItem(LC_USER_THEME);
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.status = 'failed';

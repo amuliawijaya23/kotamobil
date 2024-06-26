@@ -105,7 +105,7 @@ const VehicleSpecifications = () => {
                       onMouseDown={handleMouseDown}
                       edge="end"
                       size="small"
-                      color="inherit"
+                      color="secondary"
                     >
                       <RemoveCircleOutlineIcon />
                     </IconButton>

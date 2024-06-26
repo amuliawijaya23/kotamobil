@@ -59,7 +59,7 @@ const style = {
 const initialValues: ContactFormValues = {
   firstName: '',
   lastName: '',
-  country: '',
+  country: '62',
   mobile: '',
   email: '',
   address: '',

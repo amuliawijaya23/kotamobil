@@ -1,23 +1,27 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   Unstable_Grid2 as Grid,
   Toolbar,
-  Divider,
   Box,
   Tooltip,
   IconButton,
-  Card,
-  CardHeader,
-  CardContent,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogContentText,
   DialogActions,
   Button,
+  Typography,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import VehicleOverview from '~/components/Vehicle/VehicleOverview';
+import VehiclePricing from '~/components/Vehicle/VehiclePricing';
+import VehicleSpecifications from '~/components/Vehicle/VehicleSpecifications';
+import VehicleImages from '~/components/Vehicle/VehicleImages';
+import Loading from '~/components/Loading';
+import VehicleImageStepper from '~/components/Vehicle/VehicleImageStepper';
+import PageNotFound from '../PageNotFound';
 import { useAppSelector, useAppDispatch } from '~/redux/store';
 import { setAlert } from '~/redux/reducers/appSlice';
 import { deleteVehicle } from '~/redux/reducers/inventorySlice';
@@ -25,32 +29,31 @@ import {
   getVehicleData,
   getVehicleStatus,
 } from '~/redux/reducers/vehicleSlice';
+import { getContactsData } from '~/redux/reducers/contactsSlice';
 import { useNavigate } from 'react-router-dom';
 import useVehicleData from '~/hooks/useVehicleData';
-import Loading from '~/components/Loading';
-import VehicleForm from '~/components/VehicleForm';
-import VehicleInformation from '~/components/Vehicle/VehicleInformation';
-import VehicleImages from '~/components/Vehicle/VehicleImages';
-import VehicleSpecification from '~/components/Vehicle/VehicleSpecification';
-import VehicleImageStepper from '~/components/Vehicle/VehicleImageStepper';
-import PageNotFound from '../PageNotFound';
+import { format } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
+import useForms from '~/hooks/useForms';
 
 const Vehicle = () => {
   useVehicleData();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const vehicle = useAppSelector(getVehicleData);
+  const contacts = useAppSelector(getContactsData);
   const status = useAppSelector(getVehicleStatus);
-  const [open, setOpen] = useState<boolean>(false);
   const [openImages, setOpenImages] = useState<boolean>(false);
   const [openConfirmation, setOpenConfirmation] = useState<boolean>(false);
   const [activeStep, setActiveStep] = useState<number>(0);
 
-  useEffect(() => {
-    if (vehicle?.images && activeStep > vehicle?.images?.length - 1) {
-      setActiveStep(vehicle?.images.length - 1);
-    }
-  }, [vehicle?.images, activeStep]);
+  const { handleToggleVehicleForm } = useForms();
+
+  const customerData = useMemo(
+    () =>
+      vehicle?.sold ? contacts?.find((c) => c._id === vehicle.buyerId) : null,
+    [vehicle, contacts],
+  );
 
   const handleOpenImages = useCallback((index: number) => {
     setActiveStep(index);
@@ -59,14 +62,7 @@ const Vehicle = () => {
 
   const handleCloseImages = useCallback(() => {
     setOpenImages(false);
-  }, []);
-
-  const handleOpenForm = useCallback(() => {
-    setOpen(true);
-  }, []);
-
-  const handleCloseForm = useCallback(() => {
-    setOpen(false);
+    setActiveStep(0);
   }, []);
 
   const handleOpenConfirmation = useCallback(() => {
@@ -133,7 +129,6 @@ const Vehicle = () => {
 
   return (
     <>
-      <VehicleForm open={open} onCloseForm={handleCloseForm} />
       {vehicle?.images && vehicle.images.length > 0 && (
         <VehicleImageStepper
           open={openImages}
@@ -156,62 +151,181 @@ const Vehicle = () => {
         </DialogActions>
       </Dialog>
       <Toolbar />
-      <Grid
-        container
-        p={2}
-        spacing={2}
-        display="flex"
-        justifyContent="center"
-        sx={{ mt: { lg: 5, ultra: 20 } }}
-      >
-        <Grid xs={12} sm={11} md={10} lg={9} ultra={6}>
-          <Card sx={{ bgcolor: 'primary.light' }}>
-            <CardHeader
-              title={vehicle?.name}
-              action={
-                <Box>
-                  <Tooltip title="Delete">
-                    <IconButton
-                      onClick={handleOpenConfirmation}
-                      size="medium"
-                      color="inherit"
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Update">
-                    <IconButton
-                      onClick={handleOpenForm}
-                      size="medium"
-                      color="inherit"
-                    >
-                      <EditIcon />
-                    </IconButton>
-                  </Tooltip>
-                </Box>
-              }
-            />
-            <Divider />
-            <CardContent>
-              <Grid container p={1} spacing={2}>
-                <VehicleInformation />
-              </Grid>
-            </CardContent>
-            <Divider />
-            <CardContent>
-              <Grid container p={1} spacing={2}>
-                <VehicleSpecification />
-              </Grid>
-            </CardContent>
-            <Divider />
-            <CardContent>
-              <Grid container spacing={2}>
-                <VehicleImages onOpenImages={handleOpenImages} />
-              </Grid>
-            </CardContent>
-          </Card>
+      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Grid
+          container
+          spacing={2}
+          sx={{
+            width: { xs: '100%', lg: '80%', xl: '70%', ultra: '50%' },
+            p: { xs: 2, md: 5 },
+          }}
+        >
+          <Grid xs={12} md={3}>
+            <Typography variant="h5" component="h4" color="secondary">
+              {vehicle?.year}
+            </Typography>
+            <Typography variant="h4" component="h4" color="secondary">
+              {vehicle?.make} {vehicle?.model}
+            </Typography>
+            <Box>
+              <Tooltip title="Update">
+                <IconButton
+                  onClick={handleToggleVehicleForm}
+                  size="medium"
+                  color="inherit"
+                >
+                  <EditIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Delete">
+                <IconButton
+                  onClick={handleOpenConfirmation}
+                  size="medium"
+                  color="inherit"
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+            </Box>
+            <Typography
+              variant="body1"
+              component="p"
+              sx={{ mt: 2 }}
+              color="GrayText"
+            >
+              VIN
+            </Typography>
+            <Typography variant="body1" component="p" color="inherit">
+              {vehicle?.vin}
+            </Typography>
+            <Typography
+              variant="body1"
+              component="p"
+              sx={{ mt: 1 }}
+              color="GrayText"
+            >
+              Date Added
+            </Typography>
+            <Typography variant="body1" component="p" color="inherit">
+              {vehicle?.dateAdded &&
+                format(new Date(vehicle.dateAdded), 'dd MM yyy') +
+                  ` (${formatDistanceToNow(new Date(vehicle.dateAdded), {
+                    addSuffix: true,
+                  })})`}
+            </Typography>
+            <Typography
+              variant="body1"
+              component="p"
+              sx={{ mt: 1 }}
+              color="GrayText"
+            >
+              Condition
+            </Typography>
+            <Typography variant="body1" component="p" color="inherit">
+              {vehicle?.condition}
+            </Typography>
+            {vehicle?.condition === 'Used' && (
+              <>
+                <Typography
+                  variant="body1"
+                  component="p"
+                  sx={{ mt: 1 }}
+                  color="GrayText"
+                >
+                  Plate Number
+                </Typography>
+                <Typography variant="body1" component="p" color="inherit">
+                  {vehicle?.plateNumber}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  component="p"
+                  sx={{ mt: 1 }}
+                  color="GrayText"
+                >
+                  Tax Date
+                </Typography>
+                <Typography variant="body1" component="p" color="inherit">
+                  {vehicle?.taxDate &&
+                    format(new Date(vehicle.taxDate), 'dd MM yyy') +
+                      ` (${formatDistanceToNow(new Date(vehicle.taxDate), {
+                        addSuffix: true,
+                      })})`}
+                </Typography>
+              </>
+            )}
+            <Typography
+              variant="body1"
+              component="p"
+              sx={{ mt: 1 }}
+              color="GrayText"
+            >
+              Status
+            </Typography>
+            <Typography variant="body1" component="p" color="inherit">
+              {vehicle?.sold ? 'Sold' : 'Available'}
+            </Typography>
+            {vehicle?.sold && (
+              <>
+                <Typography
+                  variant="body1"
+                  component="p"
+                  sx={{ mt: 1 }}
+                  color="GrayText"
+                >
+                  Date Sold
+                </Typography>
+                <Typography variant="body1" component="p" color="inherit">
+                  {vehicle?.dateSold &&
+                    format(new Date(vehicle.dateSold), 'dd MM yyy') +
+                      ` (${formatDistanceToNow(new Date(vehicle.dateSold), {
+                        addSuffix: true,
+                      })})`}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  component="p"
+                  sx={{ mt: 1 }}
+                  color="GrayText"
+                >
+                  Buyer
+                </Typography>
+                <Typography variant="body1" component="p" color="inherit">
+                  {customerData?.firstName}
+                  {customerData?.lastName ? ` ${customerData.lastName}` : ''}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  component="p"
+                  sx={{ mt: 1 }}
+                  color="GrayText"
+                >
+                  Mobile
+                </Typography>
+                <Typography variant="body1" component="p" color="inherit">
+                  {customerData?.mobile}
+                </Typography>
+              </>
+            )}
+          </Grid>
+          <Grid
+            xs={12}
+            md={7}
+            sx={{
+              mt: { xs: 5, md: 0 },
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <VehicleOverview />
+            <VehiclePricing />
+            <VehicleSpecifications />
+            <VehicleImages onOpenImages={handleOpenImages} />
+          </Grid>
+          <Grid xs={0} md={2}></Grid>
         </Grid>
-      </Grid>
+      </Box>
     </>
   );
 };

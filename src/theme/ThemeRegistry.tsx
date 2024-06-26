@@ -30,7 +30,7 @@ const paletteOptions = {
     default: '#e0e0e0',
   },
   text: {
-    primary: '#616161',
+    primary: '#2e2e2e',
   },
   primary: {
     light: '#eeeeee',
