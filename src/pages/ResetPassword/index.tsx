@@ -105,11 +105,11 @@ const ResetPassword = () => {
                 <img
                   src={
                     theme === 'light'
-                      ? '/src/assets/gudangmobil-logo-dark.png'
-                      : '/src/assets/gudangmobil-logo-light.png'
+                      ? '/public/kotamobil-light.png'
+                      : '/public/kotamobil-dark.png'
                   }
                   alt="logo"
-                  style={{ width: 150, height: 60 }}
+                  style={{ width: 150, height: 90 }}
                 />
                 <Typography variant="h4" component="h1" sx={{ mt: 2 }}>
                   Reset Password

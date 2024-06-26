@@ -128,18 +128,18 @@ const VehicleImages = ({
                 </IconButton>
               </ImageListItem>
             ))}
-          {!currentImages ||
-            (currentImages.length === 0 && !values.images && (
+          {(!currentImages || currentImages.length === 0) &&
+            (!values.images || values.images.length === 0) && (
               <ImageListItem key={`image-placeholder`}>
                 <img
                   loading="lazy"
                   alt="img-placeholder"
-                  srcSet={`../src/assets/placeholder-image.png`}
-                  src={'../src/assets/placeholder-image.png'}
+                  srcSet={`../public/placeholder-image.png`}
+                  src={'../public/placeholder-image.png'}
                   style={{ height: 120 }}
                 />
               </ImageListItem>
-            ))}
+            )}
           {values.images &&
             values.images.map((image: File, index: number) => (
               <ImageListItem

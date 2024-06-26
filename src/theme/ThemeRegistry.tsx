@@ -27,21 +27,21 @@ const typographyOptions = {
 
 const paletteOptions = {
   background: {
-    default: '#e0e0e0',
+    default: '#e1ebfe',
   },
   text: {
     primary: '#2e2e2e',
   },
   primary: {
-    light: '#eeeeee',
-    main: '#e0e0e0',
-    dark: '#bdbdbd',
-    contrastText: '#616161',
+    light: '#eff4fe',
+    main: '#01579b',
+    dark: '#9dabb1',
+    contrastText: '#757575',
   },
   secondary: {
-    light: '#fe7049',
-    main: '#fe4d1c',
-    dark: '#b13513',
+    light: '#ffac33',
+    main: '#FF9800',
+    dark: '#b26a00',
     contrastText: '#eeeeee',
   },
   success: {
@@ -72,21 +72,21 @@ const paletteOptions = {
 
 const darkPaletteOptions = {
   background: {
-    default: '#12181b',
+    default: '#0c1012',
   },
   text: {
     primary: '#bdbdbd',
   },
   primary: {
-    light: '#1a2327',
-    main: '#12181b',
-    dark: '#0c1012',
+    light: '#101010',
+    main: '#0c1012',
+    dark: '#080b0c',
     contrastText: '#bdbdbd',
   },
   secondary: {
-    light: '#fe7049',
-    main: '#fe4d1c',
-    dark: '#b13513',
+    light: '#ffac33',
+    main: '#FF9800',
+    dark: '#b26a00',
     contrastText: '#eeeeee',
   },
   success: {

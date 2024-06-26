@@ -110,12 +110,13 @@ const NavBar = () => {
               <img
                 onClick={handleOnClickHome}
                 onMouseDown={handleMouseDown}
+                loading="lazy"
                 src={
                   theme === 'light'
-                    ? '/src/assets/gudangmobil-logo-dark.png'
-                    : '/src/assets/gudangmobil-logo-light.png'
+                    ? '/public/kotamobil-light.png'
+                    : '/public/kotamobil-dark.png'
                 }
-                style={{ height: 40, marginRight: 10, cursor: 'pointer' }}
+                style={{ height: 50, marginRight: 10, cursor: 'pointer' }}
               />
             </Box>
             <Box

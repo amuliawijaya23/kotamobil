@@ -31,7 +31,7 @@ const VehicleCard = ({ vehicle }: { vehicle: VehicleData }) => {
           src={
             vehicle.images && vehicle.images.length > 0
               ? vehicle.images[0].url
-              : './src/assets/coming-soon.jpg'
+              : './public/coming-soon.jpg'
           }
           height="300"
           sx={{ objectFit: 'cover' }}
