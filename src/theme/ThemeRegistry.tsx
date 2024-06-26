@@ -36,7 +36,7 @@ const paletteOptions = {
     light: '#eff4fe',
     main: '#01579b',
     dark: '#9dabb1',
-    contrastText: '#757575',
+    contrastText: '#a6a6a6',
   },
   secondary: {
     light: '#ffac33',
