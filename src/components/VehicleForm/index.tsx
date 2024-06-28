@@ -134,7 +134,7 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
       try {
         const formData = new FormData();
 
-        const { images, removedImages, ...data } = values;
+        const { images, removedImages, status, ...data } = values;
 
         if (images) {
           (images as File[]).forEach((file) => {
@@ -144,6 +144,7 @@ const VehicleForm = ({ open, onCloseForm }: VehicleFormProps) => {
 
         const dataToSend: Partial<DataToSend> = filterObject({
           ...data,
+          sold: status === 'Sold' ? true : false,
           specification: data.specification.filter((el) => el),
         });
 
