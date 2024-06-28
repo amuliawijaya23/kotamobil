@@ -30,7 +30,9 @@ jobs:
           EC2_USER: ${{ secrets.EC2_USER }}
           EC2_HOST: ${{ secrets.EC2_HOST }}
         run: |
-          echo "$SSH_PRIVATE_KEY" > private_key
-          chmod 600 private_key
-          scp -i private_key -r ./dist/* $EC2_USER@$EC2_HOST:/var/www/kotamobil.com/
-          ssh -i private_key $EC2_USER@$EC2_HOST "sudo systemctl restart nginx"
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan $EC2_HOST >> ~/.ssh/known_hosts
+          scp -r ./dist/* $EC2_USER@$EC2_HOST:/var/www/kotamobil.com/
+          ssh $EC2_USER@$EC2_HOST "sudo systemctl restart nginx"
