@@ -213,7 +213,6 @@ const Contacts = () => {
           })}
         </DialogContent>
       </Dialog>
-
       <Toolbar />
       <ContactForm
         open={openForm}
