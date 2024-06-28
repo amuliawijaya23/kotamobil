@@ -20,8 +20,8 @@ jobs:
       
       - name: Set env
         run: |
-          "VITE_API_COOKIE_NAME=${{ secrets.VITE_API_COOKIE_NAME }}" >> $GITHUB_ENV
-          
+          echo "VITE_API_COOKIE_NAME=${{ secrets.VITE_API_COOKIE_NAME }}" >> $GITHUB_ENV
+
       - name: Install dependencies
         run: npm install
 
