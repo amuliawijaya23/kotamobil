@@ -6,10 +6,9 @@ import {
   Toolbar,
   Button,
   IconButton,
-  List,
-  ListItemButton,
-  ListItemText,
-  Divider,
+  Menu,
+  MenuItem,
+  Typography,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import UserProfile from './UserProfile';
@@ -17,7 +16,6 @@ import { useAppSelector } from '~/redux/store';
 import { useNavigate } from 'react-router-dom';
 import { getUserData } from '~/redux/reducers/userSlice';
 import { getTheme } from '~/redux/reducers/themeSlice';
-import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -46,7 +44,8 @@ const NavBar = () => {
   const user = useAppSelector(getUserData);
   const theme = useAppSelector(getTheme);
   const navigate = useNavigate();
-  const [openMenu, setOpenMenu] = useState<boolean>(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  // const [openMenu, setOpenMenu] = useState<boolean>(false);
 
   const handleMouseDown = useCallback(
     (event: React.MouseEvent<HTMLButtonElement | HTMLParagraphElement>) => {
@@ -55,12 +54,15 @@ const NavBar = () => {
     [],
   );
 
-  const handleOpenNavMenu = useCallback(() => {
-    setOpenMenu((open) => !open);
-  }, []);
+  const handleToggleNavMenu = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      setAnchorEl(e.currentTarget);
+    },
+    [],
+  );
 
   const handleCloseNavMenu = useCallback(() => {
-    setOpenMenu(false);
+    setAnchorEl(null);
   }, []);
 
   const handleOnClickHome = useCallback(() => {
@@ -124,10 +126,71 @@ const NavBar = () => {
                 aria-controls="menu-appbar"
                 aria-haspopup="true"
                 color="inherit"
-                onClick={handleOpenNavMenu}
+                onClick={handleToggleNavMenu}
+                onMouseDown={handleMouseDown}
               >
                 <MenuIcon />
               </IconButton>
+              <Menu
+                id="navMenu"
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleCloseNavMenu}
+                disableScrollLock
+                marginThreshold={0}
+                sx={{
+                  mt: 0.5,
+                  display: { xs: user ? 'flex' : 'none', sm: 'none' },
+                }}
+                slotProps={{
+                  paper: {
+                    sx: {
+                      width: '100%',
+                      maxWidth: '100%',
+                      left: 0,
+                      right: 0,
+                    },
+                  },
+                }}
+              >
+                {['Home', 'Dashboard', 'Inventory', 'Contacts'].map(
+                  (page, index) => {
+                    const onClickHandler = () => {
+                      switch (index) {
+                        case 0:
+                          handleOnClickHome();
+                          handleCloseNavMenu();
+                          break;
+                        case 1:
+                          handleOnClickDashboard();
+                          handleCloseNavMenu();
+                          break;
+                        case 2:
+                          handleOnClickInventory();
+                          handleCloseNavMenu();
+                          break;
+                        case 3:
+                          handleOnClickContacts();
+                          handleCloseNavMenu();
+                          break;
+                      }
+                    };
+                    return (
+                      <>
+                        <MenuItem
+                          key={`${page}-menu-item`}
+                          onClick={onClickHandler}
+                          sx={{
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <Typography textAlign="center">{page}</Typography>
+                        </MenuItem>
+                      </>
+                    );
+                  },
+                )}
+              </Menu>
             </Box>
             <Box
               sx={{
@@ -188,67 +251,6 @@ const NavBar = () => {
           </Box>
         </Toolbar>
       </AppBar>
-      {openMenu && (
-        <>
-          <ClickAwayListener onClickAway={handleCloseNavMenu}>
-            <Box
-              sx={{
-                display: { xs: user ? 'flex' : 'none', sm: 'none' },
-                zIndex: 2,
-                position: 'fixed',
-                flexDirection: 'column',
-                width: '100%',
-                bgcolor: 'primary.light',
-              }}
-            >
-              <Toolbar />
-              <List sx={{ width: '100%' }} disablePadding>
-                {['Home', 'Dashboard', 'Inventory', 'Contacts'].map(
-                  (page, index) => {
-                    const onClickHandler = () => {
-                      switch (index) {
-                        case 0:
-                          handleOnClickHome();
-                          handleCloseNavMenu();
-                          break;
-                        case 1:
-                          handleOnClickDashboard();
-                          handleCloseNavMenu();
-                          break;
-                        case 2:
-                          handleOnClickInventory();
-                          handleCloseNavMenu();
-                          break;
-                        case 3:
-                          handleOnClickContacts();
-                          handleCloseNavMenu();
-                          break;
-                      }
-                    };
-                    return (
-                      <Box key={`${page}-menu-item`}>
-                        <ListItemButton
-                          onClick={onClickHandler}
-                          onMouseDown={handleMouseDown}
-                        >
-                          <ListItemText
-                            primary={page}
-                            primaryTypographyProps={{
-                              textAlign: 'center',
-                              color: 'secondary',
-                            }}
-                          />
-                        </ListItemButton>
-                        <Divider />
-                      </Box>
-                    );
-                  },
-                )}
-              </List>
-            </Box>
-          </ClickAwayListener>
-        </>
-      )}
     </>
   );
 };

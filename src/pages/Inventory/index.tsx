@@ -131,6 +131,8 @@ const Inventory = () => {
           open={openFilter}
           anchor="left"
           onClose={handleCloseFilter}
+          disableScrollLock
+          slotProps={{ backdrop: { invisible: true } }}
           PaperProps={{ sx: { width: drawerWidth } }}
         >
           <Toolbar />
