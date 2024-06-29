@@ -185,7 +185,12 @@ const Home = () => {
               bgcolor: 'primary.light',
             }}
           >
-            <Typography variant="h6" textAlign="center" sx={{ mb: 3 }}>
+            <Typography
+              variant="h6"
+              textAlign="center"
+              color="secondary"
+              sx={{ mb: 3 }}
+            >
               Secure and Reliable
             </Typography>
             <Typography variant="body1" textAlign="center">
@@ -204,7 +209,12 @@ const Home = () => {
               bgcolor: 'primary.light',
             }}
           >
-            <Typography variant="h6" textAlign="center" sx={{ mb: 3 }}>
+            <Typography
+              variant="h6"
+              textAlign="center"
+              color="secondary"
+              sx={{ mb: 3 }}
+            >
               User-Friendly Interface
             </Typography>
             <Typography variant="body1" textAlign="center">
@@ -223,7 +233,12 @@ const Home = () => {
               bgcolor: 'primary.light',
             }}
           >
-            <Typography variant="h6" textAlign="center" sx={{ mb: 3 }}>
+            <Typography
+              variant="h6"
+              textAlign="center"
+              color="secondary"
+              sx={{ mb: 3 }}
+            >
               Comprehensive Support
             </Typography>
             <Typography variant="body1" textAlign="center">
