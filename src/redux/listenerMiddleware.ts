@@ -15,6 +15,7 @@ import {
   getPastVehicleSales,
   getMonthlyVehicleSales,
   getPastMonthlyVehicleSales,
+  clearDashboardData,
 } from './reducers/dashboardSlice';
 import { clearUserData } from './reducers/userSlice';
 
@@ -123,7 +124,16 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
     const pastRange = listenerApi.getState().dashboard.pastRange;
     const pastStart = subYears(start, pastRange);
     const pastEnd = subYears(end, pastRange);
+    const monthsOfInterval = eachMonthOfInterval({ start, end });
+    const pastMonthsOfInterval = eachMonthOfInterval({
+      start: pastStart,
+      end: pastEnd,
+    });
     try {
+      listenerApi.dispatch(clearDashboardData());
+      listenerApi.dispatch(
+        setMonthsOfInterval(JSON.stringify(monthsOfInterval)),
+      );
       listenerApi.dispatch(
         getVehicleSales({
           startDate: start,
@@ -138,12 +148,6 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
           cancelToken: dashboardSearchRequest.token,
         }),
       );
-
-      const monthsOfInterval = eachMonthOfInterval({ start, end });
-      const pastMonthsOfInterval = eachMonthOfInterval({
-        start: pastStart,
-        end: pastEnd,
-      });
 
       listenerApi.dispatch(
         getMonthlyVehicleSales({
@@ -160,10 +164,6 @@ listenerMiddleware.startListening.withTypes<RootState, AppDispatch>()({
           endDate: pastEnd,
           cancelToken: dashboardSearchRequest.token,
         }),
-      );
-
-      listenerApi.dispatch(
-        setMonthsOfInterval(JSON.stringify(monthsOfInterval)),
       );
     } catch (error) {
       console.error(`Error fetching dashboard data: ${error}`);

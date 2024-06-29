@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Card, CardHeader, CardContent } from '@mui/material';
 import { useAppSelector } from '~/redux/store';
-import { BarChart, BarSeriesType } from '@mui/x-charts';
+import { BarChart, BarSeriesType, AxisConfig } from '@mui/x-charts';
 import {
   getMonthsOfInterval,
   getSalesPerMonth,
@@ -40,6 +40,20 @@ const SalesChart = () => {
     ] as BarSeriesType[];
   }, [totalSales, pastTotalSales, salesPerMonth, pastSalesPerMonth]);
 
+  const xSeries = useMemo(() => {
+    if (!monthsOfIntervals) {
+      return [];
+    }
+    return [
+      {
+        id: 'months',
+        data: JSON.parse(monthsOfIntervals as string) as Date[],
+        scaleType: 'band',
+        valueFormatter: (value: Date) => format(new Date(value), 'MMM'),
+      },
+    ] as AxisConfig[];
+  }, [monthsOfIntervals]);
+
   return (
     <Card sx={{ bgcolor: 'primary.light', color: 'secondary.main' }}>
       <CardHeader
@@ -53,14 +67,7 @@ const SalesChart = () => {
         <BarChart
           margin={{ left: 20, right: 0 }}
           series={series}
-          xAxis={[
-            {
-              id: 'months',
-              data: JSON.parse(monthsOfIntervals as string) as Date[],
-              scaleType: 'band',
-              valueFormatter: (value) => format(new Date(value), 'MMM'),
-            },
-          ]}
+          xAxis={xSeries}
           yAxis={[
             {
               id: 'sales',

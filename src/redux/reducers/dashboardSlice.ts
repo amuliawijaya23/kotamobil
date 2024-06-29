@@ -178,6 +178,21 @@ export const dashboardSlice = createSlice({
   initialState,
   reducers: {
     resetDashboard: () => initialState,
+    clearDashboardData: (state) => {
+      state.salesByModel = initialState.salesByModel;
+      state.pastSalesByModel = initialState.pastSalesByModel;
+      state.totalSales = initialState.totalSales;
+      state.pastTotalSales = initialState.pastTotalSales;
+      state.totalProfit = initialState.totalProfit;
+      state.pastTotalProfit = initialState.pastTotalProfit;
+      state.sales = initialState.sales;
+      state.pastSales = initialState.pastSales;
+      state.salesPerMonth = initialState.salesPerMonth;
+      state.pastSalesPerMonth = initialState.pastSalesPerMonth;
+      state.profitPerMonth = initialState.profitPerMonth;
+      state.pastProfitPerMonth = initialState.pastProfitPerMonth;
+      state.monthsOfInterval = initialState.monthsOfInterval;
+    },
     setDashboardStatus: (
       state,
       action: PayloadAction<'idle' | 'loading' | 'succeeded' | 'failed'>,
@@ -280,6 +295,7 @@ export const dashboardSlice = createSlice({
 
 export const {
   resetDashboard,
+  clearDashboardData,
   setDashboardStatus,
   setStartDate,
   setEndDate,

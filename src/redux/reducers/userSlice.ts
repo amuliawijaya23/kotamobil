@@ -182,6 +182,7 @@ export const userSlice = createSlice({
     },
     clearUserData: (state) => {
       localStorage.removeItem(LC_USER_DATA);
+      localStorage.removeItem(LC_USER_THEME);
       state.status = 'idle';
       state.data = null;
     },

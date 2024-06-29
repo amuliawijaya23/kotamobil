@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Card, CardHeader, CardContent } from '@mui/material';
-import { LineChart, LineSeriesType } from '@mui/x-charts';
+import { LineChart, LineSeriesType, AxisConfig } from '@mui/x-charts';
 import { useAppSelector } from '~/redux/store';
 import {
   getMonthsOfInterval,
@@ -41,6 +41,20 @@ const ProfitChart = () => {
     ] as LineSeriesType[];
   }, [totalProfit, pastTotalProfit, profitPerMonth, pastProfitPerMonth]);
 
+  const xSeries = useMemo(() => {
+    if (!monthsOfIntervals) {
+      return [];
+    }
+    return [
+      {
+        id: 'months',
+        data: JSON.parse(monthsOfIntervals as string) as Date[],
+        scaleType: 'band',
+        valueFormatter: (value: Date) => format(new Date(value), 'MMM'),
+      },
+    ] as AxisConfig[];
+  }, [monthsOfIntervals]);
+
   return (
     <Card sx={{ bgcolor: 'primary.light', color: 'secondary.main' }}>
       <CardHeader
@@ -54,14 +68,7 @@ const ProfitChart = () => {
         <LineChart
           margin={{ left: 20, right: 0 }}
           series={series}
-          xAxis={[
-            {
-              id: 'months',
-              data: JSON.parse(monthsOfIntervals as string) as Date[],
-              scaleType: 'band',
-              valueFormatter: (value) => format(new Date(value), 'MMM'),
-            },
-          ]}
+          xAxis={xSeries}
           yAxis={[
             {
               id: 'profit',

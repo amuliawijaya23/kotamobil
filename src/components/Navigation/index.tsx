@@ -11,15 +11,12 @@ import {
   ListItemText,
   Divider,
 } from '@mui/material';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
 import MenuIcon from '@mui/icons-material/Menu';
 import UserProfile from './UserProfile';
-import { useAppDispatch } from '~/redux/store';
 import { useAppSelector } from '~/redux/store';
 import { useNavigate } from 'react-router-dom';
 import { getUserData } from '~/redux/reducers/userSlice';
-import { getTheme, toggleTheme } from '~/redux/reducers/themeSlice';
+import { getTheme } from '~/redux/reducers/themeSlice';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 
 interface AppBarProps extends MuiAppBarProps {
@@ -48,7 +45,6 @@ const AppBar = styled(MuiAppBar, {
 const NavBar = () => {
   const user = useAppSelector(getUserData);
   const theme = useAppSelector(getTheme);
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [openMenu, setOpenMenu] = useState<boolean>(false);
 
@@ -90,10 +86,6 @@ const NavBar = () => {
   const handleOnClickRegister = useCallback(() => {
     navigate('/register');
   }, [navigate]);
-
-  const toggleThemeMode = useCallback(() => {
-    dispatch(toggleTheme());
-  }, [dispatch]);
 
   return (
     <>
@@ -172,13 +164,6 @@ const NavBar = () => {
             </Box>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton
-              onClick={toggleThemeMode}
-              color="inherit"
-              sx={{ mr: 2 }}
-            >
-              {theme === 'light' ? <Brightness7Icon /> : <Brightness4Icon />}
-            </IconButton>
             {user && <UserProfile />}
             {!user && (
               <>

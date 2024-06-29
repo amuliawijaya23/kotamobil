@@ -28,5 +28,6 @@
     }
   },
   "include": ["src"],
+  "exclude": ["github"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
